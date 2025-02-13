@@ -1,9 +1,13 @@
 using FinanceTracker.Api.Extensions;
+using FinanceTracker.Application.Extensions;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddApplication();
+
 
 builder.AddPresentation();
 
