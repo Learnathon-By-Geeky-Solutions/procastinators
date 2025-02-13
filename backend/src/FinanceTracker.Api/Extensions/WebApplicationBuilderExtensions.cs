@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using FinanceTracker.Api.Middlewares;
+using Serilog;
 
 namespace FinanceTracker.Api.Extensions;
 
@@ -11,8 +12,11 @@ public static class WebApplicationBuilderExtensions
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        builder.Services.AddScoped<ExceptionHandlingMiddleware>();
+        
         builder.Host.UseSerilog((context, configuration) =>
             configuration.ReadFrom.Configuration(context.Configuration)
         );
+
     }
 }
