@@ -4,8 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTracker.Infrastructure.Persistence;
 
-public class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext> options) 
+internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext> options) 
     : IdentityDbContext<User>(options)
 {
+    internal DbSet<Wallet> Wallets { get; set; } = default!;
 
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Wallet>(entity =>
+        {
+            entity.Property(e => e.Balance)
+                .HasColumnType("decimal(18, 2)");
+        });
+    }
 }
