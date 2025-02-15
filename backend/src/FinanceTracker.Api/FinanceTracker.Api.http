@@ -1,6 +1,43 @@
-@FinanceTracker.Api_HostAddress = http://localhost:5027
+@FinanceTracker.Api_HostAddress = https://localhost:7228
 
-GET {{FinanceTracker.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+
+POST {{FinanceTracker.Api_HostAddress}}/api/identity/register
+Content-type: application/json
+{
+  "email": "u3@test.com",
+  "password": "P@ss123"
+}
 
 ###
+
+POST {{FinanceTracker.Api_HostAddress}}/api/identity/login
+Content-type: application/json
+{
+  "email": "u1@test.com",
+  "password": "P@ss123"
+}
+
+###
+@token = CfDJ8H3kykSn-ZtIrZ77Ics2Tfs31G0h8h5BInaF9b62xzwUI_tgOeVQWAEZmSaeYfS7DsJ58PIeMxc1gSJzA4ID8YztM8Gydk_vGgRWdt7_RAAu-g-csqUEfwvsqRNRURC7Cf7DdtldcJC8pFoLOUBC6WuAuCpX7-0YzDG5CRTIiJZhVEuI1G_8Ejd93A9zmAayXVUVRJZ0YqdXKwI8AsKdmkIsu04mZQBYf4CXb2vx27JqkL2scuvaa8he-I2C14zoU5_JXanNxY0JCqM2PsBagV1ncbu1RYTDsCuz_6qsj1DuGurQfBRmFY4Pu5GywcUKTIDj6V7x5qK6b9HG4CqK4b4e1579JomlWAzLjBmzOL-HMMVuinF8yQdufFrJ9bFnh4FXkAduO5s7eYgX4w8kePrL__er_TtejzrmyYKdbgLX-s8wsPxGpazV0zhaMfDTPN44s-ndeAmDAakQBvKVf2fEJfLN23QAFNNv4h8csFFH_CbeMWCnVr044929a2NaHCR-UlguEcmt6p3CI50mtlY5W1FHYOoTxuH4o5xg9lih3Ddwj3tHYZ_mSF68jzSyWyHKfpfN7-0Q9bNpYfnyDYGixUL_4dhnCgKbE_6D0Qhpo0L26QWIHnW1wE9sPzr54J2WK2ZU9OiJ_pZCTJkVj6Hkz0FJenb1pe1Sjz06Uvo_RFW1ZqWkKPSY0fwgzbTjtQ
+@refreshToken = CfDJ8H3kykSn-ZtIrZ77Ics2Tfs9lXPPsbQw26_WO2HVQf1XavbtLAJF1KNEV-9J1Ljt14QhThPys-e_Wkafx4VMIorz-z32ygRRtrAQTO31_BhvV6tG8nVbLhfqJEx-8aacUazO74YXPRfs3qDr7YPxg_nzGlqxIx5p4SjZmWBu-GpN38JEeFkWops7cRpHPRovvq6AhClUMudDJPHoQCErO-Nr9g5zkDqLQYSE6CovHSoWZb51WNIIEuVtjEtqGAyNY9FLf09_c38KlKNwMu3lttznef52OjxGFAmOjZ9b6bW7HxKhdw2dA6LLCTKQtLax8Unbsf9LDoKp027FtcXCslW0ZG6eHHGkrwVEXk-WS9GTDHSGMl2-YiELXf2lxBLZbOUhuqSEg1SoEya4eHNwc9dC5Gcyo5FVmYBPGNlBx3agkX1GnjarLnhKZjvsVVmcOI40Z6-MXvpLrXRgFjQW-pBbHG7aRG5lD1LHgptiCC8vTXBll40uAuMOMjmMTyFFuEzVwNF08lMA3GWEs04vMklW1o5rX2yLzs2A31wmX9zeXb4XLNacHNUIEhRC_wYfaGBxaHXT8-4p5DV6MbdxAh57CfqSdcR15xXbj_vNkBy6bZaF-j-ZrnM7ai3tA7khHhydDGeKtzJpCHAsPXS_F1aFy6GVPaEOsQzNVgTXvYd-l9sh0LOWnDxKgkkOXbYjrQ
+
+
+GET {{FinanceTracker.Api_HostAddress}}/api/wallets
+Authorization: Bearer {{token}}
+###
+
+@id = 0
+GET {{FinanceTracker.Api_HostAddress}}/api/wallets/{{id}}
+Authorization: Bearer {{token}}
+###
+POST {{FinanceTracker.Api_HostAddress}}/api/wallets
+Authorization: Bearer {{token}}
+Content-Type: application/json
+{
+  "Name": "Fkash",
+  "Type": "MFS",
+  "Currency": "BDT"
+}
+
+###
+
