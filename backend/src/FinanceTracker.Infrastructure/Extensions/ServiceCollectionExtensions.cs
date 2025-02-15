@@ -1,4 +1,5 @@
-﻿using FinanceTracker.Infrastructure.Persistence;
+﻿using FinanceTracker.Domain.Entities;
+using FinanceTracker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,5 +12,8 @@ public static class ServiceCollectionExtensions
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<FinanceTrackerDbContext>(option => option.UseSqlServer(connectionString));
+
+        services.AddIdentityApiEndpoints<User>()
+            .AddEntityFrameworkStores<FinanceTrackerDbContext>();
     }
 }

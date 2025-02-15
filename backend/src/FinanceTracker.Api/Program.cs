@@ -1,6 +1,8 @@
 using FinanceTracker.Api.Extensions;
 using FinanceTracker.Api.Middlewares;
 using FinanceTracker.Application.Extensions;
+using FinanceTracker.Domain.Entities;
+using FinanceTracker.Infrastructure.Extensions;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddApplication();
-
+builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.AddPresentation();
 
@@ -27,6 +29,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapIdentityApi<User>();
 
 app.UseAuthorization();
 
