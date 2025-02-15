@@ -1,6 +1,51 @@
-@FinanceTracker.Api_HostAddress = http://localhost:5027
+@FinanceTracker.Api_HostAddress = https://localhost:7228
 
-GET {{FinanceTracker.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+
+POST {{FinanceTracker.Api_HostAddress}}/api/identity/register
+Content-type: application/json
+{
+  "email": "",
+  "password": ""
+}
 
 ###
+
+POST {{FinanceTracker.Api_HostAddress}}/api/identity/login
+Content-type: application/json
+{
+  "email": "",
+  "password": ""
+}
+
+###
+@token = place_token_here
+
+###
+
+GET {{FinanceTracker.Api_HostAddress}}/api/wallets
+Authorization: Bearer {{token}}
+
+###
+
+@id = 3
+GET {{FinanceTracker.Api_HostAddress}}/api/wallets/{{id}}
+Authorization: Bearer {{token}}
+
+###
+
+PATCH {{FinanceTracker.Api_HostAddress}}/api/wallets/{{id}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "Name": "",
+  "Type": "",
+  "Currency": ""
+}
+
+###
+DELETE {{FinanceTracker.Api_HostAddress}}/api/wallets/{{id}}
+Authorization: Bearer {{token}}
+
+###
+
