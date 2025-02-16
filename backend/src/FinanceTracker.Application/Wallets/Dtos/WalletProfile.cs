@@ -9,5 +9,6 @@ public class WalletProfile: Profile
     public WalletProfile()
     {
         CreateMap<CreateWalletCommand, Wallet>();
+        CreateMap<Wallet, WalletDto>();
     }
 }

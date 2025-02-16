@@ -1,14 +1,29 @@
 ﻿using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Repositories;
 using FinanceTracker.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTracker.Infrastructure.Repositories;
 
 internal class WalletRepository(FinanceTrackerDbContext dbContext) : IWalletRepository
 {
-    public Task<int> Create(Wallet wallet)
+    public async Task<int> Create(Wallet wallet)
     {
         dbContext.Wallets.Add(wallet);
-        return dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
+        return wallet.Id;
+    }
+
+    public async Task<IEnumerable<Wallet>> GetAll(string userId)
+    {
+        return await dbContext.Wallets
+            .Where(w => w.UserId == userId && !w.IsDeleted)
+            .ToListAsync();
+    }
+
+    public async Task<Wallet?> GetById(int id)
+    {
+        return await dbContext.Wallets
+            .FirstOrDefaultAsync(w => w.Id == id);
     }
 }
