@@ -1,6 +1,6 @@
 ﻿namespace FinanceTracker.Domain.Constants.Wallet;
 
-public class Currencies
+public static class Currencies
 {
     public const string BDT = "BDT";
     public const string USD = "USD";

@@ -6,7 +6,7 @@ public static class WalletTypes
     public const string Cash = "Cash";
     public const string MFS = "MFS";
 
-    public static List<string> GellAll()
+    public static List<string> GetAll()
     {
         return [Bank, Cash, MFS];
     }
