@@ -1,5 +1,6 @@
 ﻿using FinanceTracker.Application.Users;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FinanceTracker.Application.Extensions;
@@ -10,9 +11,9 @@ public static class ServiceCollectionExtensions
     {
         var assembly = typeof(ServiceCollectionExtensions).Assembly;
 
-        services.AddMediatR(config => config.RegisterServicesFromAssembly(assembly));
         services.AddAutoMapper(assembly);
-        services.AddValidatorsFromAssembly(assembly);
+        services.AddMediatR(config => config.RegisterServicesFromAssembly(assembly));
+        services.AddValidatorsFromAssembly(assembly).AddFluentValidationAutoValidation();
 
         services.AddHttpContextAccessor();
 
