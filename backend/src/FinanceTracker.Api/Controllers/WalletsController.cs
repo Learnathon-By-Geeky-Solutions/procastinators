@@ -1,9 +1,10 @@
 ﻿using FinanceTracker.Application.Wallets.Commands.CreateWallet;
+using FinanceTracker.Application.Wallets.Commands.DeleteWallet;
+using FinanceTracker.Application.Wallets.Commands.UpdateWallet;
 using FinanceTracker.Application.Wallets.Queries.GetAllWallets;
 using FinanceTracker.Application.Wallets.Queries.GetWalletById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceTracker.Api.Controllers;
@@ -32,5 +33,20 @@ public class WalletsController(IMediator mediator) : ControllerBase
     {
         var id = await mediator.Send(command);
         return CreatedAtAction(nameof(GetById), new { id }, null);
+    }
+
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateWalletCommand command)
+    {
+        command.Id = id;
+        await mediator.Send(command);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+        await mediator.Send(new DeleteWalletCommand { Id = id });
+        return NoContent();
     }
 }

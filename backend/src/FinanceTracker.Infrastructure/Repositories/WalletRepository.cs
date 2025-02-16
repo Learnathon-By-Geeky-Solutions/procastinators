@@ -26,4 +26,9 @@ internal class WalletRepository(FinanceTrackerDbContext dbContext) : IWalletRepo
         return await dbContext.Wallets
             .FirstOrDefaultAsync(w => w.Id == id);
     }
+
+    public async Task<int> SaveChangesAsync()
+    {
+        return await dbContext.SaveChangesAsync();
+    }
 }

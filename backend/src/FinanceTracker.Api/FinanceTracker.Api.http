@@ -18,8 +18,8 @@ Content-type: application/json
 }
 
 ###
-@token = CfDJ8H3kykSn-ZtIrZ77Ics2TfuNOXOn9aNfLqKfOwcsoSh_cr1tPZ8eHQpWsoAkRMu9h4vBmnD_5Zuwb4Bv0JdxopVL08OJe9SCbIuQts8cWcz2u4OaZQOEl0Cb1k3DTsyPQ85ZDEnH8h1BwQMKAhYXHVYQy8P2zidaIOGj47JfwRxqU6A07cIaPbHZRbUqNFpvDfcUQPkGcOnetACGOdvCCFTD1efqh-U_-6wp0Oryd2aDoCgtsVaf-B-7wo_SJFA6FYKZ1lyXwbmxiBxm2q9bPdIZivR7aY--Y2q5y3bD_loN5K1FDmZPlnQIMC8HgY_22_tzGcZCb3V_BgArnz73kKtS3II9PmShY4JqSghmxMwlglyDypMmVQcMpYiCZJJj32EnR1f13RXBwarC1WqKj2Jcmf1qsdv5c9GZIua7b28QT0idHi6Ru9vegVIh-5pqY01Oia46lSHRCszbNbuDY-fVKHhXEuYJTifZFFCk9OH2WsiG17XaP_7AiCSFzF952a8iZKnOChUEdfALqxVbincImRd5_z9YUQDnt82tfa-xJoEGmIie5JzvbYiVI3Iy8gsKg2YxPgrpPXrpjFVAlFe03s2DBbxB3hz_QmZFBugavdpqxGsi_NI-jdUfipmN8coAXTJqWcsrMTqbVuFwAi2-T3zKZzv7bmtdNZxocGHs
-@refreshToken = CfDJ8H3kykSn-ZtIrZ77Ics2TfufuOzPT9KGP57QXi0q4Pfi_RlBKqp9H-O92W5LXOzotmGMAgtRRAzDWHf-RUt7t_0tWQ6X7hr6KDa6xOjdrHEob8a11JetQvJEiURYACQtr3lGv_opK2o4gO9JK-lceCvrf0GfVBN4QSStsw4m4Kikmrr-jVJgjphUl1HUC4HtZVj-PPWveejzLL3aSmhWqOgRs0j4xxi-khcc3pp3TKFZGZdRHk1-rCJOU_d0-Ey1EPIFpPjhxpNgy7rNXEJ-bNOLoW9DD5VOjd6KXMHEh9sbyZ_I0nR_T3zIaNSZdK2bYoQZm1SjGjJq355zuxBP4xYyDAfCCsRkM_uKt7yGus-weCYTaHOw2RAKgA91CzZ_R63c_xTjR2W6ShzTUZjU_gMhEGVNNM1lxQ-nYInjJ9VfsCZrVo__HtrK_w-41dV9m4jNZdDQoWukhabiV2hQa9n3nAcV0z6CKid9fn3teytFvGBqZjQzddVnZMFsH9HNXRY007Ixl6jCVZZYVBV7EdQ9tTl5L27GaXNibHuezx3iakxGj-l7t4_MUTSiupJTFyKoouznlBBKWvURLADXnkvMUh0odUqghBZ7GDy432ne9LebXEsXl7ZKs1L714ySAkARJnSdsq7EixfAlAEPBa2mtz1hmlxJw_hrOTmwL7fw
+@token = CfDJ8H3kykSn-ZtIrZ77Ics2TfsRLDWpmtwIK9jVbHrBvFaPNVQdm7UmwqMXW-vOpWSujUX7SLaTiqBZTCUJyJ0FWniRRQNyyDTwsQL6jtz7WN6TwVWgZOrbf3SMkpFh3zlp5VFr27uhwC-tGiBdLAjXlhCEYzHSweZD5pCOLxtGmCsbMRi_VwbG4qY3qvZqEIWwwre_XL9e7TpuRuZ3yYMxzT0HiytlEOqfigLUXMzdBkd-Z1xAL0zd5LspF9OmOlVz0wjt1EVYbhpg0Pcyl9_gRBB9_D6g08XhbXo3ntJyPi7p3f56s3CacOvE4HwcF6ZRkPo55GcZJXwAs19oc1l0wljV-qBeW4wLS67Z3kqg7fCncQEIKPO5b6WFybE84QmGxjbpPoIGS0KSe-Kre-E940szFUne5LDCzdPPUKGyp5U1YqtKq28sPagPFb0PzJjDDg1ckttc-BcquxdltDXiVFb6zDpbliUgbYGTCC3uUsDeE0W9ahf9bDtlLTyHYvLhprIyc81C7CLoKqQQ15MYvUlIIUWuI0OsY36vYy1QmFbuYjUJJPcQJPR2GOBZXQkBtSJEsETbF4fLY9FzYjBMdulZwARUPSndDJXCznSERIPCwYrA2tweWm4s514o64haXzvsOUrzYYlr8uDlMnGNL_G_cikrfYSDgMBcK7031APk
+@refreshToken = CfDJ8H3kykSn-ZtIrZ77Ics2TfuHUS5U78MEv3_PbdN_CTNAAi-Ele9E7SYb6fncYkFDeAWvfMzdsnQkVbgf7Y0Cr9lXtzwFQZkcjHprvDUfWtJopqgITtVcCmETYxf0QftGJXmgBMw54cmGB614rX13EhKHY-7zmASwzZWxO1ACXLLQIUebvq01to747ywFjccUktolypeRBGCJW296KxHqQI7aMjcppcBH9ydzcHnInBz-dhUL-QFCIp3WD155LXdpmm_fblnyaz_nZ1rIeUrztIfNq0rCUb4kQgW7zCMKSzA_RHk7jQdXRTwHcA59L2Zjns8n3ejNxXesl_lTtdY2Knj4H0Wie0Zj__c7ubyAJMZMtBt-31nW6PuQvy1dDaz7_1gJ_-imB0HCS2CQFhf34msR1mFQb290poQUKE44J197iBBbpvQ9HC1xxDw9xcyW1J_-cWFXlcqGUUfzpUZ7KAAZcovFSEw0Lk38ibY5pLTcFdvUZ-zKimfy9i-JzHiQ5DpZqnJrEzmH8ofQPws1NbfZqES8XkqBVCUx53YzJpz0bTBCudHRWyvVaiSJbyWqyM1nry6EzV-lH7uU65ilSuFJ6oVpTzBfwWLmpIL5vbdzliyE7DOWa3gIpNvIwgDNW89tircPgH8VRQRbZdEbFFVAbT5or7d33_YiNGEn9Vez
 
 
 POST {{FinanceTracker.Api_HostAddress}}/api/identity/refresh
@@ -27,18 +27,6 @@ Content-type: application/json
 {
   "refreshToken": "{{refreshToken}}"
 }
-
-###
-
-
-GET {{FinanceTracker.Api_HostAddress}}/api/wallets
-Authorization: Bearer {{token}}
-
-###
-
-@id = 0
-GET {{FinanceTracker.Api_HostAddress}}/api/wallets/{{id}}
-Authorization: Bearer {{token}}
 
 ###
 
@@ -50,6 +38,33 @@ Content-Type: application/json
   "Type": "MFS",
   "Currency": "BDT"
 }
+
+###
+
+GET {{FinanceTracker.Api_HostAddress}}/api/wallets
+Authorization: Bearer {{token}}
+
+###
+
+@id = 3
+GET {{FinanceTracker.Api_HostAddress}}/api/wallets/{{id}}
+Authorization: Bearer {{token}}
+
+###
+
+PATCH {{FinanceTracker.Api_HostAddress}}/api/wallets/{{id}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "Name": "Baki",
+  "Type": "Cash",
+  "Currency": "BDT"
+}
+
+###
+DELETE {{FinanceTracker.Api_HostAddress}}/api/wallets/{{id}}
+Authorization: Bearer {{token}}
 
 ###
 
