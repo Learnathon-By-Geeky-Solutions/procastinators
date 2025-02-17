@@ -1,5 +1,7 @@
 ﻿using FinanceTracker.Domain.Entities;
+using FinanceTracker.Domain.Repositories;
 using FinanceTracker.Infrastructure.Persistence;
+using FinanceTracker.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,5 +17,7 @@ public static class ServiceCollectionExtensions
 
         services.AddIdentityApiEndpoints<User>()
             .AddEntityFrameworkStores<FinanceTrackerDbContext>();
+
+        services.AddScoped<IWalletRepository, WalletRepository>();
     }
 }
