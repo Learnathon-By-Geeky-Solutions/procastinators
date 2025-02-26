@@ -1,14 +1,18 @@
 ﻿using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Repositories;
+using FinanceTracker.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace FinanceTracker.Infrastructure.Repositories
 {
-    internal class CategoryRepository : ICategoryRepository
+    internal class CategoryRepository(FinanceTrackerDbContext dbContext) : ICategoryRepository
     {
-        public Task<int> Create(Category category)
+        public async Task<int> Create(Category category)
         {
-            throw new NotImplementedException();
+            dbContext.Categories.Add(category);
+            await dbContext.SaveChangesAsync();
+            return category.Id;
         }
 
         public Task<IEnumerable<Category>> GetAll(string userId)
@@ -16,9 +20,10 @@ namespace FinanceTracker.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<Category?> GetById(int id)
+        public async Task<Category?> GetById(int id)
         {
-            throw new NotImplementedException();
+            return await dbContext.Categories
+            .FirstOrDefaultAsync(w => w.Id == id);
         }
 
         public Task<int> SaveChangesAsync()

@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using FinanceTracker.Domain.Entities;
 
-namespace FinanceTracker.Domain.Repositories
+namespace FinanceTracker.Domain.Repositories;
+
+public interface ICategoryRepository
 {
-    internal interface ICategoryRepository
-    {
-    }
+    Task<IEnumerable<Category>> GetAll(string userId);
+    Task<Category?> GetById(int id);
+    Task<int> Create(Category category);
+
+    Task<int> SaveChangesAsync();
 }
