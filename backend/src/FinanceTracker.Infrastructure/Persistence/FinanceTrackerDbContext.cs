@@ -8,6 +8,7 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
     : IdentityDbContext<User>(options)
 {
     internal DbSet<Wallet> Wallets { get; set; } = default!;
+    internal DbSet<Category> Categories { get; set; } = default!;
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
