@@ -1,5 +1,4 @@
-﻿
-namespace FinanceTracker.Domain.Constants.Category;
+﻿namespace FinanceTracker.Domain.Constants.Category;
 
 public static class TransactionTypes
 {
