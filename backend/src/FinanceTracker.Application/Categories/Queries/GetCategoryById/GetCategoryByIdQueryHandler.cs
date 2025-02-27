@@ -22,7 +22,7 @@ internal class GetCategoryByIdQueryHandler(ILogger<GetCategoryByIdQueryHandler> 
         var category = await repo.GetById(request.Id);
         logger.LogInformation("User: {@u} \n{@r}", user, request);
 
-        if (category == null)
+        if (category == null || category.IsDeleted)
         {
             throw new NotFoundException(nameof(Category), request.Id.ToString());
         }

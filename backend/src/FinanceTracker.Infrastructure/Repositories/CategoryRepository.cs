@@ -18,7 +18,7 @@ namespace FinanceTracker.Infrastructure.Repositories
         public async Task<IEnumerable<Category>> GetAll(string userId)
         {
             return await dbContext.Categories
-           .Where(w => w.UserId == userId)
+           .Where(w => w.UserId == userId && !w.IsDeleted)
            .ToListAsync();
         }
 
@@ -28,9 +28,9 @@ namespace FinanceTracker.Infrastructure.Repositories
             .FirstOrDefaultAsync(w => w.Id == id);
         }
 
-        public Task<int> SaveChangesAsync()
+        public async Task<int> SaveChangesAsync()
         {
-            throw new NotImplementedException();
+            return await dbContext.SaveChangesAsync();
         }
     }
 }
