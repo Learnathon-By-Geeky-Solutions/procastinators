@@ -1,7 +1,6 @@
 ﻿using FinanceTracker.Application.Categories.Commands.CreateCategory;
+using FinanceTracker.Application.Categories.Queries.GetAllCategories;
 using FinanceTracker.Application.Categories.Queries.GetCategoryById;
-using FinanceTracker.Application.Wallets.Commands.CreateWallet;
-using FinanceTracker.Application.Wallets.Queries.GetWalletById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +14,12 @@ namespace FinanceTracker.Api.Controllers
     [Authorize]
     public class CategoriesController(IMediator mediator) : ControllerBase
     {
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await mediator.Send(new GetAllCategoriesQuery());
+            return Ok(result);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)

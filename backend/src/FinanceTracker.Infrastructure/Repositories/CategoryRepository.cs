@@ -15,9 +15,11 @@ namespace FinanceTracker.Infrastructure.Repositories
             return category.Id;
         }
 
-        public Task<IEnumerable<Category>> GetAll(string userId)
+        public async Task<IEnumerable<Category>> GetAll(string userId)
         {
-            throw new NotImplementedException();
+            return await dbContext.Categories
+           .Where(w => w.UserId == userId)
+           .ToListAsync();
         }
 
         public async Task<Category?> GetById(int id)
