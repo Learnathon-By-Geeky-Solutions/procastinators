@@ -19,5 +19,6 @@ public static class ServiceCollectionExtensions
             .AddEntityFrameworkStores<FinanceTrackerDbContext>();
 
         services.AddScoped<IWalletRepository, WalletRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
     }
 }
