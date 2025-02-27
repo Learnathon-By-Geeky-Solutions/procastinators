@@ -1,8 +1,10 @@
 ﻿using FinanceTracker.Application.Categories.Commands.CreateCategory;
 using FinanceTracker.Application.Categories.Commands.DeleteCategory;
+using FinanceTracker.Application.Categories.Commands.UpdateCategory;
 using FinanceTracker.Application.Categories.Queries.GetAllCategories;
 using FinanceTracker.Application.Categories.Queries.GetCategoryById;
 using FinanceTracker.Application.Wallets.Commands.DeleteWallet;
+using FinanceTracker.Application.Wallets.Commands.UpdateWallet;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -42,6 +44,14 @@ namespace FinanceTracker.Api.Controllers
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             await mediator.Send(new DeleteCategoryCommand { Id = id });
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCategoryCommand command)
+        {
+            command.Id = id;
+            await mediator.Send(command);
             return NoContent();
         }
 
