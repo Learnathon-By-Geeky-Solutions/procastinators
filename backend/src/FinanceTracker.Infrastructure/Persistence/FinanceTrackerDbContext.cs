@@ -9,6 +9,8 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
 {
     internal DbSet<Wallet> Wallets { get; set; } = default!;
     internal DbSet<Category> Categories { get; set; } = default!;
+    internal DbSet<PersonalTransaction> Transactions { get; set; } = default!;
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -20,5 +22,31 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
             entity.Property(e => e.Balance)
                 .HasColumnType("decimal(18, 2)");
         });
+
+        modelBuilder.Entity<PersonalTransaction>(entity =>
+        {
+            entity.Property(e => e.Amount)
+                .HasColumnType("decimal(18, 2)");
+        });
+
+
+
+        modelBuilder.Entity<PersonalTransaction>()
+           .HasOne(p => p.Wallet)
+           .WithMany(w => w.Transactions)
+           .HasForeignKey(p => p.WalletId)
+           .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<PersonalTransaction>()
+            .HasOne(p => p.Category)
+            .WithMany(w => w.Transactions)
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<PersonalTransaction>()
+            .HasOne(p => p.User)
+            .WithMany(w => w.Transactions)
+            .HasForeignKey(p => p.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
