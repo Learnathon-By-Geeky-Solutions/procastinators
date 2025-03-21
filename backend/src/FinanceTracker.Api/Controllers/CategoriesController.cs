@@ -13,8 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceTracker.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     [Authorize]
     public class CategoriesController(IMediator mediator) : ControllerBase
     {
