@@ -1,10 +1,12 @@
 ﻿using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Repositories;
 using FinanceTracker.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTracker.Infrastructure.Repositories
 {
-    internal class PersonalTransactionRepository(FinanceTrackerDbContext dbContext) : IPersonalTransactionRepository
+    internal class PersonalTransactionRepository(FinanceTrackerDbContext dbContext)
+        : IPersonalTransactionRepository
     {
         public async Task<int> Create(PersonalTransaction transaction)
         {
@@ -13,17 +15,19 @@ namespace FinanceTracker.Infrastructure.Repositories
             return transaction.Id;
         }
 
-        public async Task<bool> Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IEnumerable<PersonalTransaction>> GetAll(string userId)
         {
-            throw new NotImplementedException();
+            return await dbContext
+                .PersonalTransactions.Where(t => t.UserId == userId && !t.IsDeleted)
+                .ToListAsync();
         }
 
         public async Task<PersonalTransaction?> GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> SaveChangeAsync()
         {
             throw new NotImplementedException();
         }

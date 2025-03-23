@@ -9,5 +9,10 @@ public class PersonalTransactionProfile : Profile
     public PersonalTransactionProfile()
     {
         CreateMap<CreatePersonalTransactionCommand, PersonalTransaction>();
+        CreateMap<PersonalTransaction, PersonalTransactionDto>()
+            .ForMember(
+                dst => dst.Timestamp,
+                opt => opt.MapFrom(src => src.Timestamp.ToUniversalTime())
+            );
     }
 }
