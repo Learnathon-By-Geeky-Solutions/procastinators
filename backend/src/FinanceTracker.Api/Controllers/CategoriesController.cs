@@ -3,11 +3,8 @@ using FinanceTracker.Application.Categories.Commands.DeleteCategory;
 using FinanceTracker.Application.Categories.Commands.UpdateCategory;
 using FinanceTracker.Application.Categories.Queries.GetAllCategories;
 using FinanceTracker.Application.Categories.Queries.GetCategoryById;
-using FinanceTracker.Application.Wallets.Commands.DeleteWallet;
-using FinanceTracker.Application.Wallets.Commands.UpdateWallet;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 
