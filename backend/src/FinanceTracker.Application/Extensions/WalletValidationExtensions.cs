@@ -1,7 +1,7 @@
 ﻿using FinanceTracker.Domain.Constants.Wallet;
 using FluentValidation;
 
-namespace FinanceTracker.Application.Wallets.Commands;
+namespace FinanceTracker.Application.Extensions;
 
 public static class WalletValidationExtensions
 {

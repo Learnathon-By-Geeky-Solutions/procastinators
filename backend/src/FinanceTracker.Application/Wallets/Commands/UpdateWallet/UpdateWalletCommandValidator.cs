@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using FinanceTracker.Application.Extensions;
+using FluentValidation;
 
 namespace FinanceTracker.Application.Wallets.Commands.UpdateWallet;
 
