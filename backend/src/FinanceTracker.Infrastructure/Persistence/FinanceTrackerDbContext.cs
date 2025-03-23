@@ -9,7 +9,7 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
 {
     internal DbSet<Wallet> Wallets { get; set; } = default!;
     internal DbSet<Category> Categories { get; set; } = default!;
-    internal DbSet<PersonalTransaction> Transactions { get; set; } = default!;
+    internal DbSet<PersonalTransaction> PersonalTransactions { get; set; } = default!;
 
 
 
