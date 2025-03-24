@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.Users;
+using FinanceTracker.Domain.Constants.Category;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
@@ -23,20 +24,29 @@ public class CreatePersonalTransactionCommandHandler(
     )
     {
         var user = userContext.GetUser();
-        if (user == null)
-            throw new ForbiddenException();
         var wallet = await walletRepo.GetById(request.WalletId);
-        if (wallet == null)
-            throw new NotFoundException("Wallet", request.WalletId.ToString());
         var category = await categoryRepo.GetById(request.CategoryId);
-        if (category == null)
-            throw new NotFoundException("Category", request.CategoryId.ToString());
-        if (wallet.UserId != user.Id || category.UserId != user.Id)
-            throw new ForbiddenException();
+        AuthorizeOrThrow(user, wallet, category);
 
         var transaction = mapper.Map<PersonalTransaction>(request);
-        transaction.UserId = user.Id;
-        logger.LogInformation("{@r}", transaction);
+        transaction.UserId = user!.Id;
+
+        var amount = request.Amount;
+        if (transaction.TransactionType == TransactionTypes.Expense)
+            amount *= -1;
+        wallet!.Balance += amount;
+
+        logger.LogInformation("{@t}", transaction);
+        logger.LogInformation("{@w}", wallet);
+
         return await transactionRepo.Create(transaction);
+    }
+
+    private void AuthorizeOrThrow(UserDto? user, Wallet? wallet, Category? category)
+    {
+        if (user == null || wallet?.UserId != user.Id || category?.UserId != user.Id)
+        {
+            throw new ForbiddenException();
+        }
     }
 }
