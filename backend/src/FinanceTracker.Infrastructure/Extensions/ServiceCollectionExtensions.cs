@@ -10,15 +10,22 @@ namespace FinanceTracker.Infrastructure.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static void AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
-        services.AddDbContext<FinanceTrackerDbContext>(option => option.UseSqlServer(connectionString));
+        services.AddDbContext<FinanceTrackerDbContext>(option =>
+            option.UseLazyLoadingProxies(false).UseSqlServer(connectionString)
+        );
 
-        services.AddIdentityApiEndpoints<User>()
+        services
+            .AddIdentityApiEndpoints<User>()
             .AddEntityFrameworkStores<FinanceTrackerDbContext>();
 
         services.AddScoped<IWalletRepository, WalletRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IPersonalTransactionRepository, PersonalTransactionRepository>();
     }
 }

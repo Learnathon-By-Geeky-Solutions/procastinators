@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.Users;
-using FinanceTracker.Application.Wallets.Commands.CreateWallet;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;

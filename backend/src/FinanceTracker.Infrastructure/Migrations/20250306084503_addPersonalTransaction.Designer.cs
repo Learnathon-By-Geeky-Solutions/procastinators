@@ -4,6 +4,7 @@ using FinanceTracker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(FinanceTrackerDbContext))]
-    partial class FinanceTrackerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250306084503_addPersonalTransaction")]
+    partial class addPersonalTransaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,6 +73,7 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Note")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Timestamp")
@@ -94,7 +98,7 @@ namespace FinanceTracker.Infrastructure.Migrations
 
                     b.HasIndex("WalletId");
 
-                    b.ToTable("PersonalTransactions");
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("FinanceTracker.Domain.Entities.User", b =>
