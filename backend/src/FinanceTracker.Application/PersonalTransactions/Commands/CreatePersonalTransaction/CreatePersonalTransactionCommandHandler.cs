@@ -42,7 +42,7 @@ public class CreatePersonalTransactionCommandHandler(
         return await transactionRepo.Create(transaction);
     }
 
-    private void AuthorizeOrThrow(UserDto? user, Wallet? wallet, Category? category)
+    private static void AuthorizeOrThrow(UserDto? user, Wallet? wallet, Category? category)
     {
         if (user == null || wallet?.UserId != user.Id || category?.UserId != user.Id)
         {
