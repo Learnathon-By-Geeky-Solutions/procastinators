@@ -1,4 +1,5 @@
 ﻿using FinanceTracker.Application.Users;
+using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using MediatR;
@@ -14,10 +15,19 @@ public class TransferFundCommandHandler(
 {
     public async Task Handle(TransferFundCommand request, CancellationToken cancellationToken)
     {
-        var user = userContext.GetUser();
         var sourceWallet = await repo.GetById(request.SourceWalletId);
         var destinationWallet = await repo.GetById(request.DestinationWalletId);
-        if (user == null || sourceWallet?.UserId != user.Id || destinationWallet?.UserId != user.Id)
+        if (sourceWallet == null)
+        {
+            throw new NotFoundException(nameof(Wallet), request.SourceWalletId.ToString());
+        }
+        else if (destinationWallet == null)
+        {
+            throw new NotFoundException(nameof(Wallet), request.DestinationWalletId.ToString());
+        }
+        var user = userContext.GetUser();
+
+        if (user == null || sourceWallet.UserId != user.Id || destinationWallet.UserId != user.Id)
         {
             throw new ForbiddenException();
         }
