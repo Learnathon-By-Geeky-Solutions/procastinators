@@ -24,9 +24,7 @@ namespace FinanceTracker.Infrastructure.Repositories
 
         public async Task<PersonalTransaction?> GetById(int id)
         {
-            return await dbContext.PersonalTransactions.FirstOrDefaultAsync(t =>
-                t.Id == id && !t.IsDeleted
-            );
+            return await dbContext.PersonalTransactions.FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task<int> SaveChangeAsync()

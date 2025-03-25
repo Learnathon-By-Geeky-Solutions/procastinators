@@ -23,7 +23,7 @@ public class DeletePersonalTransactionCommandHandler(
         var user = userContext.GetUser();
         var transaction = await transactionRepo.GetById(request.Id);
 
-        if (transaction is null)
+        if (transaction == null || !transaction.IsDeleted)
         {
             throw new NotFoundException(nameof(PersonalTransaction), request.Id.ToString());
         }
