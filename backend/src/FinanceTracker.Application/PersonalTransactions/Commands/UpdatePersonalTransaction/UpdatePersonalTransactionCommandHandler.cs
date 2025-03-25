@@ -23,18 +23,31 @@ public class UpdatePersonalTransactionCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        var user = userContext.GetUser();
         var transaction = await transactionRepo.GetById(request.Id);
-
         if (transaction == null || transaction.IsDeleted)
         {
             throw new NotFoundException(nameof(PersonalTransaction), request.Id.ToString());
         }
 
-        var userId = transaction.UserId;
-        var wallet = await walletRepo.GetById(request.WalletId);
         var category = await categoryRepo.GetById(request.CategoryId);
-        if (user?.Id != userId || wallet?.UserId != userId || category?.UserId != userId)
+        var wallet = await walletRepo.GetById(request.WalletId);
+        if (category == null || category.IsDeleted)
+        {
+            throw new NotFoundException(nameof(Category), request.CategoryId.ToString());
+        }
+        else if (wallet == null || wallet.IsDeleted)
+        {
+            throw new NotFoundException(nameof(Wallet), request.WalletId.ToString());
+        }
+
+        var userId = transaction.UserId;
+        var user = userContext.GetUser();
+        if (
+            user == null
+            || user.Id != userId
+            || wallet.UserId != userId
+            || category.UserId != userId
+        )
         {
             throw new ForbiddenException();
         }
@@ -45,19 +58,19 @@ public class UpdatePersonalTransactionCommandHandler(
             transaction.Amount,
             transaction.TransactionType
         );
-
         wallet.Balance = GetUpdatedBalance(wallet.Balance, request.Amount, request.TransactionType);
-
         mapper.Map(request, transaction);
-
-        logger.LogInformation("{@t}", transaction);
-        logger.LogInformation("{@o}", oldWallet);
-        logger.LogInformation("{@n}", wallet);
+        logger.LogInformation(
+            "Transaction:{@t}\nPrev:{@o}\nCurr:{@n}",
+            transaction,
+            oldWallet,
+            wallet
+        );
 
         await transactionRepo.SaveChangeAsync();
     }
 
-    private decimal GetRollbackedBalance(decimal balance, decimal amount, string type)
+    private static decimal GetRollbackedBalance(decimal balance, decimal amount, string type)
     {
         if (type == TransactionTypes.Expense)
             amount *= -1;
@@ -65,7 +78,7 @@ public class UpdatePersonalTransactionCommandHandler(
         return balance;
     }
 
-    private decimal GetUpdatedBalance(decimal balance, decimal amount, string type)
+    private static decimal GetUpdatedBalance(decimal balance, decimal amount, string type)
     {
         if (type == TransactionTypes.Expense)
             amount *= -1;
