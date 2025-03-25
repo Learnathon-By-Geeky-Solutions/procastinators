@@ -24,12 +24,14 @@ namespace FinanceTracker.Infrastructure.Repositories
 
         public async Task<PersonalTransaction?> GetById(int id)
         {
-            return await dbContext.PersonalTransactions.FirstOrDefaultAsync(t => t.Id == id);
+            return await dbContext.PersonalTransactions.FirstOrDefaultAsync(t =>
+                t.Id == id && !t.IsDeleted
+            );
         }
 
-        public Task<int> SaveChangeAsync()
+        public async Task<int> SaveChangeAsync()
         {
-            throw new NotImplementedException();
+            return await dbContext.SaveChangesAsync();
         }
     }
 }

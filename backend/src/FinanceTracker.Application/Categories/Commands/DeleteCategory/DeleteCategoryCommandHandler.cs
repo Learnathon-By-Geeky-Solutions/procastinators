@@ -1,6 +1,4 @@
 ﻿using FinanceTracker.Application.Users;
-using FinanceTracker.Application.Wallets.Commands.DeleteWallet;
-using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using MediatR;
@@ -8,9 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace FinanceTracker.Application.Categories.Commands.DeleteCategory;
 
-public class DeleteCategoryCommandHandler(ILogger<DeleteCategoryCommandHandler> logger,
+public class DeleteCategoryCommandHandler(
+    ILogger<DeleteCategoryCommandHandler> logger,
     IUserContext userContext,
-    ICategoryRepository repo) : IRequestHandler<DeleteCategoryCommand>
+    ICategoryRepository repo
+) : IRequestHandler<DeleteCategoryCommand>
 {
     public async Task Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
     {

@@ -1,4 +1,5 @@
 ﻿using FinanceTracker.Application.PersonalTransactions.Commands.CreatePersonalTransaction;
+using FinanceTracker.Application.PersonalTransactions.Commands.DeletePersonalTransaction;
 using FinanceTracker.Application.PersonalTransactions.Queries.GetAllPersonalTransactions;
 using FinanceTracker.Application.PersonalTransactions.Queries.GetPersonalTransactionById;
 using MediatR;
@@ -31,5 +32,12 @@ public class PersonalTransactionsController(IMediator mediator) : ControllerBase
     {
         var transaction = await mediator.Send(new GetPersonalTransactionByIdQuery { Id = id });
         return Ok(transaction);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+        await mediator.Send(new DeletePersonalTransactionCommand { Id = id });
+        return NoContent();
     }
 }
