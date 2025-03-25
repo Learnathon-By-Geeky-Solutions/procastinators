@@ -1,5 +1,6 @@
 ﻿using FinanceTracker.Application.Wallets.Commands.CreateWallet;
 using FinanceTracker.Application.Wallets.Commands.DeleteWallet;
+using FinanceTracker.Application.Wallets.Commands.TransferFund;
 using FinanceTracker.Application.Wallets.Commands.UpdateWallet;
 using FinanceTracker.Application.Wallets.Queries.GetAllWallets;
 using FinanceTracker.Application.Wallets.Queries.GetWalletById;
@@ -36,7 +37,10 @@ public class WalletsController(IMediator mediator) : ControllerBase
     }
 
     [HttpPatch("{id}")]
-    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateWalletCommand command)
+    public async Task<IActionResult> Update(
+        [FromRoute] int id,
+        [FromBody] UpdateWalletCommand command
+    )
     {
         command.Id = id;
         await mediator.Send(command);
@@ -47,6 +51,17 @@ public class WalletsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
         await mediator.Send(new DeleteWalletCommand { Id = id });
+        return NoContent();
+    }
+
+    [HttpPost("{id}/transfer")]
+    public async Task<IActionResult> Transfer(
+        [FromRoute] int id,
+        [FromBody] TransferFundCommand command
+    )
+    {
+        command.SourceWalletId = id;
+        await mediator.Send(command);
         return NoContent();
     }
 }
