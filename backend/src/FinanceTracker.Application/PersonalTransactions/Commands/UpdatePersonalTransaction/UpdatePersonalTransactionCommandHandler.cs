@@ -34,7 +34,7 @@ public class UpdatePersonalTransactionCommandHandler(
         var userId = transaction.UserId;
         var wallet = await walletRepo.GetById(request.WalletId);
         var category = await categoryRepo.GetById(request.CategoryId);
-        if (user!.Id != userId || wallet!.UserId != userId || category!.UserId != userId)
+        if (user?.Id != userId || wallet?.UserId != userId || category?.UserId != userId)
         {
             throw new ForbiddenException();
         }
