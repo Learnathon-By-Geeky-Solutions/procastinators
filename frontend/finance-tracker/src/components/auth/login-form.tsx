@@ -108,6 +108,7 @@ export function LoginForm() {
                                                     placeholder="user@example.com"
                                                     type="email"
                                                     autoComplete="email"
+                                                    tabIndex={1}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -138,6 +139,7 @@ export function LoginForm() {
                                                     id="password"
                                                     placeholder="******"
                                                     autoComplete="current-password"
+                                                    tabIndex={2}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -151,6 +153,7 @@ export function LoginForm() {
                                     type="submit"
                                     className="w-full"
                                     disabled={form.formState.isSubmitting}
+                                    tabIndex={3}
                                 >
                                     {form.formState.isSubmitting ? (
                                         <div className="flex items-center">
