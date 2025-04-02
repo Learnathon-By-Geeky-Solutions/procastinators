@@ -38,8 +38,6 @@ const formSchema = z.object({
 });
 
 export function LoginForm() {
-    const router = useRouter();
-
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -47,6 +45,8 @@ export function LoginForm() {
             password: "",
         },
     });
+
+    const router = useRouter();
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
@@ -153,7 +153,6 @@ export function LoginForm() {
                                     type="submit"
                                     className="w-full"
                                     disabled={form.formState.isSubmitting}
-                                    tabIndex={3}
                                 >
                                     {form.formState.isSubmitting ? (
                                         <div className="flex items-center">
