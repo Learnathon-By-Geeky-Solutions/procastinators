@@ -21,11 +21,13 @@ public static class WebApplicationBuilderExtensions
             (context, configuration) => configuration.ReadFrom.Configuration(context.Configuration)
         );
 
+        var allowedOrigin = builder.Configuration["Cors:AllowedOrigin"]!;
         builder.Services.AddCors(options =>
         {
-            options.AddDefaultPolicy(builder =>
-                builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()
-            );
+            options.AddDefaultPolicy(policyBuilder =>
+            {
+                policyBuilder.WithOrigins(allowedOrigin).AllowAnyHeader().AllowAnyMethod();
+            });
         });
     }
 
