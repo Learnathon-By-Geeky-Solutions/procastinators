@@ -10,7 +10,10 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
     internal DbSet<Wallet> Wallets { get; set; } = default!;
     internal DbSet<Category> Categories { get; set; } = default!;
     internal DbSet<PersonalTransaction> PersonalTransactions { get; set; } = default!;
-
+    internal DbSet<LoanRequest> LoanRequests { get; set; } = default!;
+    internal DbSet<Loan> Loans { get; set; } = default!;
+    internal DbSet<Installment> Installments { get; set; } = default!;
+   
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,6 +27,31 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
         });
 
         modelBuilder.Entity<PersonalTransaction>(entity =>
+        {
+            entity.Property(e => e.Amount)
+                .HasColumnType("decimal(18, 2)");
+        });
+
+        modelBuilder.Entity<LoanRequest>(entity =>
+        {
+            entity.Property(e => e.Amount)
+                .HasColumnType("decimal(18, 2)");
+        });
+
+        modelBuilder.Entity<Loan>(entity =>
+        {
+            entity.Property(e => e.Amount)
+                .HasColumnType("decimal(18, 2)");
+        });
+
+
+        modelBuilder.Entity<Loan>(entity =>
+        {
+            entity.Property(e => e.DueAmount)
+                .HasColumnType("decimal(18, 2)");
+        });
+
+        modelBuilder.Entity<Installment>(entity =>
         {
             entity.Property(e => e.Amount)
                 .HasColumnType("decimal(18, 2)");
@@ -48,5 +76,39 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
             .WithMany(w => w.Transactions)
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Restrict);
+
+
+
+        modelBuilder.Entity<LoanRequest>()
+            .HasOne(lr => lr.Borrower)
+            .WithMany()
+            .HasForeignKey(lr => lr.BorrowerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<LoanRequest>()
+            .HasOne(lr => lr.Lender)
+            .WithMany()
+            .HasForeignKey(lr => lr.LenderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Loan>()
+            .HasOne(lr => lr.Lender)
+            .WithMany()
+            .HasForeignKey(lr => lr.LenderId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Loan>()
+           .HasOne(lr => lr.LoanRequest)
+           .WithOne()
+           .HasForeignKey<Loan>(lr => lr.LoanRequestId)
+           .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Installment>()
+           .HasOne(lr => lr.Loan)
+           .WithMany()
+           .HasForeignKey(lr => lr.LoanId)
+           .OnDelete(DeleteBehavior.Restrict);
+
+
     }
 }
