@@ -60,6 +60,7 @@ public class CreateWalletCommandValidatorTests
     public void Validator_ForValidCommand_ShouldNotHaveValidationErrorsForTypeProperty(string types)
     {
         // Arrange
+
         var validator = new CreateWalletCommandValidator();
         var command = new CreateWalletCommand { Type = types };
 
@@ -70,5 +71,25 @@ public class CreateWalletCommandValidatorTests
         // Assert
 
         results.ShouldNotHaveValidationErrorFor(c => c.Type);
+    }
+
+
+    [Theory()]
+    [InlineData("BDT")]
+    [InlineData("USD")]
+    public void Validator_ForValidCommand_ShouldNotHaveValidationErrorsForCurrencyProperty(string currency)
+    {
+        // Arrange
+
+        var validator = new CreateWalletCommandValidator();
+        var command = new CreateWalletCommand { Currency = currency };
+
+        // Act
+
+        var results = validator.TestValidate(command);
+
+        // Assert
+
+        results.ShouldNotHaveValidationErrorFor(c => c.Currency);
     }
 }
