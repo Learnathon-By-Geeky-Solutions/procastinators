@@ -28,14 +28,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+if (app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
-app.MapGroup("api/identity")
-    .WithTags("Identity")
-    .MapIdentityApi<User>();
+app.MapGroup("api/identity").WithTags("Identity").MapIdentityApi<User>();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+app.UseCors();
+
+await app.RunAsync();
