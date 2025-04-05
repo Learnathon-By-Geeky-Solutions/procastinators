@@ -48,7 +48,7 @@ export async function RegisterUser(
             return {
                 success: false,
                 fieldErrors: { ...fieldErrorMapper(data.errors) },
-                message: data?.title || defaultErrorMessage,
+                message: data?.title ?? defaultErrorMessage,
             };
         }
 
