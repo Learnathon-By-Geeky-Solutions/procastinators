@@ -13,8 +13,7 @@ public class TransferFundCommandValidatorTests
 
         var command = new TransferFundCommand()
         {
-            SourceWalletId = 1,
-            DestinationWalletId = 2,
+            DestinationWalletId = -2000000,
             Amount = 123432,
         };
 
@@ -27,5 +26,46 @@ public class TransferFundCommandValidatorTests
         // Assert
 
         results.ShouldNotHaveAnyValidationErrors();
+    }
+
+    [Fact()]
+    public void Validator_ForInvalidCommand_ShouldHaveValidationErrors()
+    {
+        // Arrange
+
+        var command = new TransferFundCommand()
+        {
+            SourceWalletId = 5,
+            DestinationWalletId = 0,
+            Amount = 0,
+        };
+
+        var validator = new TransferFundCommandValidator();
+
+        // Act
+
+        var results = validator.TestValidate(command);
+
+        // Assert
+
+        results.ShouldHaveAnyValidationError();
+    }
+
+    [Fact()]
+    public void Validator_ForNegativeValues_ShouldHaveValidationErrorForTypeProperty()
+    {
+        // Arrange
+
+
+        var validator = new TransferFundCommandValidator();
+        var command = new TransferFundCommand { Amount = 0 };
+
+        // Act
+
+        var results = validator.TestValidate(command);
+
+        // Assert
+
+        results.ShouldHaveValidationErrorFor(c => c.Amount);
     }
 }
