@@ -33,14 +33,14 @@ public class UpdateWalletCommandValidatorTests
     {
         // Arrange
 
-        var command = new CreateWalletCommand()
+        var command = new UpdateWalletCommand()
         {
             Name = "",
             Type = "abc",
             Currency = "abc"
         };
 
-        var validator = new CreateWalletCommandValidator();
+        var validator = new UpdateWalletCommandValidator();
 
         // Act
 
@@ -61,8 +61,8 @@ public class UpdateWalletCommandValidatorTests
     {
         // Arrange
 
-        var validator = new CreateWalletCommandValidator();
-        var command = new CreateWalletCommand { Type = types };
+        var validator = new UpdateWalletCommandValidator();
+        var command = new UpdateWalletCommand { Type = types };
 
         // Act
 
@@ -80,8 +80,8 @@ public class UpdateWalletCommandValidatorTests
     {
         // Arrange
 
-        var validator = new CreateWalletCommandValidator();
-        var command = new CreateWalletCommand { Currency = currency };
+        var validator = new UpdateWalletCommandValidator();
+        var command = new UpdateWalletCommand { Currency = currency };
 
         // Act
 
