@@ -57,6 +57,7 @@ public class CreateWalletCommandValidatorTests
     [Theory()]
     [InlineData("Cash")]
     [InlineData("Bank")]
+    [InlineData("MFS")]
     public void Validator_ForValidCommand_ShouldNotHaveValidationErrorsForTypeProperty(string types)
     {
         // Arrange
