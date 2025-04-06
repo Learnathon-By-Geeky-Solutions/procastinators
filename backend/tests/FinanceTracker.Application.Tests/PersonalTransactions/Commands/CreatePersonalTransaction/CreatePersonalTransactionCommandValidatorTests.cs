@@ -30,4 +30,23 @@ public class CreatePersonalTransactionCommandValidatorTests
         results.ShouldNotHaveAnyValidationErrors();
     }
 
+    [Theory()]
+    [InlineData("Income")]
+    [InlineData("Expense")]
+    public void Validator_ForValidCommand_ShouldNotHaveValidationErrorsForTransactionTypeProperty(string transactionTypes)
+    {
+        // Arrange
+
+        var validator = new CreatePersonalTransactionCommandValidator();
+        var command = new CreatePersonalTransactionCommand { TransactionType = transactionTypes };
+
+        // Act
+
+        var results = validator.TestValidate(command);
+
+        // Assert
+
+        results.ShouldNotHaveValidationErrorFor(c => c.TransactionType);
+    }
+
 }
