@@ -1,4 +1,5 @@
-﻿using FluentValidation.TestHelper;
+﻿using FinanceTracker.Application.Wallets.Commands.TransferFund;
+using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Http;
 using Xunit;
 
@@ -47,6 +48,23 @@ public class CreatePersonalTransactionCommandValidatorTests
         // Assert
 
         results.ShouldNotHaveValidationErrorFor(c => c.TransactionType);
+    }
+
+    [Fact()]
+    public void Validator_ForNegativeAmountValues_ShouldHaveValidationErrorForTypeProperty()
+    {
+        // Arrange
+
+        var validator = new CreatePersonalTransactionCommandValidator();
+        var command = new CreatePersonalTransactionCommand { Amount = -98372 };
+
+        // Act
+
+        var results = validator.TestValidate(command);
+
+        // Assert
+
+        results.ShouldHaveValidationErrorFor(c => c.Amount);
     }
 
 }
