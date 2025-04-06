@@ -7,14 +7,16 @@ namespace FinanceTracker.Application.PersonalTransactions.Commands.CreatePersona
 
 public class CreatePersonalTransactionCommandValidatorTests
 {
-    [Fact()]
-    public void Validator_ForValidCommand_ShouldNotHaveValidationErrors()
+    [Theory()]
+    [InlineData("Income")]
+    [InlineData("Expense")]
+    public void Validator_ForValidCommand_ShouldNotHaveValidationErrors(string transactionTypes)
     {
         // Arrange
 
         var command = new CreatePersonalTransactionCommand()
         {
-            TransactionType = "Expense",
+            TransactionType = transactionTypes,
             Amount = 45,
             WalletId = 34,
             CategoryId = 24
@@ -27,19 +29,22 @@ public class CreatePersonalTransactionCommandValidatorTests
         var results = validator.TestValidate(command);
 
         // Assert
-
+        results.ShouldNotHaveValidationErrorFor(c => c.TransactionType);
         results.ShouldNotHaveAnyValidationErrors();
     }
 
-    [Theory()]
-    [InlineData("Income")]
-    [InlineData("Expense")]
-    public void Validator_ForValidCommand_ShouldNotHaveValidationErrorsForTransactionTypeProperty(string transactionTypes)
+    [Fact()]
+    public void Validator_ForInvalidCommand_ShouldHaveValidationErrors()
     {
         // Arrange
 
+        var command = new CreatePersonalTransactionCommand()
+        {
+            TransactionType = "",
+            Amount = -2,
+        };
+
         var validator = new CreatePersonalTransactionCommandValidator();
-        var command = new CreatePersonalTransactionCommand { TransactionType = transactionTypes };
 
         // Act
 
@@ -47,7 +52,7 @@ public class CreatePersonalTransactionCommandValidatorTests
 
         // Assert
 
-        results.ShouldNotHaveValidationErrorFor(c => c.TransactionType);
+        results.ShouldHaveAnyValidationError();
     }
 
     [Fact()]
