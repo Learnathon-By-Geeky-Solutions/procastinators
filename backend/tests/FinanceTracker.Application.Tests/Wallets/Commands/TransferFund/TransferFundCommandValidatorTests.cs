@@ -55,7 +55,6 @@ public class TransferFundCommandValidatorTests
     {
         // Arrange
 
-
         var validator = new TransferFundCommandValidator();
         var command = new TransferFundCommand { Amount = -98372 };
 
