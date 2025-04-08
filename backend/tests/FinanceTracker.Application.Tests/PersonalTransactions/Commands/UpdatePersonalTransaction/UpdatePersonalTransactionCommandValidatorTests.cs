@@ -18,7 +18,7 @@ public class UpdatePersonalTransactionCommandValidatorTests
         {
             TransactionType = transactionType,
             Amount = 100,
-            Timestamp = DateTime.Parse("12-05-2022"),
+            Timestamp = DateTime.Parse("12/05/2022"),
             CategoryId = 23,
             WalletId = 11
         };
@@ -53,6 +53,31 @@ public class UpdatePersonalTransactionCommandValidatorTests
         // Assert
 
         results.ShouldNotHaveValidationErrorFor(c => c.Timestamp);
+    }
+
+    [Fact()]
+    public void Validator_ForInvalidCommand_ShouldHaveValidationErrors()
+    {
+        // Arrange
+
+        var command = new UpdatePersonalTransactionCommand()
+        {
+            TransactionType = "test",
+            Amount = 0,
+            Timestamp = DateTime.Parse("12 05 2022"),
+            CategoryId = 2,
+            WalletId = 2
+        };
+
+        var validator = new UpdatePersonalTransactionCommandValidator();
+
+        // Act
+
+        var results = validator.TestValidate(command);
+
+        // Assert
+
+        results.ShouldHaveAnyValidationError();
     }
 
 }
