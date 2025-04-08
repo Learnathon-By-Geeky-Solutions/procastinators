@@ -65,8 +65,8 @@ public class CategoryProfileTests
         // Assert
 
         category.Should().NotBeNull();
-        category.Title.Should().Be(category.Title);
-        category.DefaultTransactionType.Should().Be(category.DefaultTransactionType);
+        category.Title.Should().Be(command.Title);
+        category.DefaultTransactionType.Should().Be(command.DefaultTransactionType);
     }
 
     [Theory()]
@@ -89,7 +89,7 @@ public class CategoryProfileTests
         // Assert
 
         category.Should().NotBeNull();
-        category.Title.Should().Be(category.Title);
-        category.DefaultTransactionType.Should().Be(category.DefaultTransactionType);
+        category.Title.Should().Be(command.Title);
+        category.DefaultTransactionType.Should().Be(command.DefaultTransactionType);
     }
 }
