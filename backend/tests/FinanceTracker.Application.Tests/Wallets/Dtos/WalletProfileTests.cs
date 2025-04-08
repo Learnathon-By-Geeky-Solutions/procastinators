@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.Categories.Dtos;
 using FinanceTracker.Application.Wallets.Commands.CreateWallet;
+using FinanceTracker.Application.Wallets.Commands.UpdateWallet;
 using FinanceTracker.Domain.Entities;
 using FluentAssertions;
 using Xunit;
@@ -55,6 +56,30 @@ public class WalletProfileTests
         // Arrange
 
         var command = new CreateWalletCommand()
+        {
+            Type = "Bank",
+            Name = "name",
+            Currency = "BDT",
+        };
+
+        // Act
+
+        var wallet = _mapper.Map<Wallet>(command);
+
+        // Assert
+
+        wallet.Should().NotBeNull();
+        wallet.Type.Should().Be(command.Type);
+        wallet.Name.Should().Be(command.Name);
+        wallet.Currency.Should().Be(command.Currency);
+    }
+
+    [Fact()]
+    public void CreateMap_ForUpdateWalletCommandToWallet_MapsCorrectly()
+    {
+        // Arrange
+
+        var command = new UpdateWalletCommand()
         {
             Type = "Bank",
             Name = "name",
