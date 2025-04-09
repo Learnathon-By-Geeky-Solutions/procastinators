@@ -68,7 +68,7 @@ export function LoginForm() {
             });
 
             setTimeout(() => {
-                router.push("/");
+                router.push("/dashboard");
             }, 2000);
         } catch (error) {
             console.error(error);
@@ -171,7 +171,7 @@ export function LoginForm() {
                 <CardFooter>
                     <div className="w-full text-center text-sm">
                         Don&apos;t have an account?{" "}
-                        <Link href="#" className="underline">
+                        <Link href="/auth/register" className="underline">
                             Register
                         </Link>
                     </div>
