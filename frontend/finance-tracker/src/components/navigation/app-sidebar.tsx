@@ -2,18 +2,10 @@
 
 import type React from "react";
 import { usePathname } from "next/navigation";
-import {
-    ActivityIcon,
-    ContactIcon,
-    HelpCircle,
-    LogOut,
-    Settings,
-    MessageCircleQuestion,
-} from "lucide-react";
+import { ActivityIcon } from "lucide-react";
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarHeader,
     SidebarInset,
     SidebarMenu,
@@ -22,17 +14,8 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import AppBreadcrumbs from "@/components/navigation/app-breadcrumb";
 import NavUser from "./nav-user";
 
@@ -48,7 +31,6 @@ export function AppSidebar({
     }>;
 }) {
     const pathname = usePathname();
-    const { data: session } = useSession();
 
     return (
         <SidebarProvider>
