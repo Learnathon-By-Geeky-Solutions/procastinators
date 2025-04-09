@@ -63,6 +63,8 @@ export function LoginForm() {
                 return;
             }
 
+            form.reset();
+
             toast.success("Login Successful", {
                 description: "You are being redirected to home page.",
             });
