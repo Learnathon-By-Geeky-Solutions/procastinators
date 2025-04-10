@@ -3,12 +3,12 @@ import {
     ArrowRightLeft,
     HandCoinsIcon,
     LandmarkIcon,
-    PencilIcon,
     SmartphoneIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Wallet } from "@/lib/definitions";
+import ManageWalletDropdown from "@/components/wallet/manage-wallet-dropdown";
 
 const iconMap: Record<string, React.ReactNode> = {
     Cash: <HandCoinsIcon />,
@@ -27,10 +27,7 @@ export default function WalletCard({ wallet }: { wallet: Wallet }) {
                     <span>{wallet.name}</span>
                 </CardTitle>
                 <Badge variant="outline">{wallet.type}</Badge>
-                <Button variant="ghost" size="sm">
-                    <PencilIcon />
-                    <span className="sr-only">Edit</span>
-                </Button>
+                <ManageWalletDropdown wallet={wallet} />
             </CardHeader>
             <CardContent>
                 <div className="text-2xl font-bold mt-2">

@@ -43,3 +43,15 @@ export const addWalletFormSchema = z.object({
         message: "Currency is required",
     }),
 });
+
+export const editWalletFormSchema = addWalletFormSchema.extend({
+    id: z.coerce.string().min(1, {
+        message: "ID is required",
+    }),
+});
+
+export const deleteWalletFormSchema = editWalletFormSchema.omit({
+    name: true,
+    type: true,
+    currency: true,
+});
