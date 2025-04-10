@@ -31,3 +31,15 @@ export const registrationFormSchema = z
         path: ["confirmPassword"],
         message: "Passwords do not match",
     });
+
+export const addWalletFormSchema = z.object({
+    name: z.string().min(1, {
+        message: "Wallet name required",
+    }),
+    type: z.string().min(1, {
+        message: "Wallet type is required",
+    }),
+    currency: z.string().min(1, {
+        message: "Currency is required",
+    }),
+});
