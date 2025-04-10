@@ -76,6 +76,7 @@ export function EditWalletDialog({
                 toast.success(successTitle, {
                     description: successDescription,
                 });
+                form.reset();
                 setOpen(false);
             } else {
                 const fieldErrors = res.fieldErrors;
@@ -212,11 +213,12 @@ export function EditWalletDialog({
                             <Button
                                 variant="outline"
                                 type="button"
+                                disabled={isSubmitting}
                                 onClick={() => setOpen(false)}
                             >
                                 Cancel
                             </Button>
-                            <Button type="submit">
+                            <Button type="submit" disabled={isSubmitting}>
                                 {isSubmitting ? "Saving" : "Save"}
                             </Button>
                         </DialogFooter>

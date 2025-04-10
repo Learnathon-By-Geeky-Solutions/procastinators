@@ -11,10 +11,13 @@ import { MoreHorizontalIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import { EditWalletDialog } from "@/components/wallet/edit-wallet-dialog";
 import { useState } from "react";
 import { Wallet } from "@/lib/definitions";
+import { DeleteWalletDialog } from "./delete-wallet-dialog";
 
 export default function ManageWalletDropdown({ wallet }: { wallet: Wallet }) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
     return (
         <>
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
@@ -34,8 +37,14 @@ export default function ManageWalletDropdown({ wallet }: { wallet: Wallet }) {
                         <PencilIcon className="mr-2 h-4 w-4" />
                         Edit
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="text-destructive focus:text-destructive">
-                        <Trash2Icon className="mr-2 h-4 w-4" />
+                    <DropdownMenuItem
+                        className="text-destructive focus:text-destructive"
+                        onClick={() => {
+                            setDropdownOpen(false);
+                            setDeleteDialogOpen(true);
+                        }}
+                    >
+                        <Trash2Icon className="mr-2 h-4 w-4 text-inherit" />
                         Delete
                     </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -44,6 +53,11 @@ export default function ManageWalletDropdown({ wallet }: { wallet: Wallet }) {
                 wallet={wallet}
                 open={editDialogOpen}
                 setOpen={setEditDialogOpen}
+            />
+            <DeleteWalletDialog
+                wallet={wallet}
+                open={deleteDialogOpen}
+                setOpen={setDeleteDialogOpen}
             />
         </>
     );

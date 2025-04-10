@@ -128,3 +128,42 @@ export async function UpdateWalletAction(
         };
     }
 }
+
+export async function DeleteWalletAction(id: string) {
+    try {
+        const url = `${process.env.BACKEND_BASE_URL}/wallets/${id}`;
+        const session = await auth();
+        const res = await fetch(url, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${session?.accessToken}`,
+            },
+        });
+
+        if (!res.ok) {
+            const data = await res.json();
+            console.log(data);
+
+            return {
+                success: false,
+                fieldErrors: {},
+                message: data?.title ?? defaultErrorMessage,
+            };
+        }
+
+        revalidatePath("/");
+        return {
+            success: true,
+            fieldErrors: {},
+            message: "",
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            success: false,
+            fieldErrors: {},
+            message: defaultErrorMessage,
+        };
+    }
+}
