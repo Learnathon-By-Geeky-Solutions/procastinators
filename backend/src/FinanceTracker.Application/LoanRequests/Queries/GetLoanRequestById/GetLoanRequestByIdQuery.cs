@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FinanceTracker.Application.LoanRequests.Dtos;
+using MediatR;
 
-namespace FinanceTracker.Application.LoanRequests.Queries.GetLoanRequestById
+namespace FinanceTracker.Application.LoanRequests.Queries.GetLoanRequestById;
+
+public class GetLoanRequestByIdQuery(int id) : IRequest<LoanRequestDto>
 {
-    internal class GetLoanRequestByIdQuery
-    {
-    }
+    public int Id { get; set; } = id;
 }
