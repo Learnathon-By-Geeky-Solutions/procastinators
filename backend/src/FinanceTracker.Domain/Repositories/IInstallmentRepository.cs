@@ -7,6 +7,6 @@ public interface IInstallmentRepository
 {
     Task<int> CreateAsync(Installment installment);
     Task<Installment?> GetByIdAsync(int id);
-    Task<IEnumerable<Installment>> GetAllAsync();
+    Task<IEnumerable<Installment>> GetAllByLoanIdAsync(int loanId);
     Task<int> SaveChangesAsync();
 }
