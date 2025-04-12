@@ -16,7 +16,7 @@ export function handleResponse(
         const fieldErrors: Record<string, string[]> = res.fieldErrors;
         console.log(fieldErrors);
         for (const [key, value] of Object.entries(fieldErrors)) {
-            form.setError(key as keyof typeof fieldErrors, {
+            form.setError(key, {
                 message: value[0],
             });
         }

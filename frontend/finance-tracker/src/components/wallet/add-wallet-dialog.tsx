@@ -15,22 +15,8 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import { Form } from "@/components/ui/form";
+import { CommonFields } from "@/components/wallet/common-fields";
 import { addWalletFormSchema } from "@/validations/form-schema";
 import { AddWalletAction } from "@/lib/actions/wallet-action";
 import { toast } from "sonner";
@@ -88,87 +74,8 @@ export function AddWalletDialog() {
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-4 py-4"
                     >
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Name</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="My Wallet"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <div className="min-h-[20px]">
-                                        <FormMessage />
-                                    </div>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="type"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Type</FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        value={field.value}
-                                    >
-                                        <FormControl className="w-full">
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select wallet type" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="Cash">
-                                                Cash
-                                            </SelectItem>
-                                            <SelectItem value="Bank">
-                                                Bank
-                                            </SelectItem>
-                                            <SelectItem value="MFS">
-                                                MFS
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <div className="min-h-[20px]">
-                                        <FormMessage />
-                                    </div>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="currency"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Currency</FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
-                                    >
-                                        <FormControl className="w-full">
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select currency" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="USD">
-                                                USD
-                                            </SelectItem>
-                                            <SelectItem value="BDT">
-                                                BDT
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <div className="min-h-[20px]">
-                                        <FormMessage />
-                                    </div>
-                                </FormItem>
-                            )}
-                        />
+                        <CommonFields form={form} />
+
                         <DialogFooter className="pt-4">
                             <Button
                                 variant="outline"
