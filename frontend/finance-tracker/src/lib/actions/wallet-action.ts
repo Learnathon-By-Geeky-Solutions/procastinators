@@ -3,6 +3,7 @@
 import {
     addWalletFormSchema,
     editWalletFormSchema,
+    transferFundFormSchema,
 } from "@/validations/form-schema";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
@@ -148,6 +149,62 @@ export async function DeleteWalletAction(id: string) {
             return {
                 success: false,
                 fieldErrors: {},
+                message: data?.title ?? defaultErrorMessage,
+            };
+        }
+
+        revalidatePath("/");
+        return {
+            success: true,
+            fieldErrors: {},
+            message: "",
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            success: false,
+            fieldErrors: {},
+            message: defaultErrorMessage,
+        };
+    }
+}
+
+export async function TransferFundAction(
+    formData: z.infer<typeof transferFundFormSchema>
+) {
+    const validatedFields = transferFundFormSchema.safeParse(formData);
+    if (validatedFields.error) {
+        return {
+            success: false,
+            fieldErrors: validatedFields.error.flatten().fieldErrors,
+            message: "Invalid field(s)",
+        };
+    }
+
+    try {
+        const { sourceWalletId, destinationWalletId, amount } =
+            validatedFields.data;
+        const url = `${process.env.BACKEND_BASE_URL}/wallets/${sourceWalletId}/transfer`;
+        const session = await auth();
+        const res = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${session?.accessToken}`,
+            },
+            body: JSON.stringify({
+                destinationWalletId,
+                amount,
+            }),
+        });
+
+        if (!res.ok) {
+            const data = await res.json();
+            console.log(data);
+
+            return {
+                success: false,
+                fieldErrors: { ...MapFieldErrors(data.errors) },
                 message: data?.title ?? defaultErrorMessage,
             };
         }

@@ -18,7 +18,11 @@ export default async function Wallets() {
                     </div>
                 </Card>
                 {wallets.map((wallet) => (
-                    <WalletCard wallet={wallet} key={wallet.id} />
+                    <WalletCard
+                        key={wallet.id}
+                        wallet={wallet}
+                        otherWallets={wallets.filter((w) => w.id !== wallet.id)}
+                    />
                 ))}
             </div>
         </div>
