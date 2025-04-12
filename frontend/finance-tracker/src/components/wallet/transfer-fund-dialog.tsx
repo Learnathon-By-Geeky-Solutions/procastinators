@@ -35,8 +35,8 @@ import { useEffect, useState } from "react";
 import { transferFundFormSchema } from "@/validations/form-schema";
 import { TransferFundAction } from "@/lib/actions/wallet-action";
 import { toast } from "sonner";
+import { handleResponse } from "@/lib/handle-response";
 
-const successTitle = "Success!";
 const successDescription = "Fund transferred successfully.";
 const failedTitle = "Failed!";
 const failedDefaultDescription = "Something went wrong. Please try again.";
@@ -69,25 +69,7 @@ export function TransferFundDialog({
     async function onSubmit(values: z.infer<typeof transferFundFormSchema>) {
         try {
             const res = await TransferFundAction(values);
-            if (res.success) {
-                toast.success(successTitle, {
-                    description: successDescription,
-                });
-                form.reset();
-                setOpen(false);
-            } else {
-                const fieldErrors = res.fieldErrors;
-                console.log(fieldErrors);
-                for (const [key, value] of Object.entries(fieldErrors)) {
-                    form.setError(key as keyof typeof fieldErrors, {
-                        message: value[0],
-                    });
-                }
-
-                toast.error(failedTitle, {
-                    description: res.message,
-                });
-            }
+            handleResponse(res, form, setOpen, successDescription);
         } catch (error) {
             console.log(error);
             toast.error(failedTitle, {

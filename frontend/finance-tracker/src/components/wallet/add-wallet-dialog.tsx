@@ -34,8 +34,8 @@ import {
 import { addWalletFormSchema } from "@/validations/form-schema";
 import { AddWalletAction } from "@/lib/actions/wallet-action";
 import { toast } from "sonner";
+import { handleResponse } from "@/lib/handle-response";
 
-const successTitle = "Success!";
 const successDescription = "Wallet added successfully.";
 const failedTitle = "Failed!";
 const failedDefaultDescription = "Something went wrong. Please try again.";
@@ -60,25 +60,7 @@ export function AddWalletDialog() {
     async function onSubmit(values: z.infer<typeof addWalletFormSchema>) {
         try {
             const res = await AddWalletAction(values);
-            if (res.success) {
-                toast.success(successTitle, {
-                    description: successDescription,
-                });
-                form.reset();
-                setOpen(false);
-            } else {
-                const fieldErrors = res.fieldErrors;
-                console.log(fieldErrors);
-                for (const [key, value] of Object.entries(fieldErrors)) {
-                    form.setError(key as keyof typeof fieldErrors, {
-                        message: value[0],
-                    });
-                }
-
-                toast.error(failedTitle, {
-                    description: res.message,
-                });
-            }
+            handleResponse(res, form, setOpen, successDescription);
         } catch (error) {
             console.log(error);
             toast.error(failedTitle, {

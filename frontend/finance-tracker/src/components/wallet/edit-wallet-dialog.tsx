@@ -34,8 +34,8 @@ import { editWalletFormSchema } from "@/validations/form-schema";
 import { toast } from "sonner";
 import { UpdateWalletAction } from "@/lib/actions/wallet-action";
 import { useEffect } from "react";
+import { handleResponse } from "@/lib/handle-response";
 
-const successTitle = "Saved Changes";
 const successDescription = "Wallet updated successfully.";
 const failedTitle = "Saving Changes Failed";
 const failedDefaultDescription = "Something went wrong. Please try again.";
@@ -72,25 +72,7 @@ export function EditWalletDialog({
     async function onSubmit(values: z.infer<typeof editWalletFormSchema>) {
         try {
             const res = await UpdateWalletAction(values);
-            if (res.success) {
-                toast.success(successTitle, {
-                    description: successDescription,
-                });
-                form.reset();
-                setOpen(false);
-            } else {
-                const fieldErrors = res.fieldErrors;
-                console.log(fieldErrors);
-                for (const [key, value] of Object.entries(fieldErrors)) {
-                    form.setError(key as keyof typeof fieldErrors, {
-                        message: value[0],
-                    });
-                }
-
-                toast.error(failedTitle, {
-                    description: res.message,
-                });
-            }
+            handleResponse(res, form, setOpen, successDescription);
         } catch (error) {
             console.log(error);
             toast.error(failedTitle, {
