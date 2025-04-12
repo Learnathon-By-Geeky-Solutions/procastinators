@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -53,10 +53,9 @@ export function AddWalletDialog() {
     });
     const { isSubmitting } = form.formState;
 
-    const setOpenAndReset = (value: boolean) => {
-        setOpen(value);
+    useEffect(() => {
         form.reset();
-    };
+    }, [open]);
 
     async function onSubmit(values: z.infer<typeof addWalletFormSchema>) {
         try {
@@ -65,7 +64,8 @@ export function AddWalletDialog() {
                 toast.success(successTitle, {
                     description: successDescription,
                 });
-                setOpenAndReset(false);
+                form.reset();
+                setOpen(false);
             } else {
                 const fieldErrors = res.fieldErrors;
                 console.log(fieldErrors);
@@ -89,7 +89,7 @@ export function AddWalletDialog() {
 
     return (
         <>
-            <Dialog open={open} onOpenChange={setOpenAndReset}>
+            <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button
                         variant="outline"
@@ -197,7 +197,7 @@ export function AddWalletDialog() {
                                     type="button"
                                     disabled={isSubmitting}
                                     onClick={() => {
-                                        setOpenAndReset(false);
+                                        setOpen(false);
                                     }}
                                 >
                                     Cancel
