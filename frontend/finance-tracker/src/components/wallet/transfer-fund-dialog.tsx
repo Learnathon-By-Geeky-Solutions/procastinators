@@ -48,6 +48,8 @@ export function TransferFundDialog({
     sourceWallet: Wallet;
     destinationWallets: Wallet[];
 }) {
+    console.log("sourceWallet", sourceWallet);
+    console.log("destinationWallets", destinationWallets);
     const [open, setOpen] = useState(false);
 
     const defaultValues = {
@@ -180,7 +182,7 @@ export function TransferFundDialog({
                                                     )
                                                 )
                                             ) : (
-                                                <SelectItem value="" disabled>
+                                                <SelectItem value="0" disabled>
                                                     No other wallets available
                                                 </SelectItem>
                                             )}
