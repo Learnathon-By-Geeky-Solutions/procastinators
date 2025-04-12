@@ -88,128 +88,123 @@ export function AddWalletDialog() {
     }
 
     return (
-        <>
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                    <Button
-                        variant="outline"
-                        className="h-12 w-12 rounded-full"
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="outline" className="h-12 w-12 rounded-full">
+                    <PlusIcon className="h-6 w-6" />
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>New Wallet</DialogTitle>
+                    <DialogDescription>
+                        Add a new wallet to your account
+                    </DialogDescription>
+                </DialogHeader>
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-4 py-4"
                     >
-                        <PlusIcon className="h-6 w-6" />
-                    </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>New Wallet</DialogTitle>
-                        <DialogDescription>
-                            Add a new wallet to your account
-                        </DialogDescription>
-                    </DialogHeader>
-                    <Form {...form}>
-                        <form
-                            onSubmit={form.handleSubmit(onSubmit)}
-                            className="space-y-4 py-4"
-                        >
-                            <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Name</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="My Wallet"
-                                                {...field}
-                                            />
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Name</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="My Wallet"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <div className="min-h-[20px]">
+                                        <FormMessage />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="type"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Type</FormLabel>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        value={field.value}
+                                    >
+                                        <FormControl className="w-full">
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select wallet type" />
+                                            </SelectTrigger>
                                         </FormControl>
-                                        <div className="min-h-[20px]">
-                                            <FormMessage />
-                                        </div>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="type"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Type</FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            value={field.value}
-                                        >
-                                            <FormControl className="w-full">
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select wallet type" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="Cash">
-                                                    Cash
-                                                </SelectItem>
-                                                <SelectItem value="Bank">
-                                                    Bank
-                                                </SelectItem>
-                                                <SelectItem value="MFS">
-                                                    MFS
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <div className="min-h-[20px]">
-                                            <FormMessage />
-                                        </div>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="currency"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Currency</FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                        >
-                                            <FormControl className="w-full">
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select currency" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="USD">
-                                                    USD
-                                                </SelectItem>
-                                                <SelectItem value="BDT">
-                                                    BDT
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <div className="min-h-[20px]">
-                                            <FormMessage />
-                                        </div>
-                                    </FormItem>
-                                )}
-                            />
-                            <DialogFooter className="pt-4">
-                                <Button
-                                    variant="outline"
-                                    type="button"
-                                    disabled={isSubmitting}
-                                    onClick={() => {
-                                        setOpen(false);
-                                    }}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button type="submit" disabled={isSubmitting}>
-                                    {isSubmitting ? "Adding" : "Add"}
-                                </Button>
-                            </DialogFooter>
-                        </form>
-                    </Form>
-                </DialogContent>
-            </Dialog>
-        </>
+                                        <SelectContent>
+                                            <SelectItem value="Cash">
+                                                Cash
+                                            </SelectItem>
+                                            <SelectItem value="Bank">
+                                                Bank
+                                            </SelectItem>
+                                            <SelectItem value="MFS">
+                                                MFS
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <div className="min-h-[20px]">
+                                        <FormMessage />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="currency"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Currency</FormLabel>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                    >
+                                        <FormControl className="w-full">
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select currency" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="USD">
+                                                USD
+                                            </SelectItem>
+                                            <SelectItem value="BDT">
+                                                BDT
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <div className="min-h-[20px]">
+                                        <FormMessage />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+                        <DialogFooter className="pt-4">
+                            <Button
+                                variant="outline"
+                                type="button"
+                                disabled={isSubmitting}
+                                onClick={() => {
+                                    setOpen(false);
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                            <Button type="submit" disabled={isSubmitting}>
+                                {isSubmitting ? "Adding" : "Add"}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
     );
 }

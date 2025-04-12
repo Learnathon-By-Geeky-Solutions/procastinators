@@ -23,8 +23,8 @@ export function AppSidebar({
     children,
     routes,
 }: {
-    children: React.ReactNode;
-    routes: Array<{
+    readonly children: React.ReactNode;
+    readonly routes: Array<{
         title: string;
         icon: React.ReactNode;
         href: string;

@@ -45,8 +45,8 @@ export function TransferFundDialog({
     sourceWallet,
     destinationWallets,
 }: {
-    sourceWallet: Wallet;
-    destinationWallets: Wallet[];
+    readonly sourceWallet: Wallet;
+    readonly destinationWallets: Wallet[];
 }) {
     const [open, setOpen] = useState(false);
 

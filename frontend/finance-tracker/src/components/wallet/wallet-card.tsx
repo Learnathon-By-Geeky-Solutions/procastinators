@@ -15,8 +15,8 @@ export default function WalletCard({
     wallet,
     otherWallets,
 }: {
-    wallet: Wallet;
-    otherWallets: Wallet[];
+    readonly wallet: Wallet;
+    readonly otherWallets: Wallet[];
 }) {
     return (
         <Card key={wallet.id}>

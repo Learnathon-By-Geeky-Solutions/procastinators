@@ -27,7 +27,7 @@ function UserAvatar(fallbackText: string) {
 export default function NavUser() {
     const { data: session } = useSession();
     const user = session?.user;
-    const avatarFallbacktext = user?.name![0].toUpperCase() ?? "U";
+    const avatarFallbackText = (user?.name ?? "u").slice(0, 1).toUpperCase();
 
     return (
         <DropdownMenu>
@@ -35,7 +35,7 @@ export default function NavUser() {
             <DropdownMenuTrigger asChild>
                 <div className="flex items-center justify-between p-2 cursor-pointer hover:bg-sidebar-accent rounded-md transition-colors">
                     <div className="flex items-center">
-                        {UserAvatar(avatarFallbacktext)}
+                        {UserAvatar(avatarFallbackText)}
                     </div>
                 </div>
             </DropdownMenuTrigger>
@@ -43,7 +43,7 @@ export default function NavUser() {
             <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                        {UserAvatar(avatarFallbacktext)}
+                        {UserAvatar(avatarFallbackText)}
                         <div className="grid flex-1 text-left text-sm leading-tight">
                             <span className="truncate font-semibold">
                                 {user?.name}

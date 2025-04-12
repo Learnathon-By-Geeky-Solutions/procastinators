@@ -45,9 +45,9 @@ export function EditWalletDialog({
     open,
     setOpen,
 }: {
-    wallet: Wallet;
-    open: boolean;
-    setOpen: (value: boolean) => void;
+    readonly wallet: Wallet;
+    readonly open: boolean;
+    readonly setOpen: (value: boolean) => void;
 }) {
     const form = useForm<z.infer<typeof editWalletFormSchema>>({
         resolver: zodResolver(editWalletFormSchema),

@@ -13,7 +13,11 @@ import { useState } from "react";
 import { Wallet } from "@/lib/definitions";
 import { DeleteWalletDialog } from "./delete-wallet-dialog";
 
-export default function ManageWalletDropdown({ wallet }: { wallet: Wallet }) {
+export default function ManageWalletDropdown({
+    wallet,
+}: {
+    readonly wallet: Wallet;
+}) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
