@@ -17,7 +17,7 @@ namespace FinanceTracker.Application.Categories.Commands.CreateCategory.Tests;
 public class CreateCategoryCommandHandlerTests
 {
     [Fact()]
-    public async Task Handle_ForValidCommand_ReturnsCreatedWalletId()
+    public async Task Handle_ForValidCommand_ReturnsCreatedCategory()
     {
         // Arrange
 
