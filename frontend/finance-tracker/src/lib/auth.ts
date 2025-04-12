@@ -28,7 +28,11 @@ const fetchUserInfo = async (token: string) => {
             },
         });
         if (res?.ok) {
-            return await res.json();
+            const data = await res.json();
+            return {
+                name: data?.email.split("@")[0],
+                email: data?.email,
+            };
         }
     } catch (error) {
         console.error(error);
