@@ -4,7 +4,7 @@ import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 import {
     Form,
@@ -69,9 +69,7 @@ export function LoginForm() {
                 description: "You are being redirected to home page.",
             });
 
-            setTimeout(() => {
-                router.push("/dashboard");
-            }, 2000);
+            router.push("/dashboard");
         } catch (error) {
             console.error(error);
             toast.error("Login Failed", {
@@ -81,105 +79,102 @@ export function LoginForm() {
     }
 
     return (
-        <>
-            <Card className="mx-auto max-w-md">
-                <CardHeader>
-                    <CardTitle className="text-2xl">Login</CardTitle>
-                    <CardDescription>
-                        Enter credentials to access your account
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form
-                            onSubmit={form.handleSubmit(onSubmit)}
-                            className="space-y-8"
-                        >
-                            <div className="grid gap-2">
-                                <FormField
-                                    control={form.control}
-                                    name="email"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel htmlFor="email">
-                                                Email
+        <Card className="mx-auto max-w-md">
+            <CardHeader>
+                <CardTitle className="text-2xl">Login</CardTitle>
+                <CardDescription>
+                    Enter credentials to access your account
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-8"
+                    >
+                        <div className="grid gap-2">
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel htmlFor="email">
+                                            Email
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                id="email"
+                                                placeholder="user@example.com"
+                                                type="email"
+                                                autoComplete="email"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <div className="min-h-[20px]">
+                                            <FormMessage />
+                                        </div>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <div className="flex justify-between items-center">
+                                            <FormLabel htmlFor="password">
+                                                Password
                                             </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    id="email"
-                                                    placeholder="user@example.com"
-                                                    type="email"
-                                                    autoComplete="email"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <div className="min-h-[20px]">
-                                                <FormMessage />
-                                            </div>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="password"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <div className="flex justify-between items-center">
-                                                <FormLabel htmlFor="password">
-                                                    Password
-                                                </FormLabel>
-                                                <Link
-                                                    href="#"
-                                                    className="ml-auto inline-block text-sm underline"
-                                                >
-                                                    Forgot your password?
-                                                </Link>
-                                            </div>
-                                            <FormControl>
-                                                <PasswordInput
-                                                    id="password"
-                                                    placeholder="******"
-                                                    autoComplete="current-password"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <div className="min-h-[20px]">
-                                                <FormMessage />
-                                            </div>
-                                        </FormItem>
-                                    )}
-                                />
-                                <Button
-                                    type="submit"
-                                    className="w-full"
-                                    disabled={form.formState.isSubmitting}
-                                >
-                                    {form.formState.isSubmitting ? (
-                                        <div className="flex items-center">
-                                            <Loader2Icon className="animate-spin mr-2 h-4 w-4" />
-                                            Logging in
+                                            <Link
+                                                href="#"
+                                                className="ml-auto inline-block text-sm underline"
+                                            >
+                                                Forgot your password?
+                                            </Link>
                                         </div>
-                                    ) : (
-                                        <div className="flex items-center">
-                                            <LogInIcon className="mr-2 h-4 w-4" />
-                                            Login
+                                        <FormControl>
+                                            <PasswordInput
+                                                id="password"
+                                                placeholder="******"
+                                                autoComplete="current-password"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <div className="min-h-[20px]">
+                                            <FormMessage />
                                         </div>
-                                    )}
-                                </Button>
-                            </div>
-                        </form>
-                    </Form>
-                </CardContent>
-                <CardFooter>
-                    <div className="w-full text-center text-sm">
-                        Don&apos;t have an account?{" "}
-                        <Link href="/auth/register" className="underline">
-                            Register
-                        </Link>
-                    </div>
-                </CardFooter>
-            </Card>
-            <Toaster position="bottom-right" richColors />
-        </>
+                                    </FormItem>
+                                )}
+                            />
+                            <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={form.formState.isSubmitting}
+                            >
+                                {form.formState.isSubmitting ? (
+                                    <div className="flex items-center">
+                                        <Loader2Icon className="animate-spin mr-2 h-4 w-4" />
+                                        Logging in
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center">
+                                        <LogInIcon className="mr-2 h-4 w-4" />
+                                        Login
+                                    </div>
+                                )}
+                            </Button>
+                        </div>
+                    </form>
+                </Form>
+            </CardContent>
+            <CardFooter>
+                <div className="w-full text-center text-sm">
+                    Don&apos;t have an account?{" "}
+                    <Link href="/auth/register" className="underline">
+                        Register
+                    </Link>
+                </div>
+            </CardFooter>
+        </Card>
     );
 }

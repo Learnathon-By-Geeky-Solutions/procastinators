@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/select";
 import { addWalletFormSchema } from "@/validations/form-schema";
 import { AddWalletAction } from "@/lib/actions/wallet-action";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 const successTitle = "Success!";
 const successDescription = "Wallet added successfully.";
@@ -210,7 +210,6 @@ export function AddWalletDialog() {
                     </Form>
                 </DialogContent>
             </Dialog>
-            <Toaster position="bottom-right" richColors />
         </>
     );
 }
