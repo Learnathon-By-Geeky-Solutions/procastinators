@@ -48,8 +48,6 @@ export function TransferFundDialog({
     sourceWallet: Wallet;
     destinationWallets: Wallet[];
 }) {
-    console.log("sourceWallet", sourceWallet);
-    console.log("destinationWallets", destinationWallets);
     const [open, setOpen] = useState(false);
 
     const defaultValues = {
