@@ -18,33 +18,16 @@ function MapFieldErrors(errors: Record<string, string[]>) {
     }, {} as Record<string, string[]>);
 }
 
-export async function AddWalletAction(
-    formData: z.infer<typeof addWalletFormSchema>
-) {
-    const validatedFields = addWalletFormSchema.safeParse(formData);
-    if (validatedFields.error) {
-        return {
-            success: false,
-            fieldErrors: validatedFields.error.flatten().fieldErrors,
-            message: "Invalid field(s)",
-        };
-    }
-
+async function handleFetch(httpMethod: string, url: string, body: any) {
     try {
-        const { name, type, currency } = validatedFields.data;
-        const url = `${process.env.BACKEND_BASE_URL}/wallets`;
         const session = await auth();
         const res = await fetch(url, {
-            method: "POST",
+            method: httpMethod,
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${session?.accessToken}`,
             },
-            body: JSON.stringify({
-                name,
-                type,
-                currency,
-            }),
+            body: JSON.stringify(body),
         });
 
         if (!res.ok) {
@@ -72,6 +55,27 @@ export async function AddWalletAction(
             message: defaultErrorMessage,
         };
     }
+}
+
+export async function AddWalletAction(
+    formData: z.infer<typeof addWalletFormSchema>
+) {
+    const validatedFields = addWalletFormSchema.safeParse(formData);
+    if (validatedFields.error) {
+        return {
+            success: false,
+            fieldErrors: validatedFields.error.flatten().fieldErrors,
+            message: "Invalid field(s)",
+        };
+    }
+
+    const { name, type, currency } = validatedFields.data;
+    const url = `${process.env.BACKEND_BASE_URL}/wallets`;
+    return handleFetch("POST", url, {
+        name,
+        type,
+        currency,
+    });
 }
 
 export async function UpdateWalletAction(
@@ -86,87 +90,18 @@ export async function UpdateWalletAction(
         };
     }
 
-    try {
-        const { id, name, type, currency } = validatedFields.data;
-        const url = `${process.env.BACKEND_BASE_URL}/wallets/${id}`;
-        const session = await auth();
-        const res = await fetch(url, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${session?.accessToken}`,
-            },
-            body: JSON.stringify({
-                name,
-                type,
-                currency,
-            }),
-        });
-
-        if (!res.ok) {
-            const data = await res.json();
-            console.log(data);
-
-            return {
-                success: false,
-                fieldErrors: { ...MapFieldErrors(data.errors) },
-                message: data?.title ?? defaultErrorMessage,
-            };
-        }
-
-        revalidatePath("/");
-        return {
-            success: true,
-            fieldErrors: {},
-            message: "",
-        };
-    } catch (error) {
-        console.log(error);
-        return {
-            success: false,
-            fieldErrors: {},
-            message: defaultErrorMessage,
-        };
-    }
+    const { id, name, type, currency } = validatedFields.data;
+    const url = `${process.env.BACKEND_BASE_URL}/wallets/${id}`;
+    return handleFetch("PATCH", url, {
+        name,
+        type,
+        currency,
+    });
 }
 
 export async function DeleteWalletAction(id: string) {
-    try {
-        const url = `${process.env.BACKEND_BASE_URL}/wallets/${id}`;
-        const session = await auth();
-        const res = await fetch(url, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${session?.accessToken}`,
-            },
-        });
-
-        if (!res.ok) {
-            const data = await res.json();
-            console.log(data);
-
-            return {
-                success: false,
-                fieldErrors: {},
-                message: data?.title ?? defaultErrorMessage,
-            };
-        }
-
-        revalidatePath("/");
-        return {
-            success: true,
-            fieldErrors: {},
-            message: "",
-        };
-    } catch (error) {
-        console.log(error);
-        return {
-            success: false,
-            fieldErrors: {},
-            message: defaultErrorMessage,
-        };
-    }
+    const url = `${process.env.BACKEND_BASE_URL}/wallets/${id}`;
+    return await handleFetch("DELETE", url, {});
 }
 
 export async function TransferFundAction(
@@ -181,46 +116,11 @@ export async function TransferFundAction(
         };
     }
 
-    try {
-        const { sourceWalletId, destinationWalletId, amount } =
-            validatedFields.data;
-        const url = `${process.env.BACKEND_BASE_URL}/wallets/${sourceWalletId}/transfer`;
-        const session = await auth();
-        const res = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${session?.accessToken}`,
-            },
-            body: JSON.stringify({
-                destinationWalletId,
-                amount,
-            }),
-        });
-
-        if (!res.ok) {
-            const data = await res.json();
-            console.log(data);
-
-            return {
-                success: false,
-                fieldErrors: { ...MapFieldErrors(data.errors) },
-                message: data?.title ?? defaultErrorMessage,
-            };
-        }
-
-        revalidatePath("/");
-        return {
-            success: true,
-            fieldErrors: {},
-            message: "",
-        };
-    } catch (error) {
-        console.log(error);
-        return {
-            success: false,
-            fieldErrors: {},
-            message: defaultErrorMessage,
-        };
-    }
+    const { sourceWalletId, destinationWalletId, amount } =
+        validatedFields.data;
+    const url = `${process.env.BACKEND_BASE_URL}/wallets/${sourceWalletId}/transfer`;
+    return await handleFetch("POST", url, {
+        destinationWalletId,
+        amount,
+    });
 }
