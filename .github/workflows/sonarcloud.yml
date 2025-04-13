@@ -57,7 +57,7 @@ jobs:
                   dotnet tool install --global dotnet-coverage
 
             - name: Restore dependencies
-              run: dotnet restore FinaneTracker.sln
+              run: dotnet restore FinanceTracker.sln
 
             - name: Begin SonarCloud analysis
               env:
@@ -81,7 +81,7 @@ jobs:
                     /d:sonar.analytics.ci=github-actions
 
             - name: Build
-              run: dotnet build FinaneTracker.sln --no-restore --configuration Release
+              run: dotnet build FinanceTracker.sln --no-restore --configuration Release
 
             - name: Test with coverage
               run: |
