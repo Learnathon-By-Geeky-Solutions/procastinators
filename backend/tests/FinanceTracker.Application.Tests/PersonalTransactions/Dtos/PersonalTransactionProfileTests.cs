@@ -32,10 +32,10 @@ public class PersonalTransactionProfileTests
             Id = 1,
             TransactionType = "Income",
             Amount = 500,
-            Timestamp = DateTime.Parse("2022-12-05 08:30:00"), // Issue: doesn't maps this property should have been mapped
+            Timestamp = DateTime.Parse("2022-12-05 08:30:00").ToUniversalTime(),
             Note = "Its me the tester haha",
             WalletId = 12,
-            CategoryId = 1
+            CategoryId = 1,
         };
 
         // Act
@@ -63,10 +63,10 @@ public class PersonalTransactionProfileTests
         {
             TransactionType = "Income",
             Amount = 500,
-            Timestamp = DateTime.Parse("2022-12-05 08:30:00"), 
+            Timestamp = DateTime.Parse("2022-12-05 08:30:00"),
             Note = "Its me the tester haha",
             WalletId = 12,
-            CategoryId = 1
+            CategoryId = 1,
         };
 
         // Act
@@ -97,7 +97,7 @@ public class PersonalTransactionProfileTests
             Timestamp = DateTime.Parse("2022-12-05 08:30:00"),
             Note = "Its me the tester haha",
             WalletId = 12,
-            CategoryId = 1
+            CategoryId = 1,
         };
 
         // Act
@@ -107,7 +107,7 @@ public class PersonalTransactionProfileTests
         // Assert
 
         personalTransaction.Should().NotBeNull();
-        personalTransaction.Should().Be(command.Id);
+        personalTransaction.Id.Should().Be(command.Id);
         personalTransaction.TransactionType.Should().Be(command.TransactionType);
         personalTransaction.Amount.Should().Be(command.Amount);
         personalTransaction.Timestamp.Should().Be(command.Timestamp);
@@ -116,4 +116,3 @@ public class PersonalTransactionProfileTests
         personalTransaction.CategoryId.Should().Be(command.CategoryId);
     }
 }
-
