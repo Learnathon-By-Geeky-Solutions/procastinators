@@ -83,9 +83,9 @@ jobs:
             - name: Build
               run: dotnet build FinanceTracker.sln --no-restore --configuration Release
 
-            # - name: Test with coverage
-            #   run: |
-            #       dotnet test backend/tests --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+            - name: Test with coverage
+              run: |
+                  dotnet test FinanceTracker.sln --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
             - name: End SonarCloud analysis
               env:
