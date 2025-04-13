@@ -78,3 +78,21 @@ export const transferFundFormSchema = z.object({
         message: "Destination wallet is required",
     }),
 });
+
+export const addCategoryFormSchema = z.object({
+    title: z.string().min(1, {
+        message: "Category title is required",
+    }),
+    defaultTransactionType: z.string().min(1, {
+        message: "Default transaction type is required",
+    }),
+});
+export const editCategoryFormSchema = addCategoryFormSchema.extend({
+    id: z.coerce.string().min(1, {
+        message: "ID is required",
+    }),
+});
+export const deleteCategoryFormSchema = editCategoryFormSchema.omit({
+    title: true,
+    defaultTransactionType: true,
+});

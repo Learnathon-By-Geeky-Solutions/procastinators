@@ -6,56 +6,7 @@ import {
     transferFundFormSchema,
 } from "@/validations/form-schema";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
-import { revalidatePath } from "next/cache";
-
-const defaultErrorMessage = "Something went wrong";
-
-function MapFieldErrors(errors: Record<string, string[]>) {
-    return Object.entries(errors ?? {}).reduce((obj, [key, value]) => {
-        obj[key.toLocaleLowerCase()] = Array.isArray(value) ? value : [value];
-        return obj;
-    }, {} as Record<string, string[]>);
-}
-
-async function handleFetch(httpMethod: string, url: string, body: any) {
-    try {
-        const session = await auth();
-        const res = await fetch(url, {
-            method: httpMethod,
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${session?.accessToken}`,
-            },
-            body: JSON.stringify(body),
-        });
-
-        if (!res.ok) {
-            const data = await res.json();
-            console.log(data);
-
-            return {
-                success: false,
-                fieldErrors: { ...MapFieldErrors(data.errors) },
-                message: data?.title ?? defaultErrorMessage,
-            };
-        }
-
-        revalidatePath("/");
-        return {
-            success: true,
-            fieldErrors: {},
-            message: "",
-        };
-    } catch (error) {
-        console.log(error);
-        return {
-            success: false,
-            fieldErrors: {},
-            message: defaultErrorMessage,
-        };
-    }
-}
+import { handleAction } from "@/lib/actions/handle-action";
 
 export async function AddWalletAction(
     formData: z.infer<typeof addWalletFormSchema>
@@ -71,7 +22,7 @@ export async function AddWalletAction(
 
     const { name, type, currency } = validatedFields.data;
     const url = `${process.env.BACKEND_BASE_URL}/wallets`;
-    return handleFetch("POST", url, {
+    return handleAction("POST", url, {
         name,
         type,
         currency,
@@ -92,7 +43,7 @@ export async function UpdateWalletAction(
 
     const { id, name, type, currency } = validatedFields.data;
     const url = `${process.env.BACKEND_BASE_URL}/wallets/${id}`;
-    return handleFetch("PATCH", url, {
+    return handleAction("PATCH", url, {
         name,
         type,
         currency,
@@ -101,7 +52,7 @@ export async function UpdateWalletAction(
 
 export async function DeleteWalletAction(id: string) {
     const url = `${process.env.BACKEND_BASE_URL}/wallets/${id}`;
-    return await handleFetch("DELETE", url, {});
+    return await handleAction("DELETE", url, {});
 }
 
 export async function TransferFundAction(
@@ -119,7 +70,7 @@ export async function TransferFundAction(
     const { sourceWalletId, destinationWalletId, amount } =
         validatedFields.data;
     const url = `${process.env.BACKEND_BASE_URL}/wallets/${sourceWalletId}/transfer`;
-    return await handleFetch("POST", url, {
+    return await handleAction("POST", url, {
         destinationWalletId,
         amount,
     });
