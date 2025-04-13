@@ -7,10 +7,9 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { PencilIcon, Trash2Icon } from "lucide-react";
 import { Category } from "@/lib/definitions";
 import { EditCategoryDialog } from "@/components/category/edit-category-dialog";
+import { DeleteCategoryDialog } from "@/components/category/delete-category-dialog";
 
 export default function CategoryTable({
     categories,
@@ -53,9 +52,7 @@ export default function CategoryTable({
                         </TableCell>
                         <TableCell className="text-right">
                             <EditCategoryDialog category={category} />
-                            <Button variant="ghost" size="icon">
-                                <Trash2Icon className="h-4 w-4 text-destructive" />
-                            </Button>
+                            <DeleteCategoryDialog category={category} />
                         </TableCell>
                     </TableRow>
                 ))}

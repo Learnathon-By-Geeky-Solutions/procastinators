@@ -46,3 +46,8 @@ export async function EditCategoryAction(
         defaultTransactionType,
     });
 }
+
+export async function DeleteCategoryAction(id: string) {
+    const url = `${process.env.BACKEND_BASE_URL}/categories/${id}`;
+    return handleAction("DELETE", url, {});
+}
