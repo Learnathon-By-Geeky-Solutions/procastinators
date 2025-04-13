@@ -5,3 +5,9 @@ export type Wallet = {
     currency: string;
     balance: number;
 };
+
+export type Category = {
+    id: string;
+    title: string;
+    defaultTransactionType: string;
+};
