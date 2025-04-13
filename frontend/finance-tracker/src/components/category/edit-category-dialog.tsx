@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { PlusIcon } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -23,42 +23,49 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { addCategoryFormSchema } from "@/validations/form-schema";
 import { toast } from "sonner";
 import { handleResponse } from "@/lib/handle-response";
-import { Input } from "@/components/ui/input";
+import { Input } from "../ui/input";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
-import { AddCategoryAction } from "@/lib/actions/category-actions";
+} from "../ui/select";
+import { EditCategoryAction } from "@/lib/actions/category-actions";
+import { editCategoryFormSchema } from "@/validations/form-schema";
+import { Category } from "@/lib/definitions";
 
-const successDescription = "Category added successfully.";
+const successDescription = "Category details updated successfully.";
 const failedTitle = "Failed!";
 const failedDefaultDescription = "Something went wrong. Please try again.";
 
-export function AddCategoryDialog() {
+export function EditCategoryDialog({
+    category,
+}: {
+    readonly category: Category;
+}) {
     const [open, setOpen] = useState(false);
 
-    const form = useForm<z.infer<typeof addCategoryFormSchema>>({
-        resolver: zodResolver(addCategoryFormSchema),
-        defaultValues: {
-            title: "",
-            defaultTransactionType: "",
-        },
+    const defaultValues = {
+        id: category.id,
+        title: category.title,
+        defaultTransactionType: category.defaultTransactionType,
+    };
+    const form = useForm<z.infer<typeof editCategoryFormSchema>>({
+        resolver: zodResolver(editCategoryFormSchema),
+        defaultValues,
     });
     const { isSubmitting } = form.formState;
 
     useEffect(() => {
-        form.reset();
+        form.reset(defaultValues);
     }, [open]);
 
-    async function onSubmit(values: z.infer<typeof addCategoryFormSchema>) {
+    async function onSubmit(values: z.infer<typeof editCategoryFormSchema>) {
         try {
-            const res = await AddCategoryAction(values);
+            const res = await EditCategoryAction(values);
             handleResponse(res, form, setOpen, successDescription);
         } catch (error) {
             console.log(error);
@@ -71,16 +78,15 @@ export function AddCategoryDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>
-                    <PlusIcon className="h-4 w-4" />
-                    Add Category
+                <Button variant="ghost" size="icon">
+                    <PencilIcon className="h-4 w-4" />
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>New Category</DialogTitle>
+                    <DialogTitle>Edit Category</DialogTitle>
                     <DialogDescription>
-                        Add a new category to your personal transactions.
+                        Update your category details.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -88,6 +94,19 @@ export function AddCategoryDialog() {
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-4 py-4"
                     >
+                        {/* Hidden field for wallet ID */}
+                        <FormField
+                            control={form.control}
+                            name="id"
+                            render={({ field }) => (
+                                <FormItem className="hidden">
+                                    <FormControl>
+                                        <Input type="hidden" {...field} />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+
                         <FormField
                             control={form.control}
                             name="title"
