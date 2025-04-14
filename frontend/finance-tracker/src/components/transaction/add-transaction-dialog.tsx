@@ -40,7 +40,7 @@ const successDescription = "Category added successfully.";
 const failedTitle = "Failed!";
 const failedDefaultDescription = "Something went wrong. Please try again.";
 
-export function AddCategoryDialog() {
+export function AddTransactionDialog() {
     const [open, setOpen] = useState(false);
 
     const form = useForm<z.infer<typeof addCategoryFormSchema>>({
@@ -73,14 +73,14 @@ export function AddCategoryDialog() {
             <DialogTrigger asChild>
                 <Button>
                     <PlusIcon className="h-4 w-4" />
-                    Add Category
+                    Add Transaction
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>New Category</DialogTitle>
+                    <DialogTitle>New Transaction</DialogTitle>
                     <DialogDescription>
-                        Add a new category for your personal transactions.
+                        Add a new transaction for income or expense.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
