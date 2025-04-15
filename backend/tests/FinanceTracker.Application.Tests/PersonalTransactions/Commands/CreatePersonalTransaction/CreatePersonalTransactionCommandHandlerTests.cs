@@ -40,7 +40,6 @@ public class CreatePersonalTransactionCommandHandlerTests
             TransactionType = TransactionTypes.Income
         };
 
-        // Set up mapper
         var mapperMock = new Mock<IMapper>();
         var personalTransaction = new PersonalTransaction
         {
@@ -53,36 +52,32 @@ public class CreatePersonalTransactionCommandHandlerTests
             .Setup(m => m.Map<PersonalTransaction>(command))
             .Returns(personalTransaction);
 
-        // Set up category repository
         var categoryRepositoryMock = new Mock<ICategoryRepository>();
         var category = new Category
         {
             Id = categoryId,
-            UserId = userId // Important: Set the UserId to match the test user
+            UserId = userId 
         };
         categoryRepositoryMock
             .Setup(repo => repo.GetById(categoryId))
             .ReturnsAsync(category);
 
-        // Set up wallet repository
         var walletRepositoryMock = new Mock<IWalletRepository>();
         var wallet = new Wallet
         {
             Id = walletId,
-            UserId = userId, // Important: Set the UserId to match the test user
+            UserId = userId, 
             Balance = 500.0m
         };
         walletRepositoryMock
             .Setup(repo => repo.GetById(walletId))
             .ReturnsAsync(wallet);
 
-        // Set up transaction repository
         var transactionRepositoryMock = new Mock<IPersonalTransactionRepository>();
         transactionRepositoryMock
             .Setup(repo => repo.Create(It.IsAny<PersonalTransaction>()))
             .ReturnsAsync(1);
 
-        // Create command handler
         var commandHandler = new CreatePersonalTransactionCommandHandler(
             loggerMock.Object,
             userContextMock.Object,
@@ -99,8 +94,6 @@ public class CreatePersonalTransactionCommandHandlerTests
         result.Should().Be(1);
         personalTransaction.UserId.Should().Be(userId);
         transactionRepositoryMock.Verify(r => r.Create(personalTransaction), Times.Once);
-
-        // Additional assertions for the wallet balance update
-        wallet.Balance.Should().Be(600.0m); // Original 500 + 100 income
+        wallet.Balance.Should().Be(600.0m);
     }
 }
