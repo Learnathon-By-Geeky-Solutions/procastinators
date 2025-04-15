@@ -37,7 +37,7 @@ public class UpdateWalletCommandHandlerTests
     }
 
     [Fact()]
-    public async Task Handle_WithValidRequest_ShouldUpdateCategory()
+    public async Task Handle_WithValidRequest_ShouldUpdateWallet()
     {
         // Arrange
 
@@ -77,7 +77,7 @@ public class UpdateWalletCommandHandlerTests
 
     }
     [Fact()]
-    public async Task Handle_WithNonExistentCategory_ShouldThrowNotFoundException()
+    public async Task Handle_WithNonExistentWallet_ShouldThrowNotFoundException()
     {
         // Arrange
         var walletId = 1;
@@ -105,7 +105,7 @@ public class UpdateWalletCommandHandlerTests
     }
 
     [Fact()]
-    public async Task Handle_WithDeletedCategory_ShouldThrowNotFoundException()
+    public async Task Handle_WithDeletedWallet_ShouldThrowNotFoundException()
     {
         // Arrange
         var walletId = 1;
@@ -142,4 +142,40 @@ public class UpdateWalletCommandHandlerTests
         _walletRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Never);
     }
 
+    [Fact()]
+    public async Task Handle_WithWalletBelongingToAnotherUser_ShouldThrowForbiddenException()
+    {
+        // Arrange
+        var walletId = 1;
+        var command = new UpdateWalletCommand()
+        {
+            Id = walletId,
+            Name = "test",
+            Type = "Bank",
+            Currency = "BDT"
+        };
+
+        var wallet = new Wallet()
+        {
+            Id = walletId,
+            Name = "test",
+            Type = "Bank",
+            Currency = "BDT",
+            UserId = "different-user-id",
+        };
+
+        _walletRepositoryMock.Setup(r => r.GetById(walletId))
+            .ReturnsAsync(wallet);
+
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _walletRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Never);
+    }
 }
