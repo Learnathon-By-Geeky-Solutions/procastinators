@@ -3,6 +3,7 @@ using Castle.Core.Logging;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Application.Wallets.Commands.UpdateWallet;
 using FinanceTracker.Domain.Entities;
+using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -20,6 +21,8 @@ public class UpdateCategoryCommandHandlerTests
     private readonly Mock<IMapper> _mapperMock;
 
     private readonly UpdateCategoryCommandHandler _handler;
+
+    private readonly string _userId = "test-user-id";
 
     public UpdateCategoryCommandHandlerTests()
     {
@@ -42,7 +45,6 @@ public class UpdateCategoryCommandHandlerTests
         // Arrange
 
         var categoryId = 1;
-        var userId = "test-user-id";
         var command = new UpdateCategoryCommand()
         {
             Id = categoryId,
@@ -55,13 +57,13 @@ public class UpdateCategoryCommandHandlerTests
             Id = categoryId,
             Title = "test",
             DefaultTransactionType = "Income",
-            UserId = userId
+            UserId = _userId
         };
 
         _categoryRepositoryMock.Setup(r => r.GetById(categoryId))
             .ReturnsAsync(category);
 
-        var user = new UserDto("test", "test@test.com") { Id = userId };
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
         _userContextMock.Setup(u => u.GetUser())
             .Returns(user);
 
@@ -75,4 +77,32 @@ public class UpdateCategoryCommandHandlerTests
         _mapperMock.Verify(m => m.Map(command, category), Times.Once);
 
     }
+    [Fact()]
+    public async Task Handle_WithNonExistentCategory_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var categoryId = 1;
+        var command = new UpdateCategoryCommand()
+        {
+            Id = categoryId,
+            Title = "My test",
+            DefaultTransactionType = "Income"
+        };
+
+        _categoryRepositoryMock.Setup(r => r.GetById(categoryId))
+            .ReturnsAsync((Category?)null);
+
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _categoryRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Never);
+    }
+
+
 }
