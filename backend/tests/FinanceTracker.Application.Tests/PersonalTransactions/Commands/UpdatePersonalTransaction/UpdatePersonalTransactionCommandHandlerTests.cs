@@ -277,4 +277,59 @@ public class UpdatePersonalTransactionCommandHandlerTests
 
         _personalTransactionRepositoryMock.Verify(r => r.SaveChangeAsync(), Times.Never);
     }
+
+    [Fact()]
+    public async Task Handle_WithDifferentUserForTransaction_ShouldThrowForbiddenException()
+    {
+        // Arrange
+        var personalTransactionId = 1;
+        var categoryId = 2;
+        var walletId = 3;
+
+        var command = new UpdatePersonalTransactionCommand()
+        {
+            Id = personalTransactionId,
+            TransactionType = TransactionTypes.Income,
+            Amount = 500m,
+            CategoryId = categoryId,
+            WalletId = walletId
+        };
+
+        var transaction = new PersonalTransaction()
+        {
+            Id = personalTransactionId,
+            UserId = "different-user-id" // Different user
+        };
+
+        var category = new Category()
+        {
+            Id = categoryId,
+            UserId = _userId
+        };
+
+        var wallet = new Wallet()
+        {
+            Id = walletId,
+            UserId = _userId
+        };
+
+        _personalTransactionRepositoryMock.Setup(r => r.GetById(personalTransactionId))
+            .ReturnsAsync(transaction);
+
+        _categoryRepositoryMock.Setup(r => r.GetById(categoryId))
+            .ReturnsAsync(category);
+
+        _walletRepositoryMock.Setup(r => r.GetById(walletId))
+            .ReturnsAsync(wallet);
+
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _personalTransactionRepositoryMock.Verify(r => r.SaveChangeAsync(), Times.Never);
+    }
 }
