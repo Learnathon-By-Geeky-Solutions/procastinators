@@ -126,3 +126,17 @@ export const addTransactionFormSchema = z.object({
     }),
     note: z.coerce.string().optional(),
 });
+
+export const editTransactionFormSchema = addTransactionFormSchema.extend({
+    id: z.coerce.string().min(1, {
+        message: "ID is required",
+    }),
+});
+export const deleteTransactionFormSchema = editTransactionFormSchema.omit({
+    categoryId: true,
+    transactionType: true,
+    walletId: true,
+    amount: true,
+    timestamp: true,
+    note: true,
+});

@@ -6,10 +6,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Category, Transaction, Wallet } from "@/lib/definitions";
-import { EditCategoryDialog } from "@/components/category/edit-category-dialog";
-import { DeleteCategoryDialog } from "@/components/category/delete-category-dialog";
+import { EditTransactionDialog } from "./edit-transaction-dialog";
+import { DeleteTransactionDialog } from "./delete-transaction";
 
 export default function TransactionTable({
     transactions,
@@ -81,9 +80,13 @@ export default function TransactionTable({
                             </TableCell>
 
                             <TableCell className="text-right">
-                                <EditCategoryDialog category={categories[0]} />
-                                <DeleteCategoryDialog
-                                    category={categories[0]}
+                                <EditTransactionDialog
+                                    transaction={transaction}
+                                    categories={categories}
+                                    wallets={wallets}
+                                />
+                                <DeleteTransactionDialog
+                                    transaction={transaction}
                                 />
                             </TableCell>
                         </TableRow>
