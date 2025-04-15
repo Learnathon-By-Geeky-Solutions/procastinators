@@ -11,3 +11,13 @@ export type Category = {
     title: string;
     defaultTransactionType: string;
 };
+
+export type Transaction = {
+    id: string;
+    transactionType: string;
+    amount: number;
+    timestamp: string;
+    note?: string;
+    walletId: string;
+    categoryId: string;
+};
