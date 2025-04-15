@@ -115,8 +115,7 @@ public class CreatePersonalTransactionCommandHandlerTests
     public async Task Handle_WhenUserIsNull_ShouldThrowForbiddenException()
     {
         // Arrange
-        _userContextMock.Setup(u => u.GetUser()).Returns((UserDto)null);
-
+        _userContextMock.Setup(u => u.GetUser()).Returns((UserDto?)null);
         var command = new CreatePersonalTransactionCommand
         {
             WalletId = _walletId,
@@ -161,5 +160,77 @@ public class CreatePersonalTransactionCommandHandlerTests
         _transactionRepositoryMock.Verify(r => r.Create(It.IsAny<PersonalTransaction>()), Times.Never);
     }
 
- 
+    [Fact]
+    public async Task Handle_WhenWalletBelongsToAnotherUser_ShouldThrowForbiddenException()
+    {
+        // Arrange
+        var command = new CreatePersonalTransactionCommand
+        {
+            WalletId = _walletId,
+            CategoryId = _categoryId
+        };
+
+        var wallet = new Wallet
+        {
+            Id = _walletId,
+            UserId = "different-user-id" 
+        };
+
+        _walletRepositoryMock
+            .Setup(repo => repo.GetById(_walletId))
+            .ReturnsAsync(wallet);
+
+        var category = new Category
+        {
+            Id = _categoryId,
+            UserId = _userId
+        };
+
+        _categoryRepositoryMock
+            .Setup(repo => repo.GetById(_categoryId))
+            .ReturnsAsync(category);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _transactionRepositoryMock.Verify(r => r.Create(It.IsAny<PersonalTransaction>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_WhenCategoryBelongsToAnotherUser_ShouldThrowForbiddenException()
+    {
+        // Arrange
+        var command = new CreatePersonalTransactionCommand
+        {
+            WalletId = _walletId,
+            CategoryId = _categoryId
+        };
+
+        var wallet = new Wallet
+        {
+            Id = _walletId,
+            UserId = _userId
+        };
+
+        _walletRepositoryMock
+            .Setup(repo => repo.GetById(_walletId))
+            .ReturnsAsync(wallet);
+
+        var category = new Category
+        {
+            Id = _categoryId,
+            UserId = "different-user-id" 
+        };
+
+        _categoryRepositoryMock
+            .Setup(repo => repo.GetById(_categoryId))
+            .ReturnsAsync(category);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _transactionRepositoryMock.Verify(r => r.Create(It.IsAny<PersonalTransaction>()), Times.Never);
+    }
 }
