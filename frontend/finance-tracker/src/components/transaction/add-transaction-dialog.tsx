@@ -23,7 +23,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { addCategoryFormSchema } from "@/validations/form-schema";
+import { addTransactionFormSchema } from "@/validations/form-schema";
 import { toast } from "sonner";
 import { handleResponse } from "@/lib/handle-response";
 import { Input } from "@/components/ui/input";
@@ -34,31 +34,48 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { AddCategoryAction } from "@/lib/actions/category-actions";
+import { Category, Wallet } from "@/lib/definitions";
+import { Textarea } from "@/components/ui/textarea";
+import { DateTimePicker } from "../ui/date-time-picker";
+import { AddTransactionAction } from "@/lib/actions/transaction-action";
 
-const successDescription = "Category added successfully.";
+const successDescription = "Transaction processed successfully.";
 const failedTitle = "Failed!";
 const failedDefaultDescription = "Something went wrong. Please try again.";
 
-export function AddTransactionDialog() {
+export function AddTransactionDialog({
+    categories,
+    wallets,
+}: {
+    readonly categories: Category[];
+    readonly wallets: Wallet[];
+}) {
     const [open, setOpen] = useState(false);
 
-    const form = useForm<z.infer<typeof addCategoryFormSchema>>({
-        resolver: zodResolver(addCategoryFormSchema),
-        defaultValues: {
-            title: "",
-            defaultTransactionType: "",
-        },
+    const defaultValues = {
+        categoryId: "",
+        transactionType: "",
+        walletId: "",
+        amount: "",
+        timestamp: new Date(),
+        note: "",
+    };
+
+    const form = useForm<z.infer<typeof addTransactionFormSchema>>({
+        resolver: zodResolver(addTransactionFormSchema),
+        defaultValues,
     });
     const { isSubmitting } = form.formState;
 
+    const [currency, setCurrency] = useState("???");
+
     useEffect(() => {
-        form.reset();
+        form.reset(defaultValues);
     }, [open]);
 
-    async function onSubmit(values: z.infer<typeof addCategoryFormSchema>) {
+    async function onSubmit(values: z.infer<typeof addTransactionFormSchema>) {
         try {
-            const res = await AddCategoryAction(values);
+            const res = await AddTransactionAction(values);
             handleResponse(res, form, setOpen, successDescription);
         } catch (error) {
             console.log(error);
@@ -90,35 +107,65 @@ export function AddTransactionDialog() {
                     >
                         <FormField
                             control={form.control}
-                            name="title"
+                            name="categoryId"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Title</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Title of the new category"
-                                            {...field}
-                                        />
-                                    </FormControl>
+                                    <FormLabel>Category</FormLabel>
+                                    <Select
+                                        onValueChange={(val) => {
+                                            form.setValue(
+                                                "transactionType",
+                                                categories.find(
+                                                    (cat) => cat.id == val
+                                                )?.defaultTransactionType ?? ""
+                                            );
+                                            field.onChange(val);
+                                        }}
+                                        value={field.value}
+                                    >
+                                        <FormControl className="w-full">
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select destination wallet" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {categories.length > 0 ? (
+                                                categories.map((category) => (
+                                                    <SelectItem
+                                                        key={category.id}
+                                                        value={category.id.toString()}
+                                                    >
+                                                        {category.title}
+                                                    </SelectItem>
+                                                ))
+                                            ) : (
+                                                <SelectItem value="0" disabled>
+                                                    No other wallets available
+                                                </SelectItem>
+                                            )}
+                                        </SelectContent>
+                                    </Select>
+
                                     <div className="min-h-[20px]">
                                         <FormMessage />
                                     </div>
                                 </FormItem>
                             )}
                         />
+
                         <FormField
                             control={form.control}
-                            name="defaultTransactionType"
+                            name="transactionType"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Type</FormLabel>
+                                    <FormLabel>Transaction Type</FormLabel>
                                     <Select
                                         onValueChange={field.onChange}
                                         value={field.value}
                                     >
                                         <FormControl className="w-full">
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Select default transaction type" />
+                                                <SelectValue placeholder="Select transaction type" />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
@@ -130,6 +177,124 @@ export function AddTransactionDialog() {
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
+
+                                    <div className="min-h-[20px]">
+                                        <FormMessage />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="walletId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Wallet</FormLabel>
+                                    <Select
+                                        onValueChange={(val) => {
+                                            setCurrency(
+                                                wallets.find((w) => w.id == val)
+                                                    ?.currency ?? "???"
+                                            );
+                                            field.onChange(val);
+                                        }}
+                                        value={field.value}
+                                    >
+                                        <FormControl className="w-full">
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select wallet" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {wallets.length > 0 ? (
+                                                wallets.map((wallet) => (
+                                                    <SelectItem
+                                                        key={wallet.id}
+                                                        value={wallet.id.toString()}
+                                                    >
+                                                        {wallet.name}
+                                                    </SelectItem>
+                                                ))
+                                            ) : (
+                                                <SelectItem value="0" disabled>
+                                                    No other wallets available
+                                                </SelectItem>
+                                            )}
+                                        </SelectContent>
+                                    </Select>
+
+                                    <div className="min-h-[20px]">
+                                        <FormMessage />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="amount"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Amount</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                            <Input
+                                                type="number"
+                                                placeholder="0.00"
+                                                {...field}
+                                            />
+                                            <span className="absolute right-8 top-1/2 -translate-y-1/2 text-muted-foreground">
+                                                {currency}
+                                            </span>
+                                        </div>
+                                    </FormControl>
+
+                                    <div className="min-h-[20px]">
+                                        <FormMessage />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="timestamp"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Date & Time</FormLabel>
+                                    <FormControl>
+                                        <DateTimePicker
+                                            date={field.value}
+                                            setDate={field.onChange}
+                                            modal={true}
+                                        />
+                                    </FormControl>
+                                    <div className="min-h-[20px]">
+                                        <FormMessage />
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="note"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        Note
+                                        <span className="font-normal text-muted-foreground">
+                                            (Optional)
+                                        </span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            placeholder="About this transaction"
+                                            className="resize-none"
+                                            {...field}
+                                        />
+                                    </FormControl>
                                     <div className="min-h-[20px]">
                                         <FormMessage />
                                     </div>

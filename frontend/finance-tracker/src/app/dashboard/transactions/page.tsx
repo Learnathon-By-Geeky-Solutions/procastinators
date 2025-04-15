@@ -24,7 +24,10 @@ export default async function Transactions() {
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <AddTransactionDialog />
+                    <AddTransactionDialog
+                        categories={categories}
+                        wallets={wallets}
+                    />
                 </div>
             </div>
 
