@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using AutoMapper;
-using Castle.Core.Logging;
-using FinanceTracker.Application.Categories.Commands.CreateCategory;
 using FinanceTracker.Application.PersonalTransactions.Commands.CreatePersonalTransaction;
 using FinanceTracker.Application.Users;
+using FinanceTracker.Domain.Constants.Category;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
@@ -11,57 +11,96 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
-namespace FinanceTracker.Application.Tests.PersonalTransactions.Commands.CreatePersonalTransaction
+namespace FinanceTracker.Application.Tests.PersonalTransactions.Commands.CreatePersonalTransaction;
+
+public class CreatePersonalTransactionCommandHandlerTests
 {
-    public class CreatePersonalTransactionCommandHandlerTests
+    [Fact]
+    public async Task Handle_ForValidCommand_ReturnsCreatedTransaction()
     {
-        //[Fact()] Ignore this test temporarily
-        public async Task Handle_ForValidCommand_ReturnsCreatedTransaction()
+        // Arrange
+        var userId = "test-user-id";
+        var walletId = 1;
+        var categoryId = 2;
+
+        // Set up logger mock
+        var loggerMock = new Mock<ILogger<CreatePersonalTransactionCommandHandler>>();
+
+        // Set up user context mock
+        var userContextMock = new Mock<IUserContext>();
+        var user = new UserDto("test", "test@test.com") { Id = userId };
+        userContextMock.Setup(u => u.GetUser()).Returns(user);
+
+        // Set up transaction command
+        var command = new CreatePersonalTransactionCommand
         {
-            // Arrange
+            WalletId = walletId,
+            CategoryId = categoryId,
+            Amount = 100.0m,
+            TransactionType = TransactionTypes.Income
+        };
 
-            var loggerMock = new Mock<ILogger<CreatePersonalTransactionCommandHandler>>();
+        // Set up mapper
+        var mapperMock = new Mock<IMapper>();
+        var personalTransaction = new PersonalTransaction
+        {
+            WalletId = walletId,
+            CategoryId = categoryId,
+            Amount = 100.0m,
+            TransactionType = TransactionTypes.Income
+        };
+        mapperMock
+            .Setup(m => m.Map<PersonalTransaction>(command))
+            .Returns(personalTransaction);
 
-            var userContextMock = new Mock<IUserContext>();
-            var user = new UserDto("test", "test@test.com");
-            userContextMock.Setup(u => u.GetUser()).Returns(user);
+        // Set up category repository
+        var categoryRepositoryMock = new Mock<ICategoryRepository>();
+        var category = new Category
+        {
+            Id = categoryId,
+            UserId = userId // Important: Set the UserId to match the test user
+        };
+        categoryRepositoryMock
+            .Setup(repo => repo.GetById(categoryId))
+            .ReturnsAsync(category);
 
-            var mapperMock = new Mock<IMapper>();
-            var command = new CreatePersonalTransactionCommand();
-            var personalTransaction = new PersonalTransaction();
-            mapperMock
-                .Setup(m => m.Map<CreatePersonalTransactionCommand, PersonalTransaction>(command))
-                .Returns(personalTransaction);
+        // Set up wallet repository
+        var walletRepositoryMock = new Mock<IWalletRepository>();
+        var wallet = new Wallet
+        {
+            Id = walletId,
+            UserId = userId, // Important: Set the UserId to match the test user
+            Balance = 500.0m
+        };
+        walletRepositoryMock
+            .Setup(repo => repo.GetById(walletId))
+            .ReturnsAsync(wallet);
 
-            var categoryRepositoryMock = new Mock<ICategoryRepository>();
-            categoryRepositoryMock.Setup(repo => repo.Create(It.IsAny<Category>())).ReturnsAsync(1);
+        // Set up transaction repository
+        var transactionRepositoryMock = new Mock<IPersonalTransactionRepository>();
+        transactionRepositoryMock
+            .Setup(repo => repo.Create(It.IsAny<PersonalTransaction>()))
+            .ReturnsAsync(1);
 
-            var walletRepositoryMock = new Mock<IWalletRepository>();
-            walletRepositoryMock.Setup(repo => repo.Create(It.IsAny<Wallet>())).ReturnsAsync(1);
+        // Create command handler
+        var commandHandler = new CreatePersonalTransactionCommandHandler(
+            loggerMock.Object,
+            userContextMock.Object,
+            mapperMock.Object,
+            categoryRepositoryMock.Object,
+            walletRepositoryMock.Object,
+            transactionRepositoryMock.Object
+        );
 
-            var transactionRepositoryMock = new Mock<IPersonalTransactionRepository>();
-            transactionRepositoryMock
-                .Setup(repo => repo.Create(It.IsAny<PersonalTransaction>()))
-                .ReturnsAsync(1);
+        // Act
+        var result = await commandHandler.Handle(command, CancellationToken.None);
 
-            var commandHandler = new CreatePersonalTransactionCommandHandler(
-                loggerMock.Object,
-                userContextMock.Object,
-                mapperMock.Object,
-                categoryRepositoryMock.Object,
-                walletRepositoryMock.Object,
-                transactionRepositoryMock.Object
-            );
+        // Assert
+        result.Should().Be(1);
+        personalTransaction.UserId.Should().Be(userId);
+        transactionRepositoryMock.Verify(r => r.Create(personalTransaction), Times.Once);
 
-            // Act
-
-            var result = await commandHandler.Handle(command, CancellationToken.None);
-
-            // Assert
-
-            result.Should().Be(1);
-            personalTransaction.UserId.Should().Be("test");
-            transactionRepositoryMock.Verify(r => r.Create(personalTransaction), Times.Once);
-        }
+        // Additional assertions for the wallet balance update
+        wallet.Balance.Should().Be(600.0m); // Original 500 + 100 income
     }
 }
