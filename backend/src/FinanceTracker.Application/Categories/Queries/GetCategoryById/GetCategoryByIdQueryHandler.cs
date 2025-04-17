@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FinanceTracker.Application.Categories.Queries.GetCategoryById;
 
-internal class GetCategoryByIdQueryHandler(ILogger<GetCategoryByIdQueryHandler> logger,
+public class GetCategoryByIdQueryHandler(ILogger<GetCategoryByIdQueryHandler> logger,
     IUserContext userContext,
     IMapper mapper,
     ICategoryRepository repo) : IRequestHandler<GetCategoryByIdQuery, CategoryDto>
