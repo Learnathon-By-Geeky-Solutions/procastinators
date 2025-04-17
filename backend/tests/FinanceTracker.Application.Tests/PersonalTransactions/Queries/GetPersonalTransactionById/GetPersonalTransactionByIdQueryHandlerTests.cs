@@ -5,6 +5,7 @@ using FinanceTracker.Application.Users;
 using FinanceTracker.Application.Wallets.Dtos;
 using FinanceTracker.Application.Wallets.Queries.GetWalletById;
 using FinanceTracker.Domain.Entities;
+using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -75,5 +76,19 @@ public class GetPersonalTransactionByIdQueryHandlerTests
         // Assert
         result.Should().Be(expectedDto);
         _mapperMock.Verify(m => m.Map<PersonalTransactionDto>(personalTransaction), Times.Once);
+    }
+    [Fact]
+    public async Task Handle_WithNoAuthenticatedUser_ShouldThrowForbiddenException()
+    {
+        // Arrange
+        var query = new GetPersonalTransactionByIdQuery();
+        _userContextMock.Setup(u => u.GetUser()).Returns((UserDto?)null);
+
+        // Act & Assert
+        var act = async () => await _handler.Handle(query, CancellationToken.None);
+
+        await act.Should().ThrowAsync<ForbiddenException>();
+        _transactionRepositoryMock.Verify(r => r.GetAll(It.IsAny<string>()), Times.Never);
+        _mapperMock.Verify(m => m.Map<IEnumerable<PersonalTransactionDto>>(It.IsAny<IEnumerable<PersonalTransaction>>()), Times.Never);
     }
 }
