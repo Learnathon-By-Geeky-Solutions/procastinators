@@ -76,7 +76,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     callbacks: {
         jwt: async ({ token, user }) => {
-            console.log("JWT:", token, user);
             if (user) {
                 token.accessToken = user.token?.accessToken;
                 token.refreshToken = user.token?.refreshToken;
@@ -84,7 +83,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return token;
         },
         session: async ({ session, token }) => {
-            console.log("Session:", session, token);
             if (token) {
                 session.accessToken = token.accessToken;
                 session.refreshToken = token.refreshToken;

@@ -80,7 +80,7 @@ export function AddCategoryDialog() {
                 <DialogHeader>
                     <DialogTitle>New Category</DialogTitle>
                     <DialogDescription>
-                        Add a new category to your personal transactions.
+                        Add a new category for your personal transactions.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
