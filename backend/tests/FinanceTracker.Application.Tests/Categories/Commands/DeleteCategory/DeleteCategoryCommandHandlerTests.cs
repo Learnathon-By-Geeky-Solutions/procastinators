@@ -74,7 +74,6 @@ public class DeleteCategoryCommandHandlerTests
         category.IsDeleted.Should().BeTrue();
         _categoryRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Once);
     }
-
     [Fact()]
     public async Task Handle_WithNonExistentCategory_ShouldThrowNotFoundException()
     {
@@ -130,7 +129,6 @@ public class DeleteCategoryCommandHandlerTests
         // Act & Assert
         await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
             _handler.Handle(command, CancellationToken.None));
-
         _categoryRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Never);
     }
 }
