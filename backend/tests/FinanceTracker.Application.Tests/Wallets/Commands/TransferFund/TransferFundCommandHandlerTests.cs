@@ -286,4 +286,101 @@ public class TransferFundCommandHandlerTests
         await Xunit.Assert.ThrowsAsync<ForbiddenException>(() =>
             _handler.Handle(command, CancellationToken.None));
     }
+    [Fact]
+    public async Task Handle_WithNegativeAmount_ShouldDecreaseSenderAndIncreaseReceiverBalance()
+    {
+        // Arrange
+        var sourceWalletId = 1;
+        var destinationWalletId = 2;
+        var transferAmount = -100m;  // Negative amount
+
+        var command = new TransferFundCommand
+        {
+            SourceWalletId = sourceWalletId,
+            DestinationWalletId = destinationWalletId,
+            Amount = transferAmount
+        };
+
+        var sourceWallet = new Wallet
+        {
+            Id = sourceWalletId,
+            Name = "Source Wallet",
+            Balance = 500m,
+            UserId = _userId
+        };
+
+        var destinationWallet = new Wallet
+        {
+            Id = destinationWalletId,
+            Name = "Destination Wallet",
+            Balance = 200m,
+            UserId = _userId
+        };
+
+        _walletRepositoryMock.Setup(r => r.GetById(sourceWalletId))
+            .ReturnsAsync(sourceWallet);
+        _walletRepositoryMock.Setup(r => r.GetById(destinationWalletId))
+            .ReturnsAsync(destinationWallet);
+
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act
+        await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        sourceWallet.Balance.Should().Be(600m);  // Increased by 100
+        destinationWallet.Balance.Should().Be(100m);  // Decreased by 100
+        _walletRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_WithZeroAmount_ShouldNotChangeBalances()
+    {
+        // Arrange
+        var sourceWalletId = 1;
+        var destinationWalletId = 2;
+        var transferAmount = 0m;  // Zero amount
+
+        var command = new TransferFundCommand
+        {
+            SourceWalletId = sourceWalletId,
+            DestinationWalletId = destinationWalletId,
+            Amount = transferAmount
+        };
+
+        var sourceWallet = new Wallet
+        {
+            Id = sourceWalletId,
+            Name = "Source Wallet",
+            Balance = 500m,
+            UserId = _userId
+        };
+
+        var destinationWallet = new Wallet
+        {
+            Id = destinationWalletId,
+            Name = "Destination Wallet",
+            Balance = 200m,
+            UserId = _userId
+        };
+
+        _walletRepositoryMock.Setup(r => r.GetById(sourceWalletId))
+            .ReturnsAsync(sourceWallet);
+        _walletRepositoryMock.Setup(r => r.GetById(destinationWalletId))
+            .ReturnsAsync(destinationWallet);
+
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act
+        await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        sourceWallet.Balance.Should().Be(500m);  // Unchanged
+        destinationWallet.Balance.Should().Be(200m);  // Unchanged
+        _walletRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Once);
+    }
 }
