@@ -4,6 +4,7 @@ using FinanceTracker.Application.Wallets.Commands.UpdateWallet;
 using FinanceTracker.Application.Wallets.Dtos;
 using FinanceTracker.Application.Wallets.Queries.GetAllWallets;
 using FinanceTracker.Domain.Entities;
+using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -76,5 +77,54 @@ public class GetWalletByIdQueryHandlerTests
         // Assert
         result.Should().Be(expectedDto);
         _mapperMock.Verify(m => m.Map<WalletDto>(wallet), Times.Once);
+    }
+    [Fact]
+    public async Task Handle_ForWalletNotFound_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var walletId = 1;
+        var command = new GetWalletByIdQuery()
+        {
+            Id = walletId,
+        };
+
+        _walletRepositoryMock.Setup(r => r.GetById(walletId))
+            .ReturnsAsync((Wallet?)null);
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+    }
+    [Fact]
+    public async Task Handle_ForDeletedWallet_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var walletId = 1;
+        var command = new GetWalletByIdQuery()
+        {
+            Id = walletId,
+        };
+        var wallet = new Wallet()
+        {
+            Id = walletId,
+            Name = "test",
+            Type = "Bank",
+            Currency = "BDT",
+            UserId = _userId,
+            IsDeleted = true
+        };
+
+        _walletRepositoryMock.Setup(r => r.GetById(walletId))
+            .ReturnsAsync(wallet);
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
+            _handler.Handle(command, CancellationToken.None));
     }
 }
