@@ -3,6 +3,7 @@ using FinanceTracker.Application.PersonalTransactions.Commands.UpdatePersonalTra
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Constants.Category;
 using FinanceTracker.Domain.Entities;
+using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -120,5 +121,49 @@ public class DeletePersonalTransactionCommandHandlerTests
 
         personalTransaction.IsDeleted.Should().BeTrue();
         _personalTransactionRepositoryMock.Verify(r => r.SaveChangeAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_WithNonExistentTransaction_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var command = new DeletePersonalTransactionCommand()
+        {
+            Id = 1
+        };
+
+        _personalTransactionRepositoryMock.Setup(r => r.GetById(1))
+            .ReturnsAsync((PersonalTransaction?)null);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _personalTransactionRepositoryMock.Verify(r => r.SaveChangeAsync(), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_WithDeletedTransaction_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var command = new DeletePersonalTransactionCommand()
+        {
+            Id = 1
+        };
+
+        var transaction = new PersonalTransaction()
+        {
+            Id = 1,
+            IsDeleted = true
+        };
+
+        _personalTransactionRepositoryMock.Setup(r => r.GetById(1))
+            .ReturnsAsync(transaction);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _personalTransactionRepositoryMock.Verify(r => r.SaveChangeAsync(), Times.Never);
     }
 }
