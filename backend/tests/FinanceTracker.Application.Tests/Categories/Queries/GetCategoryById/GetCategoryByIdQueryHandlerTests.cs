@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.Categories.Dtos;
 using FinanceTracker.Application.Users;
+using FinanceTracker.Application.Wallets.Queries.GetWalletById;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
@@ -74,4 +75,27 @@ public class GetCategoryByIdQueryHandlerTests
         result.Should().Be(expectedDto);
         _mapperMock.Verify(m => m.Map<CategoryDto>(category), Times.Once);
     }
+    [Fact]
+    public async Task Handle_ForCategoryNotFound_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var categoryId = 1;
+        var command = new GetCategoryByIdQuery()
+        {
+            Id = categoryId,
+        };
+
+        _categoryRepositoryMock.Setup(r => r.GetById(categoryId))
+            .ReturnsAsync((Category?)null);
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+    }
+
+    
+
 }
