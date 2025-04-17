@@ -55,7 +55,7 @@ public class GetAllWalletsQueryHandlerTests
                 Id = 1,
                 Name = "Cash Wallet",
                 Type = "Cash",
-                Currency = "USD",
+                Currency = "BDT",
                 Balance = 500.0m,
                 UserId = _userId
             },
@@ -64,7 +64,7 @@ public class GetAllWalletsQueryHandlerTests
                 Id = 2,
                 Name = "Bank Account",
                 Type = "Bank",
-                Currency = "EUR",
+                Currency = "BDT",
                 Balance = 1500.0m,
                 UserId = _userId
             }
@@ -80,7 +80,7 @@ public class GetAllWalletsQueryHandlerTests
                 Id = 1,
                 Name = "Cash Wallet",
                 Type = "Cash",
-                Currency = "USD",
+                Currency = "BDT",
                 Balance = 500.0m
             },
             new WalletDto
@@ -88,7 +88,7 @@ public class GetAllWalletsQueryHandlerTests
                 Id = 2,
                 Name = "Bank Account",
                 Type = "Bank",
-                Currency = "EUR",
+                Currency = "BDT",
                 Balance = 1500.0m
             }
         };
