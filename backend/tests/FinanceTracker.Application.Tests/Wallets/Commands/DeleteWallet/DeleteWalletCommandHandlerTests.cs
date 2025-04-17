@@ -2,6 +2,7 @@
 using FinanceTracker.Application.Users;
 using FinanceTracker.Application.Wallets.Commands.UpdateWallet;
 using FinanceTracker.Domain.Entities;
+using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -70,5 +71,65 @@ public class DeleteWalletCommandHandlerTests
 
         wallet.IsDeleted.Should().BeTrue();
         _walletRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact()]
+    public async Task Handle_WithNonExistentWallet_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var walletId = 1;
+        var command = new DeleteWalletCommand()
+        {
+            Id = walletId
+        };
+
+        _walletRepositoryMock.Setup(r => r.GetById(walletId))
+            .ReturnsAsync((Wallet?)null);
+
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _walletRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Never);
+    }
+
+    [Fact()]
+    public async Task Handle_WithAlreadyDeletedWallet_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var walletId = 1;
+        var command = new DeleteWalletCommand()
+        {
+            Id = walletId
+        };
+
+        var wallet = new Wallet()
+        {
+            Id = walletId,
+            Name = "test",
+            Type = "Bank",
+            Currency = "BDT",
+            UserId = _userId,
+            IsDeleted = true
+        };
+
+        _walletRepositoryMock.Setup(r => r.GetById(walletId))
+            .ReturnsAsync(wallet);
+
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _walletRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Never);
     }
 }
