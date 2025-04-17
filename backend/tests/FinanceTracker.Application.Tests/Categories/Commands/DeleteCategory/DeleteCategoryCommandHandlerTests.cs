@@ -131,4 +131,37 @@ public class DeleteCategoryCommandHandlerTests
             _handler.Handle(command, CancellationToken.None));
         _categoryRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Never);
     }
+
+    [Fact()]
+    public async Task Handle_WithCategoryBelongingToAnotherUser_ShouldThrowForbiddenException()
+    {
+        // Arrange
+        var categoryId = 1;
+        var command = new DeleteCategoryCommand()
+        {
+            Id = categoryId,
+        };
+
+        var category = new Category()
+        {
+            Id = categoryId,
+            Title = "test",
+            DefaultTransactionType = "Income",
+            UserId = "different-user-id" // Different from current user
+        };
+
+        _categoryRepositoryMock.Setup(r => r.GetById(categoryId))
+            .ReturnsAsync(category);
+
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _categoryRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Never);
+    }
 }
