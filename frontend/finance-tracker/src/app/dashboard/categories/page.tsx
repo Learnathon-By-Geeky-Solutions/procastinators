@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -6,7 +5,6 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { PlusIcon } from "lucide-react";
 import CategoryTable from "@/components/category/category-table";
 import { fetchCategories } from "@/lib/data/categories-data";
 import { AddCategoryDialog } from "@/components/category/add-category-dialog";

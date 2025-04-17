@@ -3,6 +3,7 @@ using FinanceTracker.Application.Categories.Commands.UpdateCategory;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Application.Wallets.Commands.UpdateWallet;
 using FinanceTracker.Domain.Entities;
+using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -72,5 +73,64 @@ public class DeleteCategoryCommandHandlerTests
 
         category.IsDeleted.Should().BeTrue();
         _categoryRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact()]
+    public async Task Handle_WithNonExistentCategory_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var categoryId = 1;
+        var command = new DeleteCategoryCommand()
+        {
+            Id = categoryId
+        };
+
+        _categoryRepositoryMock.Setup(r => r.GetById(categoryId))
+            .ReturnsAsync((Category?)null);
+
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _categoryRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Never);
+    }
+
+    [Fact()]
+    public async Task Handle_WithCategoryAlreadyDeleted_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var categoryId = 1;
+        var command = new DeleteCategoryCommand()
+        {
+            Id = categoryId
+        };
+
+        var category = new Category()
+        {
+            Id = categoryId,
+            Title = "test",
+            DefaultTransactionType = "Income",
+            UserId = _userId,
+            IsDeleted = true
+        };
+
+        _categoryRepositoryMock.Setup(r => r.GetById(categoryId))
+            .ReturnsAsync(category);
+
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _categoryRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Never);
     }
 }
