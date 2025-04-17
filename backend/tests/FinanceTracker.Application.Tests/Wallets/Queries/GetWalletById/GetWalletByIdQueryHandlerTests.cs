@@ -127,4 +127,32 @@ public class GetWalletByIdQueryHandlerTests
         await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
             _handler.Handle(command, CancellationToken.None));
     }
+    [Fact]
+    public async Task Handle_WalletBelongsToDifferentUser_ShouldThrowForbiddenException()
+    {
+        // Arrange
+        var walletId = 1;
+        var command = new GetWalletByIdQuery()
+        {
+            Id = walletId,
+        };
+        var wallet = new Wallet()
+        {
+            Id = walletId,
+            Name = "test",
+            Type = "Bank",
+            Currency = "BDT",
+            UserId = "different-user-id"
+        };
+
+        _walletRepositoryMock.Setup(r => r.GetById(walletId))
+            .ReturnsAsync(wallet);
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+    }
 }
