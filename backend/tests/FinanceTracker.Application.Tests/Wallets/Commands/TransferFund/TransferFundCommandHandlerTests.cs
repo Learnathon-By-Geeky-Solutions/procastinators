@@ -1,5 +1,6 @@
 ﻿using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
+using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -76,5 +77,79 @@ public class TransferFundCommandHandlerTests
         sourceWallet.Balance.Should().Be(400m);
         destinationWallet.Balance.Should().Be(300m);
         _walletRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Once);
+    }
+    [Fact]
+    public async Task Handle_SourceWalletNotFound_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var sourceWalletId = 1;
+        var destinationWalletId = 2;
+        var transferAmount = 100m;
+
+        var command = new TransferFundCommand
+        {
+            SourceWalletId = sourceWalletId,
+            DestinationWalletId = destinationWalletId,
+            Amount = transferAmount
+        };
+
+        _walletRepositoryMock.Setup(r => r.GetById(sourceWalletId))
+            .ReturnsAsync((Wallet?)null);
+
+        var destinationWallet = new Wallet
+        {
+            Id = destinationWalletId,
+            Name = "Destination Wallet",
+            Balance = 200m,
+            UserId = _userId
+        };
+
+        _walletRepositoryMock.Setup(r => r.GetById(destinationWalletId))
+            .ReturnsAsync(destinationWallet);
+
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task Handle_DestinationWalletNotFound_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var sourceWalletId = 1;
+        var destinationWalletId = 2;
+        var transferAmount = 100m;
+
+        var command = new TransferFundCommand
+        {
+            SourceWalletId = sourceWalletId,
+            DestinationWalletId = destinationWalletId,
+            Amount = transferAmount
+        };
+
+        var sourceWallet = new Wallet
+        {
+            Id = sourceWalletId,
+            Name = "Source Wallet",
+            Balance = 500m,
+            UserId = _userId
+        };
+
+        _walletRepositoryMock.Setup(r => r.GetById(sourceWalletId))
+            .ReturnsAsync(sourceWallet);
+        _walletRepositoryMock.Setup(r => r.GetById(destinationWalletId))
+            .ReturnsAsync((Wallet?)null);
+
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
+            _handler.Handle(command, CancellationToken.None));
     }
 }
