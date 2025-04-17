@@ -96,6 +96,33 @@ public class GetCategoryByIdQueryHandlerTests
             _handler.Handle(command, CancellationToken.None));
     }
 
-    
+    [Fact]
+    public async Task Handle_ForDeletedCategory_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var categoryId = 1;
+        var command = new GetCategoryByIdQuery()
+        {
+            Id = categoryId,
+        };
+        var category = new Category()
+        {
+            Id = categoryId,
+            Title = "test",
+            DefaultTransactionType = "Income",
+            UserId = _userId,
+            IsDeleted = true
+        };
+
+        _categoryRepositoryMock.Setup(r => r.GetById(categoryId))
+            .ReturnsAsync(category);
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser())
+            .Returns(user);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+    }
 
 }
