@@ -107,6 +107,9 @@ public class CreatePersonalTransactionCommandHandlerTests
         // Assert
         result.Should().Be(1);
         personalTransaction.UserId.Should().Be(_userId);
+        wallet.UserId.Should().Be(_userId);
+        category.UserId.Should().Be(_userId);
+
         _transactionRepositoryMock.Verify(r => r.Create(personalTransaction), Times.Once);
     }
 
