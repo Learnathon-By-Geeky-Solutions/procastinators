@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.Categories.Queries.GetCategoryById;
-using FinanceTracker.Application.LoanRequests.Dtos.LoanRequest;
+using FinanceTracker.Application.LoanRequests.Dtos.LoanRequestDTO;
 using FinanceTracker.Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
