@@ -11,8 +11,7 @@ namespace FinanceTracker.Application.LoanRequests.Commands.ApproveLoanRequest;
 public class ApproveLoanRequestCommandHandler(
     ILogger<ApproveLoanRequestCommandHandler> logger,
     ILoanRequestRepository loanRequestRepo,
-    ILoanRepository loanRepo,
-    IMapper mapper) : IRequestHandler<ApproveLoanRequestCommand, int>
+    ILoanRepository loanRepo) : IRequestHandler<ApproveLoanRequestCommand, int>
 {
     public async Task<int> Handle(ApproveLoanRequestCommand request, CancellationToken cancellationToken)
     {

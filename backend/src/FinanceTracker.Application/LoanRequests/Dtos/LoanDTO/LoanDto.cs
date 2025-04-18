@@ -1,5 +1,5 @@
 ﻿
-namespace FinanceTracker.Application.LoanRequests.Dtos.Loan;
+namespace FinanceTracker.Application.LoanRequests.Dtos.LoanDTO;
 
 public class LoanDto
 {
