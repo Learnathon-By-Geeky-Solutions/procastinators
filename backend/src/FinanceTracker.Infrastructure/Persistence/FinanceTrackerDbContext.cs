@@ -1,6 +1,7 @@
 ﻿using FinanceTracker.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using static FinanceTracker.Infrastructure.Extensions.TypeConverters;
 
 namespace FinanceTracker.Infrastructure.Persistence;
 
@@ -45,5 +46,15 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
             .WithMany(w => w.Transactions)
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        ArgumentNullException.ThrowIfNull(configurationBuilder);
+
+        configurationBuilder.Properties<DateTime>().HaveConversion<DateTimeAsUtcValueConverter>();
+        configurationBuilder
+            .Properties<DateTime?>()
+            .HaveConversion<NullableDateTimeAsUtcValueConverter>();
     }
 }

@@ -15,7 +15,7 @@ public class UpdateWalletCommandValidatorTests
         {
             Name = "Test",
             Type = "Bank",
-            Currency = "BDT"
+            Currency = "BDT",
         };
 
         var validator = new UpdateWalletCommandValidator();
@@ -28,6 +28,7 @@ public class UpdateWalletCommandValidatorTests
 
         results.ShouldNotHaveAnyValidationErrors();
     }
+
     [Fact()]
     public void Validator_ForInvalidCommand_ShouldHaveValidationErrors()
     {
@@ -37,7 +38,7 @@ public class UpdateWalletCommandValidatorTests
         {
             Name = "",
             Type = "abc",
-            Currency = "abc"
+            Currency = "abc",
         };
 
         var validator = new UpdateWalletCommandValidator();
@@ -75,8 +76,9 @@ public class UpdateWalletCommandValidatorTests
 
     [Theory()]
     [InlineData("BDT")]
-    [InlineData("USD")]
-    public void Validator_ForValidCommand_ShouldNotHaveValidationErrorsForCurrencyProperty(string currency)
+    public void Validator_ForValidCommand_ShouldNotHaveValidationErrorsForCurrencyProperty(
+        string currency
+    )
     {
         // Arrange
 

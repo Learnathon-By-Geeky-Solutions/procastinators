@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.Users;
-using FinanceTracker.Application.Wallets.Commands.UpdateWallet;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
@@ -9,10 +8,12 @@ using Microsoft.Extensions.Logging;
 
 namespace FinanceTracker.Application.Categories.Commands.UpdateCategory;
 
-public class UpdateCategoryCommandHandler(ILogger<UpdateWalletCommandHandler> logger,
+public class UpdateCategoryCommandHandler(
+    ILogger<UpdateCategoryCommandHandler> logger,
     IUserContext userContext,
     IMapper mapper,
-    ICategoryRepository repo) : IRequestHandler<UpdateCategoryCommand>
+    ICategoryRepository repo
+) : IRequestHandler<UpdateCategoryCommand>
 {
     public async Task Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
     {
