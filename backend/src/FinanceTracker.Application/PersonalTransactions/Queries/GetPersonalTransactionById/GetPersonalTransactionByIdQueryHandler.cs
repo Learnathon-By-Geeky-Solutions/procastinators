@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.PersonalTransactions.Dtos;
 using FinanceTracker.Application.Users;
+using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using MediatR;
@@ -21,10 +22,18 @@ public class GetPersonalTransactionByIdQueryHandler(
     )
     {
         var user = userContext.GetUser();
-        if (user == null)
-            throw new ForbiddenException();
-        logger.LogInformation("User: {@user}", user);
         var transaction = await repo.GetById(request.Id);
+
+        logger.LogInformation("User: {@u} \n{@r}", user, request);
+
+        if (transaction == null || transaction.IsDeleted)
+        {
+            throw new NotFoundException(nameof(PersonalTransaction), request.Id.ToString());
+        }
+        if (transaction.UserId != user!.Id)
+        {
+            throw new ForbiddenException();
+        }
         return mapper.Map<PersonalTransactionDto>(transaction);
     }
 }
