@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace FinanceTracker.Application.LoanRequests.Commands;
+namespace FinanceTracker.Application.LoanRequests.Commands.CreateLoanRequest;
 
 public class CreateLoanRequestCommand : IRequest<int>
 {

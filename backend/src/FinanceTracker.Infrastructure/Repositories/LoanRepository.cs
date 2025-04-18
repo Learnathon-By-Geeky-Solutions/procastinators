@@ -19,9 +19,11 @@ internal class LoanRepository(FinanceTrackerDbContext dbContext) : ILoanReposito
         return await dbContext.Loans.Include(l => l.LoanRequest).FirstOrDefaultAsync(l => l.Id == id);
     }
 
-    public async Task<IEnumerable<Loan>> GetAllAsync()
+    public async Task<IEnumerable<Loan>> GetAllAsync(String LenderId)
     {
-        return await dbContext.Loans.Include(l => l.LoanRequest).ToListAsync();
+        return await dbContext.Loans.Include(l => l.LoanRequest)
+            .Where(l=>l.LenderId == LenderId)
+            .ToListAsync();
     }
 
     public async Task<int> SaveChangesAsync() => await dbContext.SaveChangesAsync();
