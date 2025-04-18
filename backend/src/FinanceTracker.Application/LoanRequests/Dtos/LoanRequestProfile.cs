@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FinanceTracker.Application.LoanRequests.Commands;
+using FinanceTracker.Application.LoanRequests.Commands.CreateLoanRequest;
 using FinanceTracker.Domain.Entities;
 namespace FinanceTracker.Application.LoanRequests.Dtos;
 
