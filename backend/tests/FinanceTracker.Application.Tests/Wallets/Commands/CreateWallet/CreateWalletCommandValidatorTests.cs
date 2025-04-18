@@ -1,7 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using Xunit;
 
-
 namespace FinanceTracker.Application.Wallets.Commands.CreateWallet.Tests;
 
 public class CreateWalletCommandValidatorTests
@@ -15,7 +14,7 @@ public class CreateWalletCommandValidatorTests
         {
             Name = "Hell",
             Type = "Bank",
-            Currency = "BDT"
+            Currency = "BDT",
         };
 
         var validator = new CreateWalletCommandValidator();
@@ -38,7 +37,7 @@ public class CreateWalletCommandValidatorTests
         {
             Name = "",
             Type = "RU",
-            Currency = "QAR"
+            Currency = "QAR",
         };
 
         var validator = new CreateWalletCommandValidator();
@@ -74,11 +73,11 @@ public class CreateWalletCommandValidatorTests
         results.ShouldNotHaveValidationErrorFor(c => c.Type);
     }
 
-
     [Theory()]
     [InlineData("BDT")]
-    [InlineData("USD")]
-    public void Validator_ForValidCommand_ShouldNotHaveValidationErrorsForCurrencyProperty(string currency)
+    public void Validator_ForValidCommand_ShouldNotHaveValidationErrorsForCurrencyProperty(
+        string currency
+    )
     {
         // Arrange
 

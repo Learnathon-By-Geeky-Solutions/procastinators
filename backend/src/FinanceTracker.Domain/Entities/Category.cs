@@ -11,5 +11,4 @@ public class Category
     public string UserId { get; set; } = default!;
 
     public User User { get; set; } = default!;
-    public ICollection<PersonalTransaction>? Transactions { get; set; }
 }
