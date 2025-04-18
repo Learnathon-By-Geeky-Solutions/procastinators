@@ -1,4 +1,4 @@
-﻿using FinanceTracker.Application.LoanRequests.Dtos;
+﻿using FinanceTracker.Application.LoanRequests.Dtos.LoanRequest;
 using MediatR;
 
 namespace FinanceTracker.Application.LoanRequests.Queries.GetLoanRequestById;
