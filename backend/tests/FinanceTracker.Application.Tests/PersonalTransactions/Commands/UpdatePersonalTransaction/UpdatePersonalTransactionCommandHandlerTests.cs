@@ -56,7 +56,7 @@ public class UpdatePersonalTransactionCommandHandlerTests
         var command = new UpdatePersonalTransactionCommand()
         {
             Id = personalTransactionId,
-            TransactionType = "Income",
+            TransactionType = "Expense",
             Amount = 500,
             CategoryId = categoryId,
             WalletId = walletId
@@ -95,8 +95,8 @@ public class UpdatePersonalTransactionCommandHandlerTests
             Id = personalTransactionId,
             TransactionType = TransactionTypes.Expense,
             Amount = 300,
-            WalletId = walletId,
-            Wallet = wallet,
+            WalletId = oldWalletId,
+            Wallet = oldWallet,
             CategoryId = categoryId,
             Category = category,
             UserId = _userId
@@ -127,13 +127,13 @@ public class UpdatePersonalTransactionCommandHandlerTests
         _personalTransactionRepositoryMock.Verify(r => r.SaveChangeAsync(), Times.Once);
         _mapperMock.Verify(m => m.Map(command, personalTransaction), Times.Once);
 
-        //// Verify old wallet balance was updated (rollback the original transaction)
-        //// Original balance: 2000, Original income: 300, After rollback: 2000 - 300 = 1700
-        //Xunit.Assert.Equal(1700m, oldWallet.Balance);
+        // Verify old wallet balance was updated (rollback the original transaction)
+        // Original balance: 2000, Original income: 300, After rollback: 2000 + 300 = 2300
+        Xunit.Assert.Equal(2300m, oldWallet.Balance);
 
-        //// Verify new wallet balance was updated
-        //// Original balance: 1000, New income: 500, After update: 1000 + 500 = 1500
-        //Xunit.Assert.Equal(1500m, wallet.Balance);
+        // Verify new wallet balance was updated
+        // Original balance: 1000, New income: 500, After update: 1000 - 500 = 500
+        Xunit.Assert.Equal(500m, wallet.Balance);
 
     }
     [Fact]
