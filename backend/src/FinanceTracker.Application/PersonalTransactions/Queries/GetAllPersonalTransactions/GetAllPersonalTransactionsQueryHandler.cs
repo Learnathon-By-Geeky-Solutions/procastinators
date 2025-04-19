@@ -24,6 +24,9 @@ public class GetAllPersonalTransactionsQueryHandler(
         var user = userContext.GetUser();
         if (user == null)
             throw new ForbiddenException();
+
+        logger.LogInformation("User: {@u}", user);
+
         var transactions = await repo.GetAll(user.Id);
         return mapper.Map<IEnumerable<PersonalTransactionDto>>(transactions);
     }

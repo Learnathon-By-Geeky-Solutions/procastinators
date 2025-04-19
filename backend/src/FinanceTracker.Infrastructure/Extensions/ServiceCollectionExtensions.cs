@@ -27,5 +27,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IWalletRepository, WalletRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IPersonalTransactionRepository, PersonalTransactionRepository>();
+        services.AddScoped<ILoanRepository, LoanRepository>();
+        services.AddScoped<ILoanRequestRepository, LoanRequestRepository>();
+        services.AddScoped<IInstallmentRepository, InstallmentRepository>();
     }
 }

@@ -1,0 +1,94 @@
+name: .NET CI with SonarCloud Analysis
+on:
+    pull_request:
+        branches:
+            - main
+            - develop
+        types: [reopened, synchronize, opened]
+    push:
+        branches:
+            - main
+            - develop
+    workflow_dispatch: # Allows manual triggering
+
+jobs:
+    build-and-analyze:
+        name: Build and Analyze
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0 # Fetching full history for SonarCloud
+
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                  dotnet-version: "8.0.x"
+
+            - name: Set up JDK 17 for SonarCloud
+              uses: actions/setup-java@v3
+              with:
+                  java-version: 17
+                  distribution: "zulu"
+
+            - name: Cache SonarCloud packages
+              uses: actions/cache@v3
+              with:
+                  path: ~/.sonar/cache
+                  key: ${{ runner.os }}-sonar
+                  restore-keys: ${{ runner.os }}-sonar
+
+            - name: Cache SonarCloud scanner
+              id: cache-sonar-scanner
+              uses: actions/cache@v3
+              with:
+                  path: ./.sonar/scanner
+                  key: ${{ runner.os }}-sonar-scanner
+                  restore-keys: ${{ runner.os }}-sonar-scanner
+
+            - name: Install SonarCloud scanner
+              if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+              run: |
+                  dotnet tool install --global dotnet-sonarscanner
+
+            - name: Install code coverage tool
+              run: |
+                  dotnet tool install --global dotnet-coverage
+
+            - name: Restore dependencies
+              run: dotnet restore FinanceTracker.sln
+
+            - name: Begin SonarCloud analysis
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+              run: |
+                  dotnet sonarscanner begin \
+                    /k:"Learnathon-By-Geeky-Solutions_procastinators" \
+                    /o:"learnathon-by-geeky-solutions" \
+                    /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+                    /d:sonar.host.url="https://sonarcloud.io" \
+                    /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
+                    /d:sonar.inclusions="backend/src/**" \
+                    /d:sonar.exclusions="frontend/**,**/Migrations/**" \
+                    /d:sonar.test.inclusions="backend/tests/**" \
+                    /d:sonar.sourceEncoding="UTF-8" \
+                    /d:sonar.projectBaseDir="${{ github.workspace }}" \
+                    /d:sonar.qualitygate.wait=true \
+                    /d:sonar.scm.provider=git \
+                    /d:sonar.alm.github.api.url=https://api.github.com \
+                    /d:sonar.analytics.ci=github-actions
+
+            - name: Build
+              run: dotnet build FinanceTracker.sln --no-restore --configuration Release
+
+            - name: Test with coverage
+              run: |
+                  dotnet test FinanceTracker.sln --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+
+            - name: End SonarCloud analysis
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+              run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
