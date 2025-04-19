@@ -18,7 +18,7 @@ public class LoanRequestController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateLoanRequest(CreateLoanRequestCommand command)
     {
         var id = await mediator.Send(command);
-        return CreatedAtAction(nameof(GetLoanRequestByIdQuery), new { id }, null);
+        return CreatedAtAction(nameof(GetLoanRequestById), new { id }, null);
     }
 
     [HttpPost("{id}/approve")]
