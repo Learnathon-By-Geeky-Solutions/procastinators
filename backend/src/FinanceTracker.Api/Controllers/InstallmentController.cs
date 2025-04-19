@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using FinanceTracker.Application.Installments.Commands.PayInstallments;
+using FinanceTracker.Application.Installments.Queries.GetInstallmentById;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,5 +11,11 @@ namespace FinanceTracker.Api.Controllers;
 [Authorize]
 public class InstallmentController(IMediator mediator) : ControllerBase
 {
-  
+    [HttpPost]
+    public async Task<IActionResult> PayInstallment(PayInstallmentCommand command)
+    {
+        var id = await mediator.Send(command);
+        return CreatedAtAction(nameof(GetInstallmentByIdQuery), new { id }, null);
+    }
+
 }
