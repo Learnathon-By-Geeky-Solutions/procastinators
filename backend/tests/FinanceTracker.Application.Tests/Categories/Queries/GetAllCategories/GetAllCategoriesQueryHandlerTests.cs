@@ -94,4 +94,32 @@ public class GetAllCategoriesQueryHandlerTests
         _categoryRepositoryMock.Verify(r => r.GetAll(_userId), Times.Once);
         _mapperMock.Verify(m => m.Map<IEnumerable<CategoryDto>>(categories), Times.Once);
     }
+    [Fact()]
+    public async Task Handle_WhenNoCategories_ShouldReturnEmptyCollection()
+    {
+        // Arrange
+        var query = new GetAllCategoriesQuery();
+
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser()).Returns(user);
+
+        var categories = new List<Category>();
+
+        _categoryRepositoryMock.Setup(r => r.GetAll(_userId))
+            .ReturnsAsync(categories);
+
+        var walletDtos = new List<CategoryDto>();
+
+        _mapperMock.Setup(m => m.Map<IEnumerable<CategoryDto>>(categories))
+            .Returns(walletDtos);
+
+        // Act
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Should().BeEmpty();
+        _categoryRepositoryMock.Verify(r => r.GetAll(_userId), Times.Once);
+        _mapperMock.Verify(m => m.Map<IEnumerable<CategoryDto>>(categories), Times.Once);
+    }
 }
