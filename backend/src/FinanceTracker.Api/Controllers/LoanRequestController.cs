@@ -27,4 +27,11 @@ public class LoanRequestController(IMediator mediator) : ControllerBase
         await mediator.Send(new ApproveLoanRequestCommand (id));
         return NoContent();
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllLoanRequests()
+    {
+        var result = await mediator.Send(new GetAllLoanRequestQuery());
+        return Ok(result);
+    }
 }
