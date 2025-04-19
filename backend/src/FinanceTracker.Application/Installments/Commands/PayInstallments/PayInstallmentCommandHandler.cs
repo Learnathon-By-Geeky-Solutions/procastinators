@@ -21,6 +21,7 @@ public class PayInstallmentCommandHandler(
 
         // Subtract the paid amount from the loan's due amount
         loan.DueAmount -= request.Amount;
+        loan.DueDate = request.NextDueDate;
 
         var installment = new Installment
         {
