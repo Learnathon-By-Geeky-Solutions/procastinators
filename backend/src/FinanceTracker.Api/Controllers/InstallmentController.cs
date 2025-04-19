@@ -15,7 +15,7 @@ public class InstallmentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> PayInstallment(PayInstallmentCommand command)
     {
         var id = await mediator.Send(command);
-        return CreatedAtAction(nameof(GetInstallmentByIdQuery), new { id }, null);
+        return CreatedAtAction(nameof(GetInstallmentById), new { id }, null);
     }
 
     [HttpGet("{id}")]
