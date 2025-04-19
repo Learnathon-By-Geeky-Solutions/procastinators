@@ -4,7 +4,7 @@ using FinanceTracker.Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace FinanceTracker.Application.LoanRequests.Commands.CreateLoan;
+namespace FinanceTracker.Application.Loans.Commands.CreateLoan;
 
 public class CreateLoanCommandHandler(
     ILogger<CreateLoanCommandHandler> logger,

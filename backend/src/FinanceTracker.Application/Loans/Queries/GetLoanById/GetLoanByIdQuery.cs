@@ -1,7 +1,7 @@
-﻿using FinanceTracker.Application.LoanRequests.Dtos.LoanDTO;
+﻿using FinanceTracker.Application.Loans.Dtos.LoanDTO;
 using MediatR;
 
-namespace FinanceTracker.Application.LoanRequests.Queries.GetLoanById;
+namespace FinanceTracker.Application.Loans.Queries.GetLoanById;
 
 public class GetLoanByIdQuery : IRequest<LoanDto>
 {

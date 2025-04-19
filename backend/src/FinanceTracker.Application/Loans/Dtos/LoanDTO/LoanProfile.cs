@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FinanceTracker.Domain.Entities;
 
-namespace FinanceTracker.Application.LoanRequests.Dtos.LoanDTO;
+namespace FinanceTracker.Application.Loans.Dtos.LoanDTO;
 
 public class LoanProfile : Profile
 {
