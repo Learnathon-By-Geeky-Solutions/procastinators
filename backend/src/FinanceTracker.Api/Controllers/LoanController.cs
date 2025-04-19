@@ -17,4 +17,11 @@ public class LoanController(IMediator mediator) : ControllerBase
         var id = await mediator.Send(command);
         return CreatedAtAction(nameof(GetLoanByIdQuery), new { id }, null);
     }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetLoanById(int id)
+    {
+        var result = await mediator.Send(new GetLoanByIdQuery { Id = id });
+        return Ok(result);
+    }
 }
