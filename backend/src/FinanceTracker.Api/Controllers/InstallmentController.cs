@@ -18,4 +18,11 @@ public class InstallmentController(IMediator mediator) : ControllerBase
         return CreatedAtAction(nameof(GetInstallmentByIdQuery), new { id }, null);
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetInstallmentById(int id)
+    {
+        var result = await mediator.Send(new GetInstallmentByIdQuery(id));
+        return Ok(result);
+    }
+
 }
