@@ -1,4 +1,5 @@
 ﻿using FinanceTracker.Application.Installments.Commands.PayInstallments;
+using FinanceTracker.Application.Installments.Queries.GetAllInstallments;
 using FinanceTracker.Application.Installments.Queries.GetInstallmentById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,13 @@ public class InstallmentController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetInstallmentById(int id)
     {
         var result = await mediator.Send(new GetInstallmentByIdQuery(id));
+        return Ok(result);
+    }
+
+    [HttpGet("loan/{loanId}")]
+    public async Task<IActionResult> GetAllInstallmentsByLoanId(int loanId)
+    {
+        var result = await mediator.Send(new GetAllInstallmentsQuery(loanId));
         return Ok(result);
     }
 
