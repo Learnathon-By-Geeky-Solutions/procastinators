@@ -17,9 +17,10 @@ public class CreateLoanRequestCommandHandler(
     public async Task<int> Handle(CreateLoanRequestCommand request, CancellationToken cancellationToken)
     {
         var user = userContext.GetUser();
-        if (user == null || user.Id != request.BorrowerId) throw new ForbiddenException();
+        if (user == null) throw new ForbiddenException();
 
         var loanRequest = mapper.Map<CreateLoanRequestCommand, LoanRequest>(request);
+        loanRequest.BorrowerId = user.Id;
         loanRequest.IsApproved = false;
 
         logger.LogInformation("Creating LoanRequest: {@loanRequest}", loanRequest);
