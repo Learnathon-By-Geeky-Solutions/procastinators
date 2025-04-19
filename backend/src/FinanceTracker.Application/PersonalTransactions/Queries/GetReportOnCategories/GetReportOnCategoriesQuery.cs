@@ -1,4 +1,5 @@
-﻿using FinanceTracker.Application.PersonalTransactions.Dtos;
+﻿using FinanceTracker.Application.Extensions;
+using FinanceTracker.Application.PersonalTransactions.Dtos;
 using MediatR;
 
 namespace FinanceTracker.Application.PersonalTransactions.Queries.GetReportOnCategories;

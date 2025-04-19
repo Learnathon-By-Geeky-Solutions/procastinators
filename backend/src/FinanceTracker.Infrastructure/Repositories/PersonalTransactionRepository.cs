@@ -19,6 +19,7 @@ namespace FinanceTracker.Infrastructure.Repositories
         {
             return await dbContext
                 .PersonalTransactions.Where(t => t.UserId == userId && !t.IsDeleted)
+                .OrderByDescending(t => t.Timestamp)
                 .ToListAsync();
         }
 
