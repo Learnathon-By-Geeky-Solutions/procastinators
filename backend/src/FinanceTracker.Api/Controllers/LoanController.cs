@@ -1,5 +1,6 @@
 ﻿using FinanceTracker.Application.Loans.Commands.CreateLoan;
 using FinanceTracker.Application.Loans.Queries.GetAllLoans;
+using FinanceTracker.Application.Loans.Queries.GetAllLoansAsBorrower;
 using FinanceTracker.Application.Loans.Queries.GetLoanById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -28,6 +29,13 @@ public class LoanController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetAllLoans([FromQuery] GetAllLoansQuery query)
+    {
+        var result = await mediator.Send(query);
+        return Ok(result);
+    }
+
+    [HttpGet("asBorrower")]
+    public async Task<IActionResult> GetAllLoansAsBorrower([FromQuery] GetAllLoansAsBorrowerQuery query)
     {
         var result = await mediator.Send(query);
         return Ok(result);
