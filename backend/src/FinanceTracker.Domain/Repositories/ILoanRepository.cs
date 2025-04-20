@@ -8,5 +8,7 @@ public interface ILoanRepository
     Task<int> CreateAsync(Loan loan);
     Task<Loan?> GetByIdAsync(int id);
     Task<IEnumerable<Loan>> GetAllAsync(String LenderId);
+
+    Task<IEnumerable<LoanRequest>> GetAllByBorrowerAsync(String BorrowerId);
     Task<int> SaveChangesAsync();
 }
