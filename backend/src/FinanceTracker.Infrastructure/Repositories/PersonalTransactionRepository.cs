@@ -18,7 +18,8 @@ namespace FinanceTracker.Infrastructure.Repositories
         public async Task<IEnumerable<PersonalTransaction>> GetAll(string userId)
         {
             return await dbContext
-                .PersonalTransactions.Where(t => t.UserId == userId && !t.IsDeleted)
+                .PersonalTransactions.Where(t => t.UserId == userId)
+                .Where(t => !t.IsDeleted)
                 .OrderByDescending(t => t.Timestamp)
                 .ToListAsync();
         }
@@ -34,9 +35,10 @@ namespace FinanceTracker.Infrastructure.Repositories
             string? type
         )
         {
-            var query = dbContext.PersonalTransactions.Where(t =>
-                t.UserId == userId && !t.IsDeleted && t.Timestamp >= DateTime.UtcNow.AddDays(-days)
-            );
+            var query = dbContext
+                .PersonalTransactions.Where(t => t.UserId == userId)
+                .Where(t => !t.IsDeleted)
+                .Where(t => t.Timestamp >= DateTime.UtcNow.AddDays(-days));
 
             if (type != null)
                 query = query.Where(t => t.TransactionType == type);
