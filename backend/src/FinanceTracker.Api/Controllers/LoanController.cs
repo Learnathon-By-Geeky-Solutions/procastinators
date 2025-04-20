@@ -35,7 +35,9 @@ public class LoanController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("asBorrower")]
-    public async Task<IActionResult> GetAllLoansAsBorrower([FromQuery] GetAllLoansAsBorrowerQuery query)
+    public async Task<IActionResult> GetAllLoansAsBorrower(
+        [FromQuery] GetAllLoansAsBorrowerQuery query
+    )
     {
         var result = await mediator.Send(query);
         return Ok(result);

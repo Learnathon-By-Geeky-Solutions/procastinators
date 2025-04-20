@@ -1,5 +1,4 @@
-﻿
-using FinanceTracker.Domain.Entities;
+﻿using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using MediatR;
@@ -13,11 +12,14 @@ public class PayInstallmentCommandHandler(
     ILogger<PayInstallmentCommandHandler> logger
 ) : IRequestHandler<PayInstallmentCommand, int>
 {
-    public async Task<int> Handle(PayInstallmentCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(
+        PayInstallmentCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var loan = await loanRepo.GetByIdAsync(request.LoanId);
         if (loan == null || loan.IsDeleted)
-            throw new NotFoundException("Loan",request.LoanId.ToString());
+            throw new NotFoundException("Loan", request.LoanId.ToString());
 
         // Subtract the paid amount from the loan's due amount
         loan.DueAmount -= request.Amount;
@@ -28,11 +30,11 @@ public class PayInstallmentCommandHandler(
             LoanId = request.LoanId,
             Amount = request.Amount,
             Note = request.Note,
-            NextDueDate = request.NextDueDate
+            NextDueDate = request.NextDueDate,
         };
 
         await installmentRepo.CreateAsync(installment);
-        await loanRepo.SaveChangesAsync(); 
+        await loanRepo.SaveChangesAsync();
         await installmentRepo.SaveChangesAsync();
 
         logger.LogInformation("Installment paid: {@installment}", installment);

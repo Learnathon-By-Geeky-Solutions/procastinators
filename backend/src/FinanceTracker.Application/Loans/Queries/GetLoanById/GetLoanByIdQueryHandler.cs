@@ -10,7 +10,8 @@ namespace FinanceTracker.Application.Loans.Queries.GetLoanById;
 public class GetLoanByIdQueryHandler(
     ILoanRepository loanRepo,
     IUserContext userContext,
-    IMapper mapper) : IRequestHandler<GetLoanByIdQuery, LoanDto>
+    IMapper mapper
+) : IRequestHandler<GetLoanByIdQuery, LoanDto>
 {
     public async Task<LoanDto> Handle(GetLoanByIdQuery request, CancellationToken cancellationToken)
     {

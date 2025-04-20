@@ -8,11 +8,11 @@ namespace FinanceTracker.Infrastructure.Repositories;
 
 internal class LoanRequestRepository(FinanceTrackerDbContext dbContext) : ILoanRequestRepository
 {
-    public async Task<int> CreateAsync(LoanRequest loanRequest)
+    public async Task<int> CreateAsync(LoanRequest request)
     {
-        dbContext.LoanRequests.Add(loanRequest);
+        dbContext.LoanRequests.Add(request);
         await dbContext.SaveChangesAsync();
-        return loanRequest.Id;
+        return request.Id;
     }
 
     public async Task<IEnumerable<LoanRequest>> GetAllReceivedAsync(string userId)

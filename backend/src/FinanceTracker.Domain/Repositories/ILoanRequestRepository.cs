@@ -1,5 +1,4 @@
-﻿
-using FinanceTracker.Domain.Entities;
+﻿using FinanceTracker.Domain.Entities;
 
 namespace FinanceTracker.Domain.Repositories;
 
