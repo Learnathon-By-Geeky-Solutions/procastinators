@@ -11,8 +11,10 @@ public class GetAllLoansAsBorrowerQueryHandler(ILoanRepository loanRepo,
     IUserContext userContext,
     IMapper mapper) : IRequestHandler<GetAllLoansAsBorrowerQuery, IEnumerable<LoanRequestDto>>
 {
-    public Task<IEnumerable<LoanRequestDto>> Handle(GetAllLoansAsBorrowerQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<LoanRequestDto>> Handle(GetAllLoansAsBorrowerQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var user = userContext.GetUser();
+        var loans = await loanRepo.GetAllByBorrowerAsync(user!.Id);
+        return mapper.Map<IEnumerable<LoanRequestDto>>(loans);
     }
 }
