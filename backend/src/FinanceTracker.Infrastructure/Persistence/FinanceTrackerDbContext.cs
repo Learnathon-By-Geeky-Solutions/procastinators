@@ -8,6 +8,7 @@ namespace FinanceTracker.Infrastructure.Persistence;
 internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext> options)
     : IdentityDbContext<User>(options)
 {
+    private const string DecimalColumnType = "decimal(18, 2)";
     internal DbSet<Wallet> Wallets { get; set; } = default!;
     internal DbSet<Category> Categories { get; set; } = default!;
     internal DbSet<PersonalTransaction> PersonalTransactions { get; set; } = default!;
@@ -21,28 +22,28 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
 
         builder.Entity<Wallet>(entity =>
         {
-            entity.Property(e => e.Balance).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Balance).HasColumnType(DecimalColumnType);
         });
 
         builder.Entity<PersonalTransaction>(entity =>
         {
-            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Amount).HasColumnType(DecimalColumnType);
         });
 
         builder.Entity<LoanRequest>(entity =>
         {
-            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Amount).HasColumnType(DecimalColumnType);
         });
 
         builder.Entity<Loan>(entity =>
         {
-            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.DueAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Amount).HasColumnType(DecimalColumnType);
+            entity.Property(e => e.DueAmount).HasColumnType(DecimalColumnType);
         });
 
         builder.Entity<Installment>(entity =>
         {
-            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Amount).HasColumnType(DecimalColumnType);
         });
 
         builder

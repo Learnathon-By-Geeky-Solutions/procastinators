@@ -15,10 +15,14 @@ public class GetLoanByIdQueryHandler(
 {
     public async Task<LoanDto> Handle(GetLoanByIdQuery request, CancellationToken cancellationToken)
     {
+        var user = userContext.GetUser() ?? throw new ForbiddenException();
         var loan = await loanRepo.GetByIdAsync(request.Id);
         if (loan == null || loan.IsDeleted)
             throw new NotFoundException("Loan", request.Id.ToString());
-
+        bool isBorrower = loan.LoanRequest != null && loan.LoanRequest.BorrowerId == user.Id;
+        bool isLender = loan.LenderId == user.Id;
+        if (!isBorrower && !isLender)
+            throw new ForbiddenException();
         return mapper.Map<LoanDto>(loan);
     }
 }
