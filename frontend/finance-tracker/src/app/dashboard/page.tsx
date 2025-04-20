@@ -53,15 +53,15 @@ export default async function Dashboard() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{`${totalBalance} BDT`}</div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 items-center">
                             <p className="text-sm text-muted-foreground mt-2">
-                                Across all wallets
+                                Across all wallets.
                             </p>
                             <Link
                                 href="/dashboard/wallets"
                                 className="text-sm underline mt-2"
                             >
-                                View
+                                View All
                             </Link>
                         </div>
                     </CardContent>

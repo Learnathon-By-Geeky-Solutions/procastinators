@@ -63,7 +63,7 @@ export function RecentTransactions({
                         </div>
                         <div className="text-right">
                             <p
-                                className={`text-sm font-medium ${
+                                className={`text-md font-medium ${
                                     transaction.transactionType === "Income"
                                         ? "text-emerald-500"
                                         : "text-rose-500"
@@ -73,8 +73,7 @@ export function RecentTransactions({
                                     transaction.transactionType === "Income"
                                         ? "+"
                                         : "-"
-                                }
-                                ${transaction.amount.toFixed(2)} BDT`}
+                                }${transaction.amount.toFixed(2)} BDT`}
                             </p>
                             <p className="text-xs text-muted-foreground mt-1">
                                 {new Date(transaction.timestamp).toLocaleString(
