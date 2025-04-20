@@ -29,21 +29,21 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
         builder
             .Entity<PersonalTransaction>()
             .HasOne(p => p.Wallet)
-            .WithMany(w => w.Transactions)
+            .WithMany()
             .HasForeignKey(p => p.WalletId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .Entity<PersonalTransaction>()
             .HasOne(p => p.Category)
-            .WithMany(w => w.Transactions)
+            .WithMany()
             .HasForeignKey(p => p.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .Entity<PersonalTransaction>()
             .HasOne(p => p.User)
-            .WithMany(w => w.Transactions)
+            .WithMany()
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Restrict);
     }

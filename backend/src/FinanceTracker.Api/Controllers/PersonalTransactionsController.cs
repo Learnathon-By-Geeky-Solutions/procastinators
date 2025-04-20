@@ -3,6 +3,7 @@ using FinanceTracker.Application.PersonalTransactions.Commands.DeletePersonalTra
 using FinanceTracker.Application.PersonalTransactions.Commands.UpdatePersonalTransaction;
 using FinanceTracker.Application.PersonalTransactions.Queries.GetAllPersonalTransactions;
 using FinanceTracker.Application.PersonalTransactions.Queries.GetPersonalTransactionById;
+using FinanceTracker.Application.PersonalTransactions.Queries.GetReportOnCategories;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,5 +52,14 @@ public class PersonalTransactionsController(IMediator mediator) : ControllerBase
     {
         await mediator.Send(new DeletePersonalTransactionCommand { Id = id });
         return NoContent();
+    }
+
+    [HttpGet("report/categories")]
+    public async Task<IActionResult> GetReportOnCategories(
+        [FromQuery] GetReportOnCategoriesQuery query
+    )
+    {
+        var report = await mediator.Send(query);
+        return Ok(report);
     }
 }

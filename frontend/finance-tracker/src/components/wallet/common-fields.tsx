@@ -75,7 +75,6 @@ export function CommonFields({ form }: { readonly form: any }) {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="USD">USD</SelectItem>
                                 <SelectItem value="BDT">BDT</SelectItem>
                             </SelectContent>
                         </Select>
