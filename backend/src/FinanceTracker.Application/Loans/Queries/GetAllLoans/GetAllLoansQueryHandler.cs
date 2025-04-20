@@ -1,5 +1,4 @@
-﻿
-using AutoMapper;
+﻿using AutoMapper;
 using FinanceTracker.Application.Loans.Dtos.LoanDTO;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Repositories;
