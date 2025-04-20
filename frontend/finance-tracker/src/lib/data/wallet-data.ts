@@ -25,3 +25,8 @@ export async function fetchWallets() {
         throw error;
     }
 }
+
+export async function fetchTotalBalance() {
+    const wallets = await fetchWallets();
+    return wallets.reduce((acc, wallet) => acc + wallet.balance, 0);
+}
