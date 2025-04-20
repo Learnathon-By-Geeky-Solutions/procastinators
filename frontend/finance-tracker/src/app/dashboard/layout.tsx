@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/navigation/app-sidebar";
-import { CreditCard, HomeIcon, Tags, Wallet } from "lucide-react";
+import { CreditCard, LayoutDashboardIcon, Tags, Wallet } from "lucide-react";
 
 export default async function DashboardLayout({
     children,
@@ -8,8 +8,8 @@ export default async function DashboardLayout({
 }>) {
     const routes = [
         {
-            title: "Dashboard",
-            icon: <HomeIcon className="h-5 w-5" />,
+            title: "Overview",
+            icon: <LayoutDashboardIcon className="h-5 w-5" />,
             href: "/dashboard",
         },
         {
