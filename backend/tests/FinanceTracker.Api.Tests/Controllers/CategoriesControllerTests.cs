@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Json;
-using System.Threading.Tasks;
 using FinanceTracker.Api.Tests;
 using FinanceTracker.Application.Categories.Commands.CreateCategory;
 using FinanceTracker.Application.Categories.Commands.DeleteCategory;
@@ -7,7 +6,6 @@ using FinanceTracker.Application.Categories.Commands.UpdateCategory;
 using FinanceTracker.Application.Categories.Dtos;
 using FinanceTracker.Application.Categories.Queries.GetAllCategories;
 using FinanceTracker.Application.Categories.Queries.GetCategoryById;
-using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using MediatR;
