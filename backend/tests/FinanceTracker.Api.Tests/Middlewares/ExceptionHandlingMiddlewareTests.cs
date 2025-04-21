@@ -1,11 +1,9 @@
-﻿using Castle.Core.Logging;
-using FinanceTracker.Domain.Entities;
+﻿using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace FinanceTracker.Api.Middlewares.Tests;
@@ -43,7 +41,7 @@ public class ExceptionHandlingMiddlewareTests
 
         // Act
 
-        await middleware.InvokeAsync(context, _=> throw notFoundException);
+        await middleware.InvokeAsync(context, _ => throw notFoundException);
 
         // Assert
 

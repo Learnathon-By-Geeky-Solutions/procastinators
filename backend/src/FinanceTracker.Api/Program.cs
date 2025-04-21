@@ -42,3 +42,5 @@ app.MapControllers();
 app.UseCors();
 
 await app.RunAsync();
+
+public partial class Program { }
