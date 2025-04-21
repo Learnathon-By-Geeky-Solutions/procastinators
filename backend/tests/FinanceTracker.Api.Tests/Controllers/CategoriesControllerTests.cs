@@ -1,6 +1,9 @@
 ﻿using System.Net.Http.Json;
 using System.Threading.Tasks;
 using FinanceTracker.Api.Tests;
+using FinanceTracker.Application.Categories.Commands.CreateCategory;
+using FinanceTracker.Application.Categories.Commands.DeleteCategory;
+using FinanceTracker.Application.Categories.Commands.UpdateCategory;
 using FinanceTracker.Application.Categories.Dtos;
 using FinanceTracker.Application.Categories.Queries.GetAllCategories;
 using FinanceTracker.Application.Categories.Queries.GetCategoryById;
@@ -104,11 +107,98 @@ public class CategoriesControllerTests : IClassFixture<WebApplicationFactory<Pro
     }
 
     [Fact()]
-    public void CreateTest() { }
+    public async Task Create_WithValidCommand_ReturnsCreatedAtAction()
+    {
+        // Arrange
+        var createCommand = new CreateCategoryCommand
+        {
+            Title = "New Category",
+            DefaultTransactionType = "Expense",
+        };
+        int createdId = 42;
+
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<CreateCategoryCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(createdId);
+
+        var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.PostAsJsonAsync("api/Categories", createCommand);
+
+        // Assert
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+        response.Headers.Location.Should().NotBeNull();
+        response.Headers.Location.ToString().Should().Contain($"/api/Categories/{createdId}");
+        _mediatorMock.Verify(
+            m => m.Send(It.IsAny<CreateCategoryCommand>(), It.IsAny<CancellationToken>()),
+            Times.Once
+        );
+    }
 
     [Fact()]
-    public void DeleteTest() { }
+    public async Task Delete_WithExistingId_ReturnsNoContent()
+    {
+        // Arrange
+        var id = 5;
+
+        _mediatorMock
+            .Setup(m =>
+                m.Send(It.Is<DeleteCategoryCommand>(c => c.Id == id), It.IsAny<CancellationToken>())
+            )
+            .Returns(Task.CompletedTask);
+
+        var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.DeleteAsync($"api/Categories/{id}");
+
+        // Assert
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+        _mediatorMock.Verify(
+            m =>
+                m.Send(
+                    It.Is<DeleteCategoryCommand>(c => c.Id == id),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once
+        );
+    }
 
     [Fact()]
-    public void UpdateTest() { }
+    public async Task Update_WithValidCommand_ReturnsNoContent()
+    {
+        // Arrange
+        var id = 10;
+        var updateCommand = new UpdateCategoryCommand
+        {
+            Title = "Updated Category",
+            DefaultTransactionType = "Income",
+        };
+
+        _mediatorMock
+            .Setup(m =>
+                m.Send(It.Is<UpdateCategoryCommand>(c => c.Id == id), It.IsAny<CancellationToken>())
+            )
+            .Returns(Task.CompletedTask);
+
+        var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.PatchAsync(
+            $"api/Categories/{id}",
+            JsonContent.Create(updateCommand)
+        );
+
+        // Assert
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+        _mediatorMock.Verify(
+            m =>
+                m.Send(
+                    It.Is<UpdateCategoryCommand>(c => c.Id == id),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once
+        );
+    }
 }
