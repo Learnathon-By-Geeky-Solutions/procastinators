@@ -1,15 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Net.Http.Json;
 using System.Threading.Tasks;
 using FinanceTracker.Api.Tests;
 using FinanceTracker.Application.Categories.Dtos;
 using FinanceTracker.Application.Categories.Queries.GetAllCategories;
+using FinanceTracker.Application.Categories.Queries.GetCategoryById;
+using FinanceTracker.Domain.Entities;
+using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 using Xunit;
 
@@ -19,6 +22,7 @@ public class CategoriesControllerTests : IClassFixture<WebApplicationFactory<Pro
 {
     private readonly WebApplicationFactory<Program> _factory;
     private readonly Mock<IMediator> _mediatorMock;
+    private readonly Mock<ICategoryRepository> _categoryRepositoryMock = new();
 
     public CategoriesControllerTests(WebApplicationFactory<Program> factory)
     {
@@ -44,6 +48,13 @@ public class CategoriesControllerTests : IClassFixture<WebApplicationFactory<Pro
 
                 // Allow unauthorized requests for testing
                 services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+
+                services.Replace(
+                    ServiceDescriptor.Scoped(
+                        typeof(ICategoryRepository),
+                        _ => _categoryRepositoryMock.Object
+                    )
+                );
             });
         });
     }
@@ -66,7 +77,31 @@ public class CategoriesControllerTests : IClassFixture<WebApplicationFactory<Pro
     }
 
     [Fact()]
-    public void GetByIdTest() { }
+    public async Task GetById_ForExistingId_Returns200Ok()
+    {
+        // Arrange
+        var id = 11;
+        var categoryDto = new CategoryDto { Id = id, Title = "test" };
+
+        _mediatorMock
+            .Setup(m =>
+                m.Send(It.Is<GetCategoryByIdQuery>(q => q.Id == id), It.IsAny<CancellationToken>())
+            )
+            .ReturnsAsync(categoryDto);
+
+        var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.GetAsync($"/api/Categories/{id}");
+
+        // Assert
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        _mediatorMock.Verify(
+            m =>
+                m.Send(It.Is<GetCategoryByIdQuery>(q => q.Id == id), It.IsAny<CancellationToken>()),
+            Times.Once
+        );
+    }
 
     [Fact()]
     public void CreateTest() { }
