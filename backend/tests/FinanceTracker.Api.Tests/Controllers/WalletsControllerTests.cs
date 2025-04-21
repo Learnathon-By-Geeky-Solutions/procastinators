@@ -1,8 +1,10 @@
 ﻿using FinanceTracker.Api.Tests;
 using FinanceTracker.Application.Categories.Dtos;
 using FinanceTracker.Application.Categories.Queries.GetAllCategories;
+using FinanceTracker.Application.Categories.Queries.GetCategoryById;
 using FinanceTracker.Application.Wallets.Dtos;
 using FinanceTracker.Application.Wallets.Queries.GetAllWallets;
+using FinanceTracker.Application.Wallets.Queries.GetWalletById;
 using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using MediatR;
@@ -80,6 +82,37 @@ public class WalletsControllerTests : IClassFixture<WebApplicationFactory<Progra
         result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         _mediatorMock.Verify(
             m => m.Send(It.IsAny<GetAllWalletsQuery>(), It.IsAny<CancellationToken>()),
+            Times.Once
+        );
+    }
+
+    [Fact()]
+    public async Task GetById_ForExistingId_Returns200Ok()
+    {
+        // Arrange
+        var id = 11;
+        var walletDto = new WalletDto
+        {
+            Id = 1,
+            Type = "Cash",
+            Name = "test",
+        };
+
+        _mediatorMock
+            .Setup(m =>
+                m.Send(It.Is<GetWalletByIdQuery>(q => q.Id == id), It.IsAny<CancellationToken>())
+            )
+            .ReturnsAsync(walletDto);
+
+        var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.GetAsync($"/api/Wallets/{id}");
+
+        // Assert
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        _mediatorMock.Verify(
+            m => m.Send(It.Is<GetWalletByIdQuery>(q => q.Id == id), It.IsAny<CancellationToken>()),
             Times.Once
         );
     }
