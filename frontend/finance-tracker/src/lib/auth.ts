@@ -30,6 +30,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 return { ...user, token };
             },
         }),
+        Credentials({
+            id: "refresh",
+            credentials: {},
+            authorize: async (credentials) => {
+                const { refreshToken } = credentials as {
+                    refreshToken: string;
+                };
+                const res = await fetchAccessToken(refreshToken);
+
+                if (!res?.ok) {
+                    console.error(res);
+                    return null;
+                }
+
+                const token = await res.json();
+                const user = await fetchUserInfo(token.accessToken);
+                return { ...user, token };
+            },
+        }),
     ],
 
     pages: {
@@ -38,7 +57,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     session: {
         strategy: "jwt",
-        maxAge: 3600,
+        maxAge: 36000 * 24 * 7,
     },
 
     callbacks: {
@@ -46,19 +65,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (user) {
                 token.accessToken = user.token?.accessToken;
                 token.refreshToken = user.token?.refreshToken;
+                token.expiresIn = setRefreshAt(user.token?.expiresIn);
                 return token;
-            } else if (token.exp && token.exp * 1000 > Date.now()) {
-                return token;
-            } else if (token.refreshToken) {
-                const res = await fetchAccessToken(token.refreshToken);
-                if (!res?.ok) {
-                    console.error(res);
-                    return token;
-                }
-                const newToken = await res.json();
-                token.accessToken = newToken.accessToken;
-                token.refreshToken = newToken.refreshToken;
-                token.exp = Math.floor(Date.now() / 1000) + 3600;
+            } else if (token.expiresIn && token.expiresIn > Date.now()) {
+                const timeLeft = (token.expiresIn - Date.now()) / 1000;
+                console.log(
+                    `Expires in: ${Math.floor(timeLeft / 60)}m ${Math.floor(
+                        timeLeft % 60
+                    )}s`
+                );
                 return token;
             }
 
@@ -68,8 +83,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (token) {
                 session.accessToken = token.accessToken;
                 session.refreshToken = token.refreshToken;
+                session.refreshAt = token.expiresIn;
             }
             return session;
         },
     },
 });
+
+function setRefreshAt(expiresIn: number | undefined) {
+    const expires = expiresIn ?? 3600;
+    return Date.now() + expires * 1000 - (expires / 2) * 1000;
+}

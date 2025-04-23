@@ -28,18 +28,12 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Loader2Icon, LogInIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-
-const formSchema = z.object({
-    email: z
-        .string()
-        .min(1, { message: "Email is required" })
-        .email({ message: "Invalid email address" }),
-    password: z.string().min(1, { message: "Password is required" }),
-});
+import { loginFormSchema } from "@/validations/form-schema";
+import { loginUser } from "@/lib/actions/user-action";
 
 export function LoginForm() {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof loginFormSchema>>({
+        resolver: zodResolver(loginFormSchema),
         defaultValues: {
             email: "",
             password: "",
@@ -48,12 +42,9 @@ export function LoginForm() {
 
     const router = useRouter();
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof loginFormSchema>) {
         try {
-            const res = await signIn("credentials", {
-                ...values,
-                redirect: false,
-            });
+            const res = await loginUser(values);
 
             if (res?.error) {
                 console.log(res.error);
