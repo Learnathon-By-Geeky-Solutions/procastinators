@@ -1,7 +1,11 @@
 "use server";
 
 import { z } from "zod";
-import { registrationFormSchema } from "@/validations/form-schema";
+import {
+    loginFormSchema,
+    registrationFormSchema,
+} from "@/validations/form-schema";
+import { signIn } from "@/lib/auth";
 
 const defaultErrorMessage = "Something went wrong";
 
@@ -15,6 +19,19 @@ const fieldErrorMapper = (errors: any) => {
     }
     return fieldErrors;
 };
+
+export async function loginUser(formData: z.infer<typeof loginFormSchema>) {
+    try {
+        return await signIn("credentials", {
+            ...formData,
+            redirect: false,
+        });
+    } catch (error) {
+        return {
+            error: error instanceof Error ? error.message : defaultErrorMessage,
+        };
+    }
+}
 
 export async function RegisterUser(
     formData: z.infer<typeof registrationFormSchema>
