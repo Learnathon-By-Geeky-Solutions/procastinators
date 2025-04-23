@@ -19,9 +19,16 @@ try
 
     var app = builder.Build();
 
-    var scope = app.Services.CreateScope();
-    var seeder = scope.ServiceProvider.GetRequiredService<IFinanceTrackerSeeder>();
-    await seeder.SeedAsync();
+    try
+    {
+        var scope = app.Services.CreateScope();
+        var seeder = scope.ServiceProvider.GetRequiredService<IFinanceTrackerSeeder>();
+        await seeder.SeedAsync();
+    }
+    catch (Exception exception)
+    {
+        Log.Fatal(exception, "Failed Database Seeding");
+    }
 
     // Configure the HTTP request pipeline.
 
@@ -34,8 +41,7 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
     }
-
-    if (app.Environment.IsProduction())
+    else
     {
         app.UseHttpsRedirection();
     }
