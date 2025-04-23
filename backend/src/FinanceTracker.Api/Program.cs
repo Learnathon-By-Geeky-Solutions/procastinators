@@ -62,7 +62,7 @@ catch (Exception exception)
 }
 finally
 {
-    Log.CloseAndFlush();
+    await Log.CloseAndFlushAsync();
 }
 
 public partial class Program

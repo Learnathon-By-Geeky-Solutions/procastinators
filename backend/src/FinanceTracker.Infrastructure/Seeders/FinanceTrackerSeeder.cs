@@ -7,7 +7,8 @@ internal class FinanceTrackerSeeder(FinanceTrackerDbContext dbContext) : IFinanc
 {
     public async Task SeedAsync()
     {
-        if (dbContext.Database.GetPendingMigrations().Any())
+        var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+        if (pendingMigrations.Any())
         {
             await dbContext.Database.MigrateAsync();
         }
