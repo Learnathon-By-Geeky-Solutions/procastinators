@@ -47,6 +47,9 @@ public class PayInstallmentCommandHandler(
         borrowerWallet.Balance -= request.Amount;
         lenderWallet.Balance += request.Amount;
 
+        await walletRepo.UpdateBalance(borrowerWallet);
+        await walletRepo.UpdateBalance(lenderWallet);
+
         // Subtract the paid amount from the loan's due amount
         loan.DueAmount -= request.Amount;
         loan.DueDate = request.NextDueDate;
