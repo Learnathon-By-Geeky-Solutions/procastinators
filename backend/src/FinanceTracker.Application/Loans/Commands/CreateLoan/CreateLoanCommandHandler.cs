@@ -18,6 +18,9 @@ public class CreateLoanCommandHandler(
         var user = userContext.GetUser();
         var lenderId = user!.Id;
 
+        var wallets = await walletRepo.GetAll(lenderId);
+        var wallet = wallets.FirstOrDefault(w => !w.IsDeleted);
+
         var loan = new Loan
         {
             LenderId = user!.Id,
