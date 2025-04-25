@@ -25,6 +25,9 @@ public class PayInstallmentCommandHandler(
         var borrowerWallets = await walletRepo.GetAll(loan.LoanRequest!.BorrowerId);
         var lenderWallets = await walletRepo.GetAll(loan.LoanRequest.LenderId);
 
+        var borrowerWallet = borrowerWallets.FirstOrDefault(w => !w.IsDeleted);
+        var lenderWallet = lenderWallets.FirstOrDefault(w => !w.IsDeleted);
+
         // Subtract the paid amount from the loan's due amount
         loan.DueAmount -= request.Amount;
         loan.DueDate = request.NextDueDate;
