@@ -46,9 +46,11 @@ const failedDefaultDescription = "Something went wrong. Please try again.";
 export function AddTransactionDialog({
     categories,
     wallets,
+    iconOnly = false,
 }: {
     readonly categories: Category[];
     readonly wallets: Wallet[];
+    readonly iconOnly?: boolean;
 }) {
     const [open, setOpen] = useState(false);
 
@@ -88,10 +90,16 @@ export function AddTransactionDialog({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>
-                    <PlusIcon className="h-4 w-4" />
-                    Add Transaction
-                </Button>
+                {iconOnly ? (
+                    <Button variant={"outline"} size="icon">
+                        <PlusIcon className="h-4 w-4" />
+                    </Button>
+                ) : (
+                    <Button>
+                        <PlusIcon className="h-4 w-4" />
+                        New Transaction
+                    </Button>
+                )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>

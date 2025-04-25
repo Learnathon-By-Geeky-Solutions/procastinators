@@ -21,3 +21,13 @@ export type Transaction = {
     walletId: string;
     categoryId: string;
 };
+
+export type TotalPerCategory = {
+    categoryId: string;
+    categoryTitle: string;
+    total: number;
+};
+export type TransactionReport = {
+    categories: TotalPerCategory[];
+    grandTotal: number;
+};

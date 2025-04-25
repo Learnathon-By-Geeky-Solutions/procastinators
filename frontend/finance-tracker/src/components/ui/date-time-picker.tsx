@@ -75,7 +75,6 @@ export function DateTimePicker({
                             }
                             setDate(selectedDate);
                         }}
-                        initialFocus
                     />
                     <div className="p-3 border-t">
                         <Label htmlFor="time">Time</Label>

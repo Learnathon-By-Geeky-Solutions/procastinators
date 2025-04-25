@@ -201,6 +201,37 @@ public class CreatePersonalTransactionCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WhenCategoryIsNull_ShouldThrowForbiddenException()
+    {
+        // Arrange
+        var command = new CreatePersonalTransactionCommand
+        {
+            WalletId = _walletId,
+            CategoryId = _categoryId
+        };
+
+        var wallet = new Wallet
+        {
+            Id = _walletId,
+            UserId = _userId
+        };
+
+        _walletRepositoryMock
+            .Setup(repo => repo.GetById(_walletId))
+            .ReturnsAsync(wallet);
+
+        _categoryRepositoryMock
+            .Setup(repo => repo.GetById(_categoryId))
+            .ReturnsAsync((Category?)null);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        _transactionRepositoryMock.Verify(r => r.Create(It.IsAny<PersonalTransaction>()), Times.Never);
+    }
+
+    [Fact]
     public async Task Handle_WhenCategoryBelongsToAnotherUser_ShouldThrowForbiddenException()
     {
         // Arrange

@@ -21,7 +21,7 @@ public static class WebApplicationBuilderExtensions
             (context, configuration) => configuration.ReadFrom.Configuration(context.Configuration)
         );
 
-        var allowedOrigin = builder.Configuration["Cors:AllowedOrigin"]!;
+        var allowedOrigin = builder.Configuration["Cors:AllowedOrigin"] ?? "http://localhost:3000/";
         builder.Services.AddCors(options =>
         {
             options.AddDefaultPolicy(policyBuilder =>

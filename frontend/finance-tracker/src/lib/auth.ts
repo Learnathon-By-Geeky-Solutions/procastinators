@@ -1,43 +1,10 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-
-const attemptLogin = async (email: string, password: string) => {
-    try {
-        const url = `${process.env.BACKEND_BASE_URL}/identity/login`;
-        console.log("Attempting login to", url);
-        return await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-        });
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-const fetchUserInfo = async (token: string) => {
-    try {
-        const url = `${process.env.BACKEND_BASE_URL}/identity/manage/info`;
-        console.log("Fetching user info from", url);
-        const res = await fetch(url, {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        if (res?.ok) {
-            const data = await res.json();
-            return {
-                name: data?.email.split("@")[0],
-                email: data?.email,
-            };
-        }
-    } catch (error) {
-        console.error(error);
-    }
-};
+import {
+    attemptLogin,
+    fetchAccessToken,
+    fetchUserInfo,
+} from "@/lib/data/auth-data";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
@@ -79,7 +46,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (user) {
                 token.accessToken = user.token?.accessToken;
                 token.refreshToken = user.token?.refreshToken;
+                return token;
+            } else if (token.exp && token.exp * 1000 > Date.now()) {
+                return token;
+            } else if (token.refreshToken) {
+                const res = await fetchAccessToken(token.refreshToken);
+                if (!res?.ok) {
+                    console.error(res);
+                    return token;
+                }
+                const newToken = await res.json();
+                token.accessToken = newToken.accessToken;
+                token.refreshToken = newToken.refreshToken;
+                token.exp = Math.floor(Date.now() / 1000) + 3600;
+                return token;
             }
+
             return token;
         },
         session: async ({ session, token }) => {
