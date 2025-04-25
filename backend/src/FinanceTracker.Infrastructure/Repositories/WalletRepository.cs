@@ -28,18 +28,4 @@ internal class WalletRepository(FinanceTrackerDbContext dbContext) : IWalletRepo
     {
         return await dbContext.SaveChangesAsync();
     }
-
-    public async Task<int> UpdateBalance(Wallet wallet)
-    {
-        var existingWallet = await dbContext.Wallets.FirstOrDefaultAsync(w =>
-            w.Id == wallet.Id && !w.IsDeleted
-        );
-        if (existingWallet != null)
-        {
-            throw new Exception("Wallet Not Found");
-        }
-
-        existingWallet!.Balance = wallet.Balance;
-        return await dbContext.SaveChangesAsync();
-    }
 }

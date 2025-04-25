@@ -8,5 +8,4 @@ public interface IWalletRepository
     Task<Wallet?> GetById(int id);
     Task<int> Create(Wallet wallet);
     Task<int> SaveChangesAsync();
-    Task<int> UpdateBalance(Wallet wallet);
 }
