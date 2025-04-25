@@ -25,6 +25,9 @@ public class CreateLoanCommandHandler(
         if (wallet == null)
             throw new NotFoundException("Wallet", $"No active wallet found for lender {lenderId}");
 
+        if (wallet.Balance < request.Amount)
+            throw new BadRequestException("Insufficient wallet balance to create loan.");
+
         var loan = new Loan
         {
             LenderId = user!.Id,
