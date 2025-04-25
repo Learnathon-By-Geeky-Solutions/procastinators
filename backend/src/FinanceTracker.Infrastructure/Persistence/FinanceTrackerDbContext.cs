@@ -101,6 +101,12 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
             .WithMany()
             .HasForeignKey(lr => lr.LoanId)
             .OnDelete(DeleteBehavior.Restrict);
+        builder
+            .Entity<Loan>()
+            .HasOne(l => l.Wallet)
+            .WithMany()
+            .HasForeignKey(l => l.WalletId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

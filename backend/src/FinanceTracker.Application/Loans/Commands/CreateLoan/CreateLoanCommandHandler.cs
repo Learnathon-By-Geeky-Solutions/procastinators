@@ -18,16 +18,13 @@ public class CreateLoanCommandHandler(
     {
         var user = userContext.GetUser();
         var lenderId = user!.Id;
-
-        var wallets = await walletRepo.GetAll(lenderId);
-        var wallet = wallets.FirstOrDefault(w => !w.IsDeleted);
+        logger.LogInformation("WalletId: {@WalletId}", request.WalletId);
+        var wallet = await walletRepo.GetById(request.WalletId);
 
         if (wallet == null)
-            throw new NotFoundException("Wallet", $"No active wallet found for lender {lenderId}");
+            throw new NotFoundException("Wallet", lenderId.ToString());
 
-        // Deduct amount from lender's wallet
         wallet.Balance -= request.Amount;
-        await walletRepo.UpdateBalance(wallet);
 
         var loan = new Loan
         {

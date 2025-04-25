@@ -18,6 +18,6 @@ public class Loan
     public DateTime DueDate { get; set; } = default!;
     public decimal DueAmount { get; set; } = default!;
 
-    public int WalletId { get; set; } = default!;
+    public int? WalletId { get; set; } = default!;
     public Wallet Wallet { get; set; } = default!;
 }
