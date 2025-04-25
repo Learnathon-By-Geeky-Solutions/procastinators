@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
@@ -20,6 +21,7 @@ public class ApproveLoanRequestCommandHandler(
     )
     {
         var loanRequest = await loanRequestRepo.GetByIdAsync(request.LoanRequestId);
+
         logger.LogInformation("LoanReq: {@r}", loanRequest);
         if (loanRequest == null)
             throw new NotFoundException("LoanRequest", request.LoanRequestId.ToString());
