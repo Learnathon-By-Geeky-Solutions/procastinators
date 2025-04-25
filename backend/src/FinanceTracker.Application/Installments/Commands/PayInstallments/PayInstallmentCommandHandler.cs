@@ -9,6 +9,7 @@ namespace FinanceTracker.Application.Installments.Commands.PayInstallments;
 public class PayInstallmentCommandHandler(
     ILoanRepository loanRepo,
     IInstallmentRepository installmentRepo,
+    IWalletRepository walletRepo,
     ILogger<PayInstallmentCommandHandler> logger
 ) : IRequestHandler<PayInstallmentCommand, int>
 {
@@ -20,6 +21,9 @@ public class PayInstallmentCommandHandler(
         var loan = await loanRepo.GetByIdAsync(request.LoanId);
         if (loan == null || loan.IsDeleted)
             throw new NotFoundException("Loan", request.LoanId.ToString());
+
+        var borrowerWallets = await walletRepo.GetAll(loan.LoanRequest!.BorrowerId);
+        var lenderWallets = await walletRepo.GetAll(loan.LoanRequest.LenderId);
 
         // Subtract the paid amount from the loan's due amount
         loan.DueAmount -= request.Amount;
