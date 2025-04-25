@@ -40,6 +40,12 @@ public class ApproveLoanRequestCommandHandler(
                 $"Lender wallet not found for user {loanRequest.LenderId}"
             );
 
+        if (lenderWallet == null)
+            throw new NotFoundException(
+                "Wallet",
+                $"Lender wallet not found for user {loanRequest.LenderId}"
+            );
+
         // Step 2: Approve it
         loanRequest.IsApproved = true;
 
