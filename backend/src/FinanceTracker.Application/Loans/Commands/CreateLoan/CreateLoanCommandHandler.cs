@@ -39,6 +39,7 @@ public class CreateLoanCommandHandler(
             DueAmount = request.Amount,
             IsDeleted = false,
             LoanRequestId = null,
+            WalletId = wallet.Id,
         };
 
         logger.LogInformation("Creating Loan: {@Loan}", loan);
