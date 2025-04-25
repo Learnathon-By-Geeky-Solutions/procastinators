@@ -34,6 +34,12 @@ public class ApproveLoanRequestCommandHandler(
         var lenderWallet = lenderWallets.FirstOrDefault(w => !w.IsDeleted);
         var borrowerWallet = borrowerWallets.FirstOrDefault(w => !w.IsDeleted);
 
+        if (lenderWallet == null)
+            throw new NotFoundException(
+                "Wallet",
+                $"Lender wallet not found for user {loanRequest.LenderId}"
+            );
+
         // Step 2: Approve it
         loanRequest.IsApproved = true;
 
