@@ -40,6 +40,9 @@ public class PayInstallmentCommandHandler(
                 $"Lender wallet not found for user {loan.LoanRequest.LenderId}"
             );
 
+        if (borrowerWallet.Balance < request.Amount)
+            throw new BadRequestException("Borrower does not have sufficient balance.");
+
         // Subtract the paid amount from the loan's due amount
         loan.DueAmount -= request.Amount;
         loan.DueDate = request.NextDueDate;
