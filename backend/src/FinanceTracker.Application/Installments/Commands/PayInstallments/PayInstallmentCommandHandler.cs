@@ -40,9 +40,6 @@ public class PayInstallmentCommandHandler(
                 $"Lender wallet not found for user {loan.LoanRequest.LenderId}"
             );
 
-        if (borrowerWallet.Balance < request.Amount)
-            throw new BadRequestException("Borrower does not have sufficient balance.");
-
         // Update wallet balances
         borrowerWallet.Balance -= request.Amount;
         lenderWallet.Balance += request.Amount;
