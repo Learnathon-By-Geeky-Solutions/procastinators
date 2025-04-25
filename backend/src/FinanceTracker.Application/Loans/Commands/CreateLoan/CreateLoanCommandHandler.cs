@@ -28,6 +28,10 @@ public class CreateLoanCommandHandler(
         if (wallet.Balance < request.Amount)
             throw new BadRequestException("Insufficient wallet balance to create loan.");
 
+        // Deduct amount from lender's wallet
+        wallet.Balance -= request.Amount;
+        await walletRepo.UpdateBalance(wallet);
+
         var loan = new Loan
         {
             LenderId = user!.Id,
