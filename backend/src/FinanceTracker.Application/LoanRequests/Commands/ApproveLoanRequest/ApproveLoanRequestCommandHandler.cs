@@ -10,7 +10,8 @@ namespace FinanceTracker.Application.LoanRequests.Commands.ApproveLoanRequest;
 public class ApproveLoanRequestCommandHandler(
     ILogger<ApproveLoanRequestCommandHandler> logger,
     ILoanRequestRepository loanRequestRepo,
-    ILoanRepository loanRepo
+    ILoanRepository loanRepo,
+    IWalletRepository walletRepo
 ) : IRequestHandler<ApproveLoanRequestCommand, int>
 {
     public async Task<int> Handle(
@@ -26,6 +27,9 @@ public class ApproveLoanRequestCommandHandler(
 
         if (loanRequest.IsApproved)
             throw new BadRequestException("LoanRequest is already approved.");
+
+        var lenderWallets = await walletRepo.GetAll(loanRequest.LenderId);
+        var BorrowerWallets = await walletRepo.GetAll(loanRequest.BorrowerId);
 
         // Step 2: Approve it
         loanRequest.IsApproved = true;
