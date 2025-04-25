@@ -9,11 +9,15 @@ namespace FinanceTracker.Application.Loans.Commands.CreateLoan;
 public class CreateLoanCommandHandler(
     ILogger<CreateLoanCommandHandler> logger,
     IUserContext userContext,
-    ILoanRepository loanRepo) : IRequestHandler<CreateLoanCommand, int>
+    ILoanRepository loanRepo,
+    IWalletRepository walletRepo
+) : IRequestHandler<CreateLoanCommand, int>
 {
     public async Task<int> Handle(CreateLoanCommand request, CancellationToken cancellationToken)
     {
         var user = userContext.GetUser();
+        var lenderId = user!.Id;
+
         var loan = new Loan
         {
             LenderId = user!.Id,
@@ -23,7 +27,7 @@ public class CreateLoanCommandHandler(
             IssuedAt = DateTime.UtcNow,
             DueAmount = request.Amount,
             IsDeleted = false,
-            LoanRequestId = null
+            LoanRequestId = null,
         };
 
         logger.LogInformation("Creating Loan: {@Loan}", loan);
