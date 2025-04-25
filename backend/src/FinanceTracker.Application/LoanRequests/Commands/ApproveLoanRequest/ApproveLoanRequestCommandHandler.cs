@@ -50,7 +50,10 @@ public class ApproveLoanRequestCommandHandler(
             throw new BadRequestException("Lender does not have sufficient balance.");
 
         lenderWallet.Balance -= loanRequest.Amount;
-        borrowerWallet.Balance += loanRequest.Amount;
+        borrowerWallet!.Balance += loanRequest.Amount;
+
+        await walletRepo.UpdateBalance(lenderWallet);
+        await walletRepo.UpdateBalance(borrowerWallet);
 
         // Step 2: Approve it
         loanRequest.IsApproved = true;
