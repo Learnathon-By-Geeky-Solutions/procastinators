@@ -34,6 +34,12 @@ public class PayInstallmentCommandHandler(
                 $"Borrower wallet not found for user {loan.LoanRequest.BorrowerId}"
             );
 
+        if (lenderWallet == null)
+            throw new NotFoundException(
+                "Wallet",
+                $"Lender wallet not found for user {loan.LoanRequest.LenderId}"
+            );
+
         // Subtract the paid amount from the loan's due amount
         loan.DueAmount -= request.Amount;
         loan.DueDate = request.NextDueDate;
