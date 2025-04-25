@@ -1,5 +1,4 @@
-﻿
-namespace FinanceTracker.Application.Installments.Dtos;
+﻿namespace FinanceTracker.Application.Installments.Dtos;
 
 public class InstallmentDto
 {

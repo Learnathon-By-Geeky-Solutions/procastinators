@@ -1,5 +1,4 @@
-﻿
-using MediatR;
+﻿using MediatR;
 
 namespace FinanceTracker.Application.Installments.Commands.PayInstallments;
 

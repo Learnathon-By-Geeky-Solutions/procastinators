@@ -1,5 +1,4 @@
-﻿
-using AutoMapper;
+﻿using AutoMapper;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
@@ -11,9 +10,13 @@ namespace FinanceTracker.Application.LoanRequests.Commands.ApproveLoanRequest;
 public class ApproveLoanRequestCommandHandler(
     ILogger<ApproveLoanRequestCommandHandler> logger,
     ILoanRequestRepository loanRequestRepo,
-    ILoanRepository loanRepo) : IRequestHandler<ApproveLoanRequestCommand, int>
+    ILoanRepository loanRepo
+) : IRequestHandler<ApproveLoanRequestCommand, int>
 {
-    public async Task<int> Handle(ApproveLoanRequestCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(
+        ApproveLoanRequestCommand request,
+        CancellationToken cancellationToken
+    )
     {
         // Step 1: Get the loan request
         var loanRequest = await loanRequestRepo.GetByIdAsync(request.LoanRequestId);
@@ -37,12 +40,12 @@ public class ApproveLoanRequestCommandHandler(
             IssuedAt = DateTime.UtcNow,
             DueDate = loanRequest.DueDate,
             DueAmount = loanRequest.Amount,
-            IsDeleted = false
+            IsDeleted = false,
         };
 
         // Step 4: Save loan and update request
         await loanRepo.CreateAsync(loan);
-        await loanRequestRepo.SaveChangesAsync(); 
+        await loanRequestRepo.SaveChangesAsync();
         return loan.Id;
     }
 }
