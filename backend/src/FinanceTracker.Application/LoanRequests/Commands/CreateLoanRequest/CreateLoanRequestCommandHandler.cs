@@ -12,12 +12,17 @@ public class CreateLoanRequestCommandHandler(
     ILogger<CreateLoanRequestCommandHandler> logger,
     IUserContext userContext,
     ILoanRequestRepository repo,
-    IMapper mapper) : IRequestHandler<CreateLoanRequestCommand, int>
+    IMapper mapper
+) : IRequestHandler<CreateLoanRequestCommand, int>
 {
-    public async Task<int> Handle(CreateLoanRequestCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(
+        CreateLoanRequestCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var user = userContext.GetUser();
-        if (user == null) throw new ForbiddenException();
+        if (user == null)
+            throw new ForbiddenException();
 
         var loanRequest = mapper.Map<CreateLoanRequestCommand, LoanRequest>(request);
         loanRequest.BorrowerId = user.Id;
