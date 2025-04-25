@@ -1,5 +1,6 @@
 ﻿using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
+using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -20,6 +21,9 @@ public class CreateLoanCommandHandler(
 
         var wallets = await walletRepo.GetAll(lenderId);
         var wallet = wallets.FirstOrDefault(w => !w.IsDeleted);
+
+        if (wallet == null)
+            throw new NotFoundException("Wallet", $"No active wallet found for lender {lenderId}");
 
         var loan = new Loan
         {
