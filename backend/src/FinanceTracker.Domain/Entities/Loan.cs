@@ -20,4 +20,7 @@ public class Loan
 
     public int? WalletId { get; set; } = default!;
     public Wallet Wallet { get; set; } = default!;
+
+    public int? BorrowerWalletId { get; set; } = default!;
+    public Wallet BorrowerWallet { get; set; } = default!;
 }
