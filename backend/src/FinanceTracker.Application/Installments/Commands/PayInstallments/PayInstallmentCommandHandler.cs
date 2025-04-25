@@ -43,6 +43,10 @@ public class PayInstallmentCommandHandler(
         if (borrowerWallet.Balance < request.Amount)
             throw new BadRequestException("Borrower does not have sufficient balance.");
 
+        // Update wallet balances
+        borrowerWallet.Balance -= request.Amount;
+        lenderWallet.Balance += request.Amount;
+
         // Subtract the paid amount from the loan's due amount
         loan.DueAmount -= request.Amount;
         loan.DueDate = request.NextDueDate;
