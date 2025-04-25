@@ -19,7 +19,6 @@ public class ApproveLoanRequestCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        // Step 1: Get the loan request
         var loanRequest = await loanRequestRepo.GetByIdAsync(request.LoanRequestId);
         logger.LogInformation("LoanReq: {@r}", loanRequest);
         if (loanRequest == null)
@@ -49,13 +48,8 @@ public class ApproveLoanRequestCommandHandler(
         lenderWallet.Balance -= loanRequest.Amount;
         borrowerWallet!.Balance += loanRequest.Amount;
 
-        await walletRepo.UpdateBalance(lenderWallet);
-        await walletRepo.UpdateBalance(borrowerWallet);
-
-        // Step 2: Approve it
         loanRequest.IsApproved = true;
 
-        // Step 3: Create loan from request
         var loan = new Loan
         {
             LenderId = loanRequest.LenderId,
@@ -68,7 +62,6 @@ public class ApproveLoanRequestCommandHandler(
             IsDeleted = false,
         };
 
-        // Step 4: Save loan and update request
         await loanRepo.CreateAsync(loan);
         await loanRequestRepo.SaveChangesAsync();
         return loan.Id;
