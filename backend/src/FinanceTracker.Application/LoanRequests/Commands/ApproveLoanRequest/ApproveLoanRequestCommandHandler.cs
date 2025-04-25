@@ -29,7 +29,10 @@ public class ApproveLoanRequestCommandHandler(
             throw new BadRequestException("LoanRequest is already approved.");
 
         var lenderWallets = await walletRepo.GetAll(loanRequest.LenderId);
-        var BorrowerWallets = await walletRepo.GetAll(loanRequest.BorrowerId);
+        var borrowerWallets = await walletRepo.GetAll(loanRequest.BorrowerId);
+
+        var lenderWallet = lenderWallets.FirstOrDefault(w => !w.IsDeleted);
+        var borrowerWallet = borrowerWallets.FirstOrDefault(w => !w.IsDeleted);
 
         // Step 2: Approve it
         loanRequest.IsApproved = true;
