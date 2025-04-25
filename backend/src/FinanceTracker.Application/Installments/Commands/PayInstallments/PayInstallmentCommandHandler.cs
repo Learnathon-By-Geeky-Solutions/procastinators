@@ -28,6 +28,12 @@ public class PayInstallmentCommandHandler(
         var borrowerWallet = borrowerWallets.FirstOrDefault(w => !w.IsDeleted);
         var lenderWallet = lenderWallets.FirstOrDefault(w => !w.IsDeleted);
 
+        if (borrowerWallet == null)
+            throw new NotFoundException(
+                "Wallet",
+                $"Borrower wallet not found for user {loan.LoanRequest.BorrowerId}"
+            );
+
         // Subtract the paid amount from the loan's due amount
         loan.DueAmount -= request.Amount;
         loan.DueDate = request.NextDueDate;
