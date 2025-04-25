@@ -1,5 +1,4 @@
-﻿
-namespace FinanceTracker.Domain.Entities;
+﻿namespace FinanceTracker.Domain.Entities;
 
 public class Loan
 {
@@ -16,8 +15,9 @@ public class Loan
 
     public DateTime IssuedAt { get; set; } = DateTime.UtcNow;
 
-
     public DateTime DueDate { get; set; } = default!;
     public decimal DueAmount { get; set; } = default!;
 
+    public int WalletId { get; set; } = default!;
+    public Wallet Wallet { get; set; } = default!;
 }
