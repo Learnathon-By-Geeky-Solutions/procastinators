@@ -27,23 +27,16 @@ public class ApproveLoanRequestCommandHandler(
         if (loanRequest.IsApproved)
             throw new BadRequestException("LoanRequest is already approved.");
 
-        var lenderWallets = await walletRepo.GetAll(loanRequest.LenderId);
-        var borrowerWallets = await walletRepo.GetAll(loanRequest.BorrowerId);
-
-        var lenderWallet = lenderWallets.FirstOrDefault(w => !w.IsDeleted);
-        var borrowerWallet = borrowerWallets.FirstOrDefault(w => !w.IsDeleted);
-
-        if (lenderWallet == null)
-            throw new NotFoundException(
-                "Wallet",
-                $"Lender wallet not found for user {loanRequest.LenderId}"
-            );
+        var lenderWallet = await walletRepo.GetById(request.LenderWalletId);
+        var borrowerWallet = await walletRepo.GetById(
+            loanRequest.WalletId ?? throw new BadRequestException("WalletId cannot be null.")
+        );
 
         if (lenderWallet == null)
-            throw new NotFoundException(
-                "Wallet",
-                $"Lender wallet not found for user {loanRequest.LenderId}"
-            );
+            throw new NotFoundException("Wallet", loanRequest.LenderId.ToString());
+
+        if (borrowerWallet == null)
+            throw new NotFoundException("Wallet", loanRequest.BorrowerId.ToString());
 
         lenderWallet.Balance -= loanRequest.Amount;
         borrowerWallet!.Balance += loanRequest.Amount;
@@ -60,6 +53,8 @@ public class ApproveLoanRequestCommandHandler(
             DueDate = loanRequest.DueDate,
             DueAmount = loanRequest.Amount,
             IsDeleted = false,
+            WalletId = request.LenderWalletId,
+            BorrowerWalletId = borrowerWallet.Id,
         };
 
         await loanRepo.CreateAsync(loan);
