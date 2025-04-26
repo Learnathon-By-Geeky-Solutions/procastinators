@@ -19,7 +19,7 @@ public class GetLoanByIdQueryHandler(
         var loan = await loanRepo.GetByIdAsync(request.Id);
         if (loan == null || loan.IsDeleted)
             throw new NotFoundException("Loan", request.Id.ToString());
-        bool isBorrower = loan.LoanRequest != null && loan.LoanRequest.BorrowerId == user.Id;
+        bool isBorrower = loan.BorrowerId == user.Id;
         bool isLender = loan.LenderId == user.Id;
         if (!isBorrower && !isLender)
             throw new ForbiddenException();

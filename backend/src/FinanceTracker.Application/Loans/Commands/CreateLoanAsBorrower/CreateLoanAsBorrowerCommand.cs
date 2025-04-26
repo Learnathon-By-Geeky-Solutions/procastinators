@@ -1,9 +1,8 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
 
-namespace FinanceTracker.Application.Loans.Commands.CreateLoan;
+namespace FinanceTracker.Application.Loans.Commands.CreateLoanAsBorrower;
 
-public class CreateLoanCommand : IRequest<int>
+public class CreateLoanAsBorrowerCommand : IRequest<int>
 {
     public decimal Amount { get; set; } = default!;
     public string? Note { get; set; } = default;

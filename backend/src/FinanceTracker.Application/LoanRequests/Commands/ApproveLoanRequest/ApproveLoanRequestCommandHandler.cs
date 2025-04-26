@@ -55,7 +55,7 @@ public class ApproveLoanRequestCommandHandler(
             DueDate = loanRequest.DueDate,
             DueAmount = loanRequest.Amount,
             IsDeleted = false,
-            WalletId = request.LenderWalletId,
+            LenderWalletId = request.LenderWalletId,
             BorrowerWalletId = borrowerWallet.Id,
         };
 

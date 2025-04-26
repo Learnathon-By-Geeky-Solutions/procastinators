@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using FinanceTracker.Application.LoanRequests.Dtos.LoanRequestDTO;
 using FinanceTracker.Application.Loans.Dtos.LoanDTO;
 using FinanceTracker.Application.Users;
+using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using MediatR;
 
@@ -18,8 +18,8 @@ public class GetAllLoansAsBorrowerQueryHandler(
         CancellationToken cancellationToken
     )
     {
-        var user = userContext.GetUser();
-        var loans = await loanRepo.GetAllByBorrowerAsync(user!.Id);
+        var user = userContext.GetUser() ?? throw new ForbiddenException();
+        var loans = await loanRepo.GetAllAsBorrowerAsync(user.Id);
 
         return mapper.Map<IEnumerable<LoanDto>>(loans);
     }

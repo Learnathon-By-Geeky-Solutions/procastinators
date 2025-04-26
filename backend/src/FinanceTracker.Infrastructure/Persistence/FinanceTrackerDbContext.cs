@@ -90,6 +90,13 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
 
         builder
             .Entity<Loan>()
+            .HasOne(lr => lr.Borrower)
+            .WithMany()
+            .HasForeignKey(lr => lr.BorrowerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .Entity<Loan>()
             .HasOne(lr => lr.LoanRequest)
             .WithOne()
             .HasForeignKey<Loan>(lr => lr.LoanRequestId)
@@ -103,9 +110,9 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
             .OnDelete(DeleteBehavior.Restrict);
         builder
             .Entity<Loan>()
-            .HasOne(l => l.Wallet)
+            .HasOne(l => l.LenderWallet)
             .WithMany()
-            .HasForeignKey(l => l.WalletId)
+            .HasForeignKey(l => l.LenderWalletId)
             .OnDelete(DeleteBehavior.Restrict);
         builder
             .Entity<Loan>()
