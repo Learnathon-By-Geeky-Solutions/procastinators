@@ -187,4 +187,81 @@ public class PayInstallmentCommandHandlerTests
             () => _handler.Handle(command, CancellationToken.None)
         );
     }
+
+    [Fact]
+    public async Task Handle_BorrowerWalletNotFound_ThrowsNotFoundException()
+    {
+        // Arrange
+        var loanRequest = new LoanRequest { BorrowerId = _borrowerId, LenderId = _lenderId };
+
+        var loan = new Loan
+        {
+            Id = _loanId,
+            LoanRequest = loanRequest,
+            IsDeleted = false,
+        };
+
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+
+        _walletRepositoryMock
+            .Setup(repo => repo.GetAll(_borrowerId))
+            .ReturnsAsync(new List<Wallet>()); // Empty list
+
+        var command = new PayInstallmentCommand
+        {
+            LoanId = _loanId,
+            Amount = 500m,
+            NextDueDate = DateTime.Now.AddMonths(1),
+        };
+
+        // Act & Assert
+        var exception = await Xunit.Assert.ThrowsAsync<NotFoundException>(
+            () => _handler.Handle(command, CancellationToken.None)
+        );
+
+        Xunit.Assert.Contains(
+            $"Borrower wallet not found for user {_borrowerId}",
+            exception.Message
+        );
+    }
+
+    [Fact]
+    public async Task Handle_LenderWalletNotFound_ThrowsNotFoundException()
+    {
+        // Arrange
+        var loanRequest = new LoanRequest { BorrowerId = _borrowerId, LenderId = _lenderId };
+
+        var loan = new Loan
+        {
+            Id = _loanId,
+            LoanRequest = loanRequest,
+            IsDeleted = false,
+        };
+
+        var borrowerWallet = new Wallet { UserId = _borrowerId, IsDeleted = false };
+
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+
+        _walletRepositoryMock
+            .Setup(repo => repo.GetAll(_borrowerId))
+            .ReturnsAsync(new List<Wallet> { borrowerWallet });
+
+        _walletRepositoryMock
+            .Setup(repo => repo.GetAll(_lenderId))
+            .ReturnsAsync(new List<Wallet>()); // Empty list
+
+        var command = new PayInstallmentCommand
+        {
+            LoanId = _loanId,
+            Amount = 500m,
+            NextDueDate = DateTime.Now.AddMonths(1),
+        };
+
+        // Act & Assert
+        var exception = await Xunit.Assert.ThrowsAsync<NotFoundException>(
+            () => _handler.Handle(command, CancellationToken.None)
+        );
+
+        Xunit.Assert.Contains($"Lender wallet not found for user {_lenderId}", exception.Message);
+    }
 }
