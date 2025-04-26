@@ -1,55 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceTracker.Application.Installments.Commands.PayInstallments;
-using FluentValidation.TestHelper;
+﻿using FluentValidation.TestHelper;
 using Xunit;
 
-namespace FinanceTracker.Application.Installments.Commands.PayInstallments.Tests
+namespace FinanceTracker.Application.Installments.Commands.PayInstallments.Tests;
+
+public class PayInstallmentCommandValidatorTests
 {
-    public class PayInstallmentCommandValidatorTests
+    [Fact()]
+    public void Validator_ForValidCommand_ShouldNotHaveValidationErrors()
     {
-        [Fact()]
-        public void Validator_ForValidCommand_ShouldNotHaveValidationErrors()
+        // Arrange
+        var command = new PayInstallmentCommand()
         {
-            // Arrange
-            var command = new PayInstallmentCommand()
-            {
-                LoanId = 2,
-                Amount = 100,
-                NextDueDate = DateTime.UtcNow.AddDays(1),
-            };
+            LoanId = 2,
+            Amount = 100,
+            NextDueDate = DateTime.UtcNow.AddDays(1),
+        };
 
-            var validator = new PayInstallmentCommandValidator();
+        var validator = new PayInstallmentCommandValidator();
 
-            // Act
-            var results = validator.TestValidate(command);
+        // Act
+        var results = validator.TestValidate(command);
 
-            // Assert
-            results.ShouldNotHaveAnyValidationErrors();
-        }
+        // Assert
+        results.ShouldNotHaveAnyValidationErrors();
+    }
 
-        [Fact()]
-        public void Validator_ForInvalidCommand_ShouldHaveValidationErrors()
+    [Fact()]
+    public void Validator_ForInvalidCommand_ShouldHaveValidationErrors()
+    {
+        // Arrange
+        var command = new PayInstallmentCommand()
         {
-            // Arrange
-            var command = new PayInstallmentCommand()
-            {
-                LoanId = 0,
-                Amount = -100,
-                NextDueDate = DateTime.UtcNow,
-            };
+            LoanId = 0,
+            Amount = -100,
+            NextDueDate = DateTime.UtcNow,
+        };
 
-            var validator = new PayInstallmentCommandValidator();
+        var validator = new PayInstallmentCommandValidator();
 
-            // Act
-            var results = validator.TestValidate(command);
+        // Act
+        var results = validator.TestValidate(command);
 
-            // Assert
-            results.ShouldHaveValidationErrorFor(c => c.Amount);
-            results.ShouldHaveValidationErrorFor(c => c.NextDueDate);
-        }
+        // Assert
+        results.ShouldHaveValidationErrorFor(c => c.Amount);
+        results.ShouldHaveValidationErrorFor(c => c.NextDueDate);
     }
 }

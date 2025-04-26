@@ -1,45 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceTracker.Application.LoanRequests.Commands.ApproveLoanRequest;
-using FluentValidation.TestHelper;
+﻿using FluentValidation.TestHelper;
 using Xunit;
 
-namespace FinanceTracker.Application.LoanRequests.Commands.ApproveLoanRequest.Tests
+namespace FinanceTracker.Application.LoanRequests.Commands.ApproveLoanRequest.Tests;
+
+public class ApproveLoanRequestCommandValidatorTests
 {
-    public class ApproveLoanRequestCommandValidatorTests
+    [Fact()]
+    public void Validator_ForValidCommand_ShouldNotHaveAnyValidationErrors()
     {
-        [Fact()]
-        public void Validator_ForValidCommand_ShouldNotHaveAnyValidationErrors()
-        {
-            // Arrange
-            var command = new ApproveLoanRequestCommand(1, 2);
+        // Arrange
+        var command = new ApproveLoanRequestCommand(1, 2);
 
-            var validator = new ApproveLoanRequestCommandValidator();
+        var validator = new ApproveLoanRequestCommandValidator();
 
-            // Act
-            var results = validator.TestValidate(command);
+        // Act
+        var results = validator.TestValidate(command);
 
-            // Assert
-            results.ShouldNotHaveAnyValidationErrors();
-        }
+        // Assert
+        results.ShouldNotHaveAnyValidationErrors();
+    }
 
-        [Fact()]
-        public void Validator_ForEmptyCommand_ShouldHaveValidationErrors()
-        {
-            // Arrange
-            var command = new ApproveLoanRequestCommand(0, 0);
+    [Fact()]
+    public void Validator_ForEmptyCommand_ShouldHaveValidationErrors()
+    {
+        // Arrange
+        var command = new ApproveLoanRequestCommand(0, 0);
 
-            var validator = new ApproveLoanRequestCommandValidator();
+        var validator = new ApproveLoanRequestCommandValidator();
 
-            // Act
-            var results = validator.TestValidate(command);
+        // Act
+        var results = validator.TestValidate(command);
 
-            // Assert
-            results.ShouldHaveValidationErrorFor(c => c.LoanRequestId);
-            results.ShouldHaveValidationErrorFor(c => c.LenderWalletId);
-        }
+        // Assert
+        results.ShouldHaveValidationErrorFor(c => c.LoanRequestId);
+        results.ShouldHaveValidationErrorFor(c => c.LenderWalletId);
     }
 }
