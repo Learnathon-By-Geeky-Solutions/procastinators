@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { auth, signIn } from "@/lib/auth";
 
 export async function middleware(request: NextRequest) {
     const session = await auth();
 
     if (!session) {
         return NextResponse.redirect(new URL("/auth/login", request.url));
+    }
+
+    if (session.refreshAt && session.refreshAt < Date.now()) {
+        try {
+            await signIn("refresh", {
+                redirect: false,
+                refreshToken: session.refreshToken,
+            });
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return NextResponse.next();

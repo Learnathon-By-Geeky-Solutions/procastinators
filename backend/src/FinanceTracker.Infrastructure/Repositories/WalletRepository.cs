@@ -16,15 +16,12 @@ internal class WalletRepository(FinanceTrackerDbContext dbContext) : IWalletRepo
 
     public async Task<IEnumerable<Wallet>> GetAll(string userId)
     {
-        return await dbContext.Wallets
-            .Where(w => w.UserId == userId && !w.IsDeleted)
-            .ToListAsync();
+        return await dbContext.Wallets.Where(w => w.UserId == userId && !w.IsDeleted).ToListAsync();
     }
 
     public async Task<Wallet?> GetById(int id)
     {
-        return await dbContext.Wallets
-            .FirstOrDefaultAsync(w => w.Id == id);
+        return await dbContext.Wallets.FirstOrDefaultAsync(w => w.Id == id);
     }
 
     public async Task<int> SaveChangesAsync()

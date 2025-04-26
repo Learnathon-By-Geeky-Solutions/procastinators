@@ -2,6 +2,7 @@
 using FinanceTracker.Domain.Repositories;
 using FinanceTracker.Infrastructure.Persistence;
 using FinanceTracker.Infrastructure.Repositories;
+using FinanceTracker.Infrastructure.Seeders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,8 +25,12 @@ public static class ServiceCollectionExtensions
             .AddIdentityApiEndpoints<User>()
             .AddEntityFrameworkStores<FinanceTrackerDbContext>();
 
+        services.AddScoped<IFinanceTrackerSeeder, FinanceTrackerSeeder>();
         services.AddScoped<IWalletRepository, WalletRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IPersonalTransactionRepository, PersonalTransactionRepository>();
+        services.AddScoped<ILoanRepository, LoanRepository>();
+        services.AddScoped<ILoanRequestRepository, LoanRequestRepository>();
+        services.AddScoped<IInstallmentRepository, InstallmentRepository>();
     }
 }

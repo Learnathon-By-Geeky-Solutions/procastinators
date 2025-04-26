@@ -17,7 +17,7 @@ namespace FinanceTracker.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.2")
+                .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -52,6 +52,142 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("FinanceTracker.Domain.Entities.Installment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int>("LoanId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("NextDueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LoanId");
+
+                    b.ToTable("Installments");
+                });
+
+            modelBuilder.Entity("FinanceTracker.Domain.Entities.Loan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int?>("BorrowerWalletId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("DueAmount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("LoanRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("WalletId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BorrowerWalletId");
+
+                    b.HasIndex("LenderId");
+
+                    b.HasIndex("LoanRequestId")
+                        .IsUnique()
+                        .HasFilter("[LoanRequestId] IS NOT NULL");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WalletId");
+
+                    b.ToTable("Loans");
+                });
+
+            modelBuilder.Entity("FinanceTracker.Domain.Entities.LoanRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("BorrowerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("WalletId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BorrowerId");
+
+                    b.HasIndex("LenderId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WalletId");
+
+                    b.ToTable("LoanRequests");
+                });
+
             modelBuilder.Entity("FinanceTracker.Domain.Entities.PersonalTransaction", b =>
                 {
                     b.Property<int>("Id")
@@ -83,6 +219,9 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("UserId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("WalletId")
                         .HasColumnType("int");
 
@@ -91,6 +230,8 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.HasIndex("WalletId");
 
@@ -346,22 +487,103 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("FinanceTracker.Domain.Entities.Installment", b =>
+                {
+                    b.HasOne("FinanceTracker.Domain.Entities.Loan", "Loan")
+                        .WithMany()
+                        .HasForeignKey("LoanId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Loan");
+                });
+
+            modelBuilder.Entity("FinanceTracker.Domain.Entities.Loan", b =>
+                {
+                    b.HasOne("FinanceTracker.Domain.Entities.Wallet", "BorrowerWallet")
+                        .WithMany()
+                        .HasForeignKey("BorrowerWalletId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FinanceTracker.Domain.Entities.User", "Lender")
+                        .WithMany()
+                        .HasForeignKey("LenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FinanceTracker.Domain.Entities.LoanRequest", "LoanRequest")
+                        .WithOne()
+                        .HasForeignKey("FinanceTracker.Domain.Entities.Loan", "LoanRequestId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FinanceTracker.Domain.Entities.User", null)
+                        .WithMany("Loans")
+                        .HasForeignKey("UserId");
+
+                    b.HasOne("FinanceTracker.Domain.Entities.Wallet", "Wallet")
+                        .WithMany()
+                        .HasForeignKey("WalletId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("BorrowerWallet");
+
+                    b.Navigation("Lender");
+
+                    b.Navigation("LoanRequest");
+
+                    b.Navigation("Wallet");
+                });
+
+            modelBuilder.Entity("FinanceTracker.Domain.Entities.LoanRequest", b =>
+                {
+                    b.HasOne("FinanceTracker.Domain.Entities.User", "Borrower")
+                        .WithMany()
+                        .HasForeignKey("BorrowerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FinanceTracker.Domain.Entities.User", "Lender")
+                        .WithMany()
+                        .HasForeignKey("LenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FinanceTracker.Domain.Entities.User", null)
+                        .WithMany("LoanRequests")
+                        .HasForeignKey("UserId");
+
+                    b.HasOne("FinanceTracker.Domain.Entities.Wallet", "Wallet")
+                        .WithMany()
+                        .HasForeignKey("WalletId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Borrower");
+
+                    b.Navigation("Lender");
+
+                    b.Navigation("Wallet");
+                });
+
             modelBuilder.Entity("FinanceTracker.Domain.Entities.PersonalTransaction", b =>
                 {
                     b.HasOne("FinanceTracker.Domain.Entities.Category", "Category")
-                        .WithMany("Transactions")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FinanceTracker.Domain.Entities.User", "User")
-                        .WithMany("Transactions")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FinanceTracker.Domain.Entities.Wallet", "Wallet")
+                    b.HasOne("FinanceTracker.Domain.Entities.User", null)
                         .WithMany("Transactions")
+                        .HasForeignKey("UserId1");
+
+                    b.HasOne("FinanceTracker.Domain.Entities.Wallet", "Wallet")
+                        .WithMany()
                         .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -435,23 +657,17 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FinanceTracker.Domain.Entities.Category", b =>
-                {
-                    b.Navigation("Transactions");
-                });
-
             modelBuilder.Entity("FinanceTracker.Domain.Entities.User", b =>
                 {
                     b.Navigation("Categories");
 
+                    b.Navigation("LoanRequests");
+
+                    b.Navigation("Loans");
+
                     b.Navigation("Transactions");
 
                     b.Navigation("Wallets");
-                });
-
-            modelBuilder.Entity("FinanceTracker.Domain.Entities.Wallet", b =>
-                {
-                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }
