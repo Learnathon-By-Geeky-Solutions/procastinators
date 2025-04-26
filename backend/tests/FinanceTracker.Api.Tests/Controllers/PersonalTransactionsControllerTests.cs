@@ -12,6 +12,7 @@ using FinanceTracker.Application.PersonalTransactions.Commands.UpdatePersonalTra
 using FinanceTracker.Application.PersonalTransactions.Dtos;
 using FinanceTracker.Application.PersonalTransactions.Queries.GetAllPersonalTransactions;
 using FinanceTracker.Application.PersonalTransactions.Queries.GetPersonalTransactionById;
+using FinanceTracker.Application.PersonalTransactions.Queries.GetReportOnCategories;
 using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using MediatR;
@@ -252,5 +253,80 @@ public class PersonalTransactionsControllerTests : IClassFixture<WebApplicationF
     }
 
     [Fact()]
-    public void GetReportOnCategoriesTest() { }
+    public async Task GetReportOnCategoriesTest_ReturnsOkWithReport()
+    {
+        // Arrange
+        var query = new GetReportOnCategoriesQuery { Type = "expense", Days = 30 };
+
+        var totalPerCategoryDtos = new List<TotalPerCategoryDto>
+        {
+            new TotalPerCategoryDto
+            {
+                CategoryId = 1,
+                CategoryTitle = "Food",
+                Total = 150.50m,
+            },
+            new TotalPerCategoryDto
+            {
+                CategoryId = 2,
+                CategoryTitle = "Transportation",
+                Total = 75.25m,
+            },
+            new TotalPerCategoryDto
+            {
+                CategoryId = 3,
+                CategoryTitle = "Entertainment",
+                Total = 50.00m,
+            },
+        };
+
+        var reportResult = new ReportOnCategoriesDto
+        {
+            GrandTotal = 275.75m,
+            Categories = totalPerCategoryDtos,
+        };
+
+        _mediatorMock
+            .Setup(m =>
+                m.Send(
+                    It.Is<GetReportOnCategoriesQuery>(q =>
+                        q.Type == query.Type && q.Days == query.Days
+                    ),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync(reportResult);
+
+        var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.GetAsync(
+            $"api/PersonalTransactions/report/categories?Type={query.Type}&Days={query.Days}"
+        );
+
+        // Assert
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+
+        var responseContent = await response.Content.ReadFromJsonAsync<ReportOnCategoriesDto>();
+        responseContent.Should().NotBeNull();
+        responseContent.GrandTotal.Should().Be(275.75m);
+        responseContent.Categories.Should().HaveCount(3);
+
+        var categories = responseContent.Categories.ToList();
+        categories[0].CategoryTitle.Should().Be("Food");
+        categories[0].Total.Should().Be(150.50m);
+        categories[1].CategoryTitle.Should().Be("Transportation");
+        categories[2].CategoryTitle.Should().Be("Entertainment");
+
+        _mediatorMock.Verify(
+            m =>
+                m.Send(
+                    It.Is<GetReportOnCategoriesQuery>(q =>
+                        q.Type == query.Type && q.Days == query.Days
+                    ),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once
+        );
+    }
 }
