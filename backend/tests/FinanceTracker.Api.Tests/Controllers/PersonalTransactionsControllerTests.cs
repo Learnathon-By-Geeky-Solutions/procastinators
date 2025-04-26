@@ -2,6 +2,7 @@
 using FinanceTracker.Api.Tests;
 using FinanceTracker.Application.Categories.Commands.CreateCategory;
 using FinanceTracker.Application.Categories.Dtos;
+using FinanceTracker.Application.Categories.Queries.GetAllCategories;
 using FinanceTracker.Application.PersonalTransactions.Commands.CreatePersonalTransaction;
 using FinanceTracker.Application.PersonalTransactions.Dtos;
 using FinanceTracker.Application.PersonalTransactions.Queries.GetAllPersonalTransactions;
@@ -75,42 +76,59 @@ public class PersonalTransactionsControllerTests : IClassFixture<WebApplicationF
     [Fact()]
     public async Task Create_WithValidCommand_ReturnsCreatedAtAction()
     {
-        //// Arrange
-        //var createCommand = new CreatePersonalTransactionCommand()
-        //{
-        //    TransactionType = "Income",
-        //    Amount = 20,
-        //    CategoryId = 1,
-        //    WalletId = 2,
-        //    Timestamp = DateTime.Now,
-        //    Note = "Test transaction",
-        //};
-        //int createdId = 42;
+        // Arrange
+        var createCommand = new CreatePersonalTransactionCommand()
+        {
+            TransactionType = "Income",
+            Amount = 20,
+            CategoryId = 1,
+            WalletId = 2,
+            Timestamp = DateTime.Now,
+            Note = "Test transaction",
+        };
+        int createdId = 42;
 
-        //_mediatorMock
-        //    .Setup(m =>
-        //        m.Send(It.IsAny<CreatePersonalTransactionCommand>(), It.IsAny<CancellationToken>())
-        //    )
-        //    .ReturnsAsync(createdId);
+        _mediatorMock
+            .Setup(m =>
+                m.Send(It.IsAny<CreatePersonalTransactionCommand>(), It.IsAny<CancellationToken>())
+            )
+            .ReturnsAsync(createdId);
 
-        //var client = _factory.CreateClient();
+        var client = _factory.CreateClient();
 
-        //// Act
-        //var response = await client.PostAsJsonAsync("api/Transactions", createCommand);
+        // Act
+        var response = await client.PostAsJsonAsync("api/PersonalTransactions", createCommand);
 
-        //// Assert
-        //response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
-        //response.Headers.Location.Should().NotBeNull();
-        //response.Headers.Location.ToString().Should().Contain($"/api/Transactions/{createdId}");
-        //_mediatorMock.Verify(
-        //    m =>
-        //        m.Send(It.IsAny<CreatePersonalTransactionCommand>(), It.IsAny<CancellationToken>()),
-        //    Times.Once
-        //);
+        // Assert
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+        response.Headers.Location.Should().NotBeNull();
+        response
+            .Headers.Location.ToString()
+            .Should()
+            .Contain($"/api/PersonalTransactions/{createdId}");
+        _mediatorMock.Verify(
+            m =>
+                m.Send(It.IsAny<CreatePersonalTransactionCommand>(), It.IsAny<CancellationToken>()),
+            Times.Once
+        );
     }
 
     [Fact()]
-    public void GetAllTest() { }
+    public async Task GetAll_ForValidRequest_Returns200Ok()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+
+        // Act
+        var result = await client.GetAsync("api/PersonalTransactions");
+
+        // Assert
+        result.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        _mediatorMock.Verify(
+            m => m.Send(It.IsAny<GetAllPersonalTransactionsQuery>(), It.IsAny<CancellationToken>()),
+            Times.Once
+        );
+    }
 
     [Fact()]
     public void GetByIdTest() { }
