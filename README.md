@@ -1,4 +1,4 @@
-<center>
+<div align="center">
 
 ![.NET 8](https://img.shields.io/badge/.NET%208-6C2E9B?style=flat-square)
 ![EF Core](https://img.shields.io/badge/EF%20Core-4D26CE?style=flat-square)
@@ -15,7 +15,7 @@
 
 ###### Simplify Finances, Ease Collaboration
 
-</center>
+</div>
 
 Finance Tracker is a comprehensive financial management application designed to help users track personal finances and manage collaborative financial activities. It's objectives are:
 
@@ -23,7 +23,7 @@ Finance Tracker is a comprehensive financial management application designed to 
 -   Offer visibility into financial habits through analytics.
 -   Enable collaborative financial activities (e.g. tracking loans and group expenses).
 
-<center>
+<div align="center">
 
 <br>
 
@@ -32,13 +32,13 @@ Finance Tracker is a comprehensive financial management application designed to 
 [![API DOC](https://img.shields.io/badge/API%20DOC-view-grey?labelColor=85EA2D&style=for-the-badge&logo=swagger&logoColor=black)](https://fintrack-api-dev-hrb9cae8fef8facy.eastasia-01.azurewebsites.net/swagger/index.html)
 [![live demo](https://img.shields.io/badge/live%20demo-view-grey?labelColor=8A05FF&style=for-the-badge&logo=render)](https://procastinators.onrender.com)
 
-</center>
+</div>
 
 ## Team
 
 ### Information
 
-<center>
+<div align="center">
 
 <table>
   <tr >
@@ -72,16 +72,16 @@ Finance Tracker is a comprehensive financial management application designed to 
   </tr>
 </table>
 
-</center>
+</div>
 
 ### Resources
 
-<center>
+<div align="center">
 
 [![Kanban Board](https://img.shields.io/badge/Kanban%20Board-view-grey?labelColor=007ACC&style=for-the-badge&logo=github&logoColor=white)](https://github.com/orgs/Learnathon-By-Geeky-Solutions/projects/85)
 [![Diagrams](https://img.shields.io/badge/Diagrams-view-grey?labelColor=E88305&style=for-the-badge&logo=lucid&logoColor=white)](https://lucid.app/lucidchart/a38c61ea-8c46-4299-a165-344b6b8e7c43/edit?viewport_loc=-1171%2C-1231%2C7008%2C3117%2C0_0&invitationId=inv_3c679402-33c7-4b2b-bf60-358c0073d401)
 
-</center>
+</div>
 
 ## Project Description
 
