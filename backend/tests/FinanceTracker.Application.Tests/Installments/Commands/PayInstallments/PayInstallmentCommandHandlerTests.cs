@@ -148,4 +148,43 @@ public class PayInstallmentCommandHandlerTests
         _loanRepositoryMock.Verify(repo => repo.SaveChangesAsync(), Times.Once);
         _installmentRepositoryMock.Verify(repo => repo.SaveChangesAsync(), Times.Once);
     }
+
+    [Fact()]
+    public async Task Handle_WithNonExistentLoan_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var command = new PayInstallmentCommand
+        {
+            LoanId = _loanId,
+            Amount = 500m,
+            NextDueDate = DateTime.Now.AddMonths(1),
+            Note = "Test payment",
+        };
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync((Loan?)null);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(
+            () => _handler.Handle(command, CancellationToken.None)
+        );
+    }
+
+    [Fact()]
+    public async Task Handle_WithDeletedLoan_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var command = new PayInstallmentCommand
+        {
+            LoanId = _loanId,
+            Amount = 500m,
+            NextDueDate = DateTime.Now.AddMonths(1),
+            Note = "Test payment",
+        };
+        var loan = new Loan { Id = _loanId, IsDeleted = true };
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(
+            () => _handler.Handle(command, CancellationToken.None)
+        );
+    }
 }
