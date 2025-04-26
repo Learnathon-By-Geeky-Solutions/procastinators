@@ -4,6 +4,7 @@ using FinanceTracker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(FinanceTrackerDbContext))]
-    partial class FinanceTrackerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250425155659_LoanManager")]
+    partial class LoanManager
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,9 +96,6 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int?>("BorrowerWalletId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("DueAmount")
                         .HasColumnType("decimal(18, 2)");
 
@@ -125,8 +125,6 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BorrowerWalletId");
 
                     b.HasIndex("LenderId");
 
@@ -172,9 +170,6 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("WalletId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BorrowerId");
@@ -182,8 +177,6 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.HasIndex("LenderId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("WalletId");
 
                     b.ToTable("LoanRequests");
                 });
@@ -500,11 +493,6 @@ namespace FinanceTracker.Infrastructure.Migrations
 
             modelBuilder.Entity("FinanceTracker.Domain.Entities.Loan", b =>
                 {
-                    b.HasOne("FinanceTracker.Domain.Entities.Wallet", "BorrowerWallet")
-                        .WithMany()
-                        .HasForeignKey("BorrowerWalletId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("FinanceTracker.Domain.Entities.User", "Lender")
                         .WithMany()
                         .HasForeignKey("LenderId")
@@ -524,8 +512,6 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("BorrowerWallet");
 
                     b.Navigation("Lender");
 
@@ -552,16 +538,9 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .WithMany("LoanRequests")
                         .HasForeignKey("UserId");
 
-                    b.HasOne("FinanceTracker.Domain.Entities.Wallet", "Wallet")
-                        .WithMany()
-                        .HasForeignKey("WalletId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("Borrower");
 
                     b.Navigation("Lender");
-
-                    b.Navigation("Wallet");
                 });
 
             modelBuilder.Entity("FinanceTracker.Domain.Entities.PersonalTransaction", b =>

@@ -4,6 +4,7 @@ using FinanceTracker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(FinanceTrackerDbContext))]
-    partial class FinanceTrackerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250425173733_FinalLoanManagement")]
+    partial class FinalLoanManagement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -172,9 +175,6 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("WalletId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BorrowerId");
@@ -182,8 +182,6 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.HasIndex("LenderId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("WalletId");
 
                     b.ToTable("LoanRequests");
                 });
@@ -552,16 +550,9 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .WithMany("LoanRequests")
                         .HasForeignKey("UserId");
 
-                    b.HasOne("FinanceTracker.Domain.Entities.Wallet", "Wallet")
-                        .WithMany()
-                        .HasForeignKey("WalletId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("Borrower");
 
                     b.Navigation("Lender");
-
-                    b.Navigation("Wallet");
                 });
 
             modelBuilder.Entity("FinanceTracker.Domain.Entities.PersonalTransaction", b =>
