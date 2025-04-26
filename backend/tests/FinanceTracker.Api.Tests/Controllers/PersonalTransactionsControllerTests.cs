@@ -1,11 +1,17 @@
 ﻿using System.Net.Http.Json;
 using FinanceTracker.Api.Tests;
 using FinanceTracker.Application.Categories.Commands.CreateCategory;
+using FinanceTracker.Application.Categories.Commands.DeleteCategory;
+using FinanceTracker.Application.Categories.Commands.UpdateCategory;
 using FinanceTracker.Application.Categories.Dtos;
 using FinanceTracker.Application.Categories.Queries.GetAllCategories;
+using FinanceTracker.Application.Categories.Queries.GetCategoryById;
 using FinanceTracker.Application.PersonalTransactions.Commands.CreatePersonalTransaction;
+using FinanceTracker.Application.PersonalTransactions.Commands.DeletePersonalTransaction;
+using FinanceTracker.Application.PersonalTransactions.Commands.UpdatePersonalTransaction;
 using FinanceTracker.Application.PersonalTransactions.Dtos;
 using FinanceTracker.Application.PersonalTransactions.Queries.GetAllPersonalTransactions;
+using FinanceTracker.Application.PersonalTransactions.Queries.GetPersonalTransactionById;
 using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using MediatR;
@@ -131,13 +137,119 @@ public class PersonalTransactionsControllerTests : IClassFixture<WebApplicationF
     }
 
     [Fact()]
-    public void GetByIdTest() { }
+    public async Task GetById_ForExistingId_Returns200Ok()
+    {
+        // Arrange
+        var id = 11;
+        var personalTransactionDto = new PersonalTransactionDto
+        {
+            Id = id,
+            TransactionType = "Income",
+            Amount = 100,
+        };
+
+        _mediatorMock
+            .Setup(m =>
+                m.Send(
+                    It.Is<GetPersonalTransactionByIdQuery>(q => q.Id == id),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync(personalTransactionDto);
+
+        var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.GetAsync($"/api/PersonalTransactions/{id}");
+
+        // Assert
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+        _mediatorMock.Verify(
+            m =>
+                m.Send(
+                    It.Is<GetPersonalTransactionByIdQuery>(q => q.Id == id),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once
+        );
+    }
 
     [Fact()]
-    public void UpdateTest() { }
+    public async Task Update_WithValidCommand_ReturnsNoContent()
+    {
+        // Arrange
+        var id = 10;
+        var updateCommand = new UpdatePersonalTransactionCommand
+        {
+            Id = id,
+            TransactionType = "Income",
+            Amount = 20,
+            CategoryId = 1,
+            WalletId = 2,
+            Timestamp = DateTime.Now,
+            Note = "Test transaction",
+        };
+
+        _mediatorMock
+            .Setup(m =>
+                m.Send(
+                    It.Is<UpdatePersonalTransactionCommand>(c => c.Id == id),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .Returns(Task.CompletedTask);
+
+        var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.PatchAsync(
+            $"api/PersonalTransactions/{id}",
+            JsonContent.Create(updateCommand)
+        );
+
+        // Assert
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+        _mediatorMock.Verify(
+            m =>
+                m.Send(
+                    It.Is<UpdatePersonalTransactionCommand>(c => c.Id == id),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once
+        );
+    }
 
     [Fact()]
-    public void DeleteTest() { }
+    public async Task Delete_WithExistingId_ReturnsNoContent()
+    {
+        // Arrange
+        var id = 5;
+
+        _mediatorMock
+            .Setup(m =>
+                m.Send(
+                    It.Is<DeletePersonalTransactionCommand>(c => c.Id == id),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .Returns(Task.CompletedTask);
+
+        var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.DeleteAsync($"api/PersonalTransactions/{id}");
+
+        // Assert
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+        _mediatorMock.Verify(
+            m =>
+                m.Send(
+                    It.Is<DeletePersonalTransactionCommand>(c => c.Id == id),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once
+        );
+    }
 
     [Fact()]
     public void GetReportOnCategoriesTest() { }
