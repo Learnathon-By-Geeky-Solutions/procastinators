@@ -133,7 +133,7 @@ export function AddTransactionDialog({
                                     >
                                         <FormControl className="w-full">
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Select destination wallet" />
+                                                <SelectValue placeholder="Select Category" />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
