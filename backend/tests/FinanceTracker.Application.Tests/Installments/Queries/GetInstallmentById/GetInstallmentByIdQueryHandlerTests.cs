@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using FinanceTracker.Application.Categories.Dtos;
 using FinanceTracker.Application.Installments.Dtos;
-using FinanceTracker.Application.Installments.Queries.GetAllInstallments;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
