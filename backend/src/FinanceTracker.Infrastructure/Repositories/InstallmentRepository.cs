@@ -27,9 +27,11 @@ internal class InstallmentRepository(FinanceTrackerDbContext dbContext) : IInsta
         return await dbContext.Installments.Where(i => i.LoanId == loanId).ToListAsync();
     }
 
-    public async Task<Installment?> GetByIdAsync(int id)
+    public async Task<Installment?> GetByIdAsync(int loanId, int id)
     {
-        return await dbContext.Installments.FirstOrDefaultAsync(i => i.Id == id);
+        return await dbContext
+            .Installments.Where(i => i.LoanId == loanId)
+            .FirstOrDefaultAsync(i => i.Id == id);
     }
 
     public async Task<IEnumerable<InstallmentClaim>> GetAllInstallmentClaimsAsync(string userId)

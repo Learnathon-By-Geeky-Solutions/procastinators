@@ -25,7 +25,7 @@ public class GetInstallmentByIdQueryHandler(
             loanRepo.GetByIdAsync(request.LoanId, user.Id)
             ?? throw new NotFoundException(nameof(Loan), request.LoanId.ToString());
         var installment =
-            await installmentRepo.GetByIdAsync(request.Id)
+            await installmentRepo.GetByIdAsync(loan.Id, request.Id)
             ?? throw new NotFoundException(nameof(Installment), request.Id.ToString());
 
         return mapper.Map<InstallmentDto>(installment);

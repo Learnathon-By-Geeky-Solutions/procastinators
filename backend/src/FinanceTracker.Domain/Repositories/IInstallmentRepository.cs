@@ -6,7 +6,7 @@ public interface IInstallmentRepository
 {
     Task<int> CreateAsync(Installment installment);
     Task<int> CreateWithClaimAsync(Installment installment);
-    Task<Installment?> GetByIdAsync(int id);
+    Task<Installment?> GetByIdAsync(int loanId, int id);
     Task<IEnumerable<Installment>> GetAllAsync(int loanId);
 
     Task<IEnumerable<InstallmentClaim>> GetAllInstallmentClaimsAsync(string userId);

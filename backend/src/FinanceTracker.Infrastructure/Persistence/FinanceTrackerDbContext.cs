@@ -62,7 +62,7 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
             .HaveConversion<NullableDateTimeAsUtcValueConverter>();
     }
 
-    private void ConfigureDecimalColumns(ModelBuilder builder)
+    private static void ConfigureDecimalColumns(ModelBuilder builder)
     {
         builder.Entity<Wallet>(entity =>
             entity.Property(e => e.Balance).HasColumnType(DecimalColumnType)
@@ -87,7 +87,7 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
         );
     }
 
-    private void ConfigurePersonalTransactionRelations(ModelBuilder builder)
+    private static void ConfigurePersonalTransactionRelations(ModelBuilder builder)
     {
         builder
             .Entity<PersonalTransaction>()
@@ -111,7 +111,7 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private void ConfigureLoanRelations(ModelBuilder builder)
+    private static void ConfigureLoanRelations(ModelBuilder builder)
     {
         builder
             .Entity<Loan>()
@@ -135,7 +135,7 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private void ConfigureLoanRequestRelations(ModelBuilder builder)
+    private static void ConfigureLoanRequestRelations(ModelBuilder builder)
     {
         builder
             .Entity<LoanRequest>()

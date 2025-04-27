@@ -25,7 +25,7 @@ public class GetLoanRequestByIdQueryHandler(
         var entity =
             await repo.GetByIdAsync(request.Id)
             ?? throw new NotFoundException(nameof(LoanRequest), request.Id.ToString());
-        ;
+
         logger.LogInformation("User: {@u} \n{@r}", user, request);
 
         var isAllowed = entity.BorrowerId == user.Id || entity.LenderId == user.Id;
