@@ -14,25 +14,6 @@ internal class LoanRepository(FinanceTrackerDbContext dbContext) : ILoanReposito
         return loan.Id;
     }
 
-    public async Task<Loan?> GetByIdAsync(int id)
-    {
-        return await dbContext
-            .Loans.Include(l => l.LoanRequest)
-            .FirstOrDefaultAsync(l => l.Id == id);
-    }
-
-    public async Task<IEnumerable<Loan>> GetAllAsLenderAsync(String LenderId)
-    {
-        return await dbContext.Loans.Where(l => l.LenderId == LenderId).ToListAsync();
-    }
-
-    public async Task<IEnumerable<Loan>> GetAllAsBorrowerAsync(String BorrowerId)
-    {
-        return await dbContext.Loans.Where(L => L.BorrowerId == BorrowerId).ToListAsync();
-    }
-
-    public async Task<int> SaveChangesAsync() => await dbContext.SaveChangesAsync();
-
     public async Task<int> CreateWithClaimAsync(Loan loan)
     {
         dbContext.Loans.Add(loan);
@@ -40,6 +21,51 @@ internal class LoanRepository(FinanceTrackerDbContext dbContext) : ILoanReposito
         await dbContext.SaveChangesAsync();
         return loan.Id;
     }
+
+    public async Task<IEnumerable<Loan>> GetAllAsLenderAsync(string LenderId)
+    {
+        return await dbContext.Loans.Where(l => l.LenderId == LenderId).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Loan>> GetAllAsBorrowerAsync(string BorrowerId)
+    {
+        return await dbContext.Loans.Where(L => L.BorrowerId == BorrowerId).ToListAsync();
+    }
+
+    public async Task<Loan?> GetByIdAsync(int id, string userId)
+    {
+        return await dbContext
+            .Loans.Include(l => l.LoanRequest)
+            .Include(l => l.Lender)
+            .Include(l => l.Borrower)
+            .Where(l => !l.IsDeleted)
+            .Where(l => l.BorrowerId == userId || l.LenderId == userId)
+            .FirstOrDefaultAsync(l => l.Id == id);
+    }
+
+    public async Task<Loan?> GetByIdAsLenderAsync(int id, string lenderId)
+    {
+        return await dbContext
+            .Loans.Include(l => l.LoanRequest)
+            .Include(l => l.Lender)
+            .Include(l => l.Borrower)
+            .Where(l => !l.IsDeleted)
+            .Where(l => l.LenderId == lenderId)
+            .FirstOrDefaultAsync(l => l.Id == id);
+    }
+
+    public async Task<Loan?> GetByIdAsBorrowerAsync(int id, string borrowerId)
+    {
+        return await dbContext
+            .Loans.Include(l => l.LoanRequest)
+            .Include(l => l.Lender)
+            .Include(l => l.Borrower)
+            .Where(l => !l.IsDeleted)
+            .Where(l => l.BorrowerId == borrowerId)
+            .FirstOrDefaultAsync(l => l.Id == id);
+    }
+
+    public async Task<int> SaveChangesAsync() => await dbContext.SaveChangesAsync();
 
     public async Task<IEnumerable<LoanClaim>> GetAllLoanClaimsAsync(string userId)
     {

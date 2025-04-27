@@ -1,4 +1,4 @@
-﻿using FinanceTracker.Application.LoanClaims.Commands;
+﻿using FinanceTracker.Application.LoanClaims.Commands.ClaimLoanFund;
 using FinanceTracker.Application.LoanClaims.Queries.GetAllLoanClaims;
 using FinanceTracker.Application.LoanClaims.Queries.GetLoanClaimById;
 using MediatR;
@@ -29,7 +29,7 @@ public class LoanClaimsController(IMediator mediator) : ControllerBase
     [HttpPost("{id}/claim")]
     public async Task<IActionResult> ClaimFund(
         [FromRoute] int id,
-        [FromBody] ClaimFundCommand command
+        [FromBody] ClaimLoanFundCommand command
     )
     {
         command.Id = id;

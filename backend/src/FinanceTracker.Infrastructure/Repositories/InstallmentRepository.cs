@@ -1,5 +1,4 @@
-﻿
-using FinanceTracker.Domain.Entities;
+﻿using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Repositories;
 using FinanceTracker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -15,17 +14,40 @@ internal class InstallmentRepository(FinanceTrackerDbContext dbContext) : IInsta
         return installment.Id;
     }
 
-    public async Task<IEnumerable<Installment>> GetAllByLoanIdAsync(int loanId)
+    public async Task<int> CreateWithClaimAsync(Installment installment)
     {
-        return await dbContext.Installments
-            .Where(i => i.LoanId == loanId)
-            .ToListAsync();
+        dbContext.Installments.Add(installment);
+        dbContext.InstallmentClaims.Add(new InstallmentClaim { Installment = installment });
+        await dbContext.SaveChangesAsync();
+        return installment.Id;
+    }
+
+    public async Task<IEnumerable<Installment>> GetAllAsync(int loanId)
+    {
+        return await dbContext.Installments.Where(i => i.LoanId == loanId).ToListAsync();
     }
 
     public async Task<Installment?> GetByIdAsync(int id)
     {
-        return await dbContext.Installments
-            .FirstOrDefaultAsync(i => i.Id == id);
+        return await dbContext.Installments.FirstOrDefaultAsync(i => i.Id == id);
+    }
+
+    public async Task<IEnumerable<InstallmentClaim>> GetAllInstallmentClaimsAsync(string userId)
+    {
+        return await dbContext
+            .InstallmentClaims.Include(ic => ic.Installment)
+            .ThenInclude(i => i.Loan)
+            .Where(ic => ic.Installment.Loan.LenderId == userId)
+            .ToListAsync();
+    }
+
+    public async Task<InstallmentClaim?> GetInstallmentClaimByIdAsync(int id, string userId)
+    {
+        return await dbContext
+            .InstallmentClaims.Include(ic => ic.Installment)
+            .ThenInclude(i => i.Loan)
+            .Where(ic => ic.Installment.Loan.LenderId == userId)
+            .FirstOrDefaultAsync(ic => ic.Id == id);
     }
 
     public async Task<int> SaveChangesAsync()

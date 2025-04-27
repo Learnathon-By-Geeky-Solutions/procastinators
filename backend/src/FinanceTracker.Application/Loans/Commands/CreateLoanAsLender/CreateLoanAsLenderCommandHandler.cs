@@ -23,13 +23,18 @@ public class CreateLoanAsLenderCommandHandler(
 
         var wallet =
             await walletRepo.GetById(request.WalletId)
-            ?? throw new NotFoundException("Wallet", request.WalletId.ToString());
-        wallet.Balance -= request.Amount;
+            ?? throw new NotFoundException(nameof(Wallet), request.WalletId.ToString());
+
+        if (wallet.IsDeleted)
+        {
+            throw new NotFoundException(nameof(Wallet), request.WalletId.ToString());
+        }
 
         if (wallet.UserId != user.Id)
         {
             throw new ForbiddenException();
         }
+        wallet.Balance -= request.Amount;
 
         var loan = new Loan
         {

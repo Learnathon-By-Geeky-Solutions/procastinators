@@ -5,22 +5,16 @@ using FinanceTracker.Domain.Repositories;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace FinanceTracker.Application.LoanClaims.Commands;
+namespace FinanceTracker.Application.LoanClaims.Commands.ClaimLoanFund;
 
-public class ClaimFundCommand : IRequest
-{
-    public int Id { get; set; } = default!;
-    public int WalletId { get; set; } = default!;
-}
-
-public class ClaimFundCommandHandler(
-    ILogger<ClaimFundCommandHandler> logger,
+public class ClaimLoanFundCommandHandler(
+    ILogger<ClaimLoanFundCommandHandler> logger,
     IUserContext userContext,
     ILoanRepository loanRepository,
     IWalletRepository walletRepository
-) : IRequestHandler<ClaimFundCommand>
+) : IRequestHandler<ClaimLoanFundCommand>
 {
-    public async Task Handle(ClaimFundCommand request, CancellationToken cancellationToken)
+    public async Task Handle(ClaimLoanFundCommand request, CancellationToken cancellationToken)
     {
         var user = userContext.GetUser() ?? throw new ForbiddenException();
         var loanClaim =

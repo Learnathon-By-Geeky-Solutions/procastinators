@@ -16,6 +16,7 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
     internal DbSet<LoanRequest> LoanRequests { get; set; } = default!;
     internal DbSet<LoanClaim> LoanClaims { get; set; } = default!;
     internal DbSet<Installment> Installments { get; set; } = default!;
+    internal DbSet<InstallmentClaim> InstallmentClaims { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -41,6 +42,13 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
             .HasOne(lr => lr.Loan)
             .WithMany()
             .HasForeignKey(lr => lr.LoanId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .Entity<InstallmentClaim>()
+            .HasOne(ic => ic.Installment)
+            .WithOne()
+            .HasForeignKey<InstallmentClaim>(ic => ic.InstallmentId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
