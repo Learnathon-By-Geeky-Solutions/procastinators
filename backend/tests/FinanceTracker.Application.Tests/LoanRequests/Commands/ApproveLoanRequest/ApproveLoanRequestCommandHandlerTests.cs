@@ -204,4 +204,79 @@ public class ApproveLoanRequestCommandHandlerTests
 
         Xunit.Assert.Contains("WalletId cannot be null", exception.Message);
     }
+
+    [Fact]
+    public async Task Handle_LenderWalletNotFound_ThrowsNotFoundException()
+    {
+        // Arrange
+        var loanRequest = new LoanRequest
+        {
+            Id = _loanRequestId,
+            IsApproved = false,
+            WalletId = _borrowerWalletId,
+            LenderId = _lenderId,
+        };
+
+        _loanRequestRepository
+            .Setup(repo => repo.GetByIdAsync(_loanRequestId))
+            .ReturnsAsync(loanRequest);
+
+        _walletRepositoryMock
+            .Setup(repo => repo.GetById(_lenderWalletId))
+            .ReturnsAsync((Wallet?)null);
+
+        var command = new ApproveLoanRequestCommand(_loanRequestId, _lenderWalletId)
+        {
+            LoanRequestId = _loanRequestId,
+            LenderWalletId = _lenderWalletId,
+        };
+
+        // Act & Assert
+        var exception = await Xunit.Assert.ThrowsAsync<NotFoundException>(
+            () => _handler.Handle(command, CancellationToken.None)
+        );
+
+        Xunit.Assert.Contains(_lenderId.ToString(), exception.Message);
+    }
+
+    [Fact]
+    public async Task Handle_BorrowerWalletNotFound_ThrowsNotFoundException()
+    {
+        // Arrange
+        var loanRequest = new LoanRequest
+        {
+            Id = _loanRequestId,
+            BorrowerId = _borrowerId,
+            LenderId = _lenderId,
+            IsApproved = false,
+            WalletId = _borrowerWalletId,
+        };
+
+        var lenderWallet = new Wallet { Id = _lenderWalletId, UserId = _lenderId };
+
+        _loanRequestRepository
+            .Setup(repo => repo.GetByIdAsync(_loanRequestId))
+            .ReturnsAsync(loanRequest);
+
+        _walletRepositoryMock
+            .Setup(repo => repo.GetById(_lenderWalletId))
+            .ReturnsAsync(lenderWallet);
+
+        _walletRepositoryMock
+            .Setup(repo => repo.GetById(_borrowerWalletId))
+            .ReturnsAsync((Wallet?)null);
+
+        var command = new ApproveLoanRequestCommand(_loanRequestId, _lenderWalletId)
+        {
+            LoanRequestId = _loanRequestId,
+            LenderWalletId = _lenderWalletId,
+        };
+
+        // Act & Assert
+        var exception = await Xunit.Assert.ThrowsAsync<NotFoundException>(
+            () => _handler.Handle(command, CancellationToken.None)
+        );
+
+        Xunit.Assert.Contains(_borrowerId.ToString(), exception.Message);
+    }
 }
