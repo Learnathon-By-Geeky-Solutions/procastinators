@@ -187,4 +187,94 @@ public class GetLoanByIdQueryHandlerTests
         _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId), Times.Once);
         _mapperMock.Verify(m => m.Map<LoanDto>(It.IsAny<Loan>()), Times.Never);
     }
+
+    [Fact]
+    public async Task Handle_WithUnauthorizedUser_ShouldThrowForbiddenException()
+    {
+        // Arrange
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser()).Returns(user);
+
+        var query = new GetLoanByIdQuery { Id = _loanId };
+
+        var loan = new Loan
+        {
+            Id = _loanId,
+            IsDeleted = false,
+            LenderId = "other-lender-id", // Not the current user
+            Amount = 100,
+            Note = "Test loan",
+            IssuedAt = DateTime.UtcNow.AddDays(-5),
+            DueDate = DateTime.UtcNow.AddDays(10),
+            DueAmount = 110,
+            WalletId = 1,
+            BorrowerWalletId = 2,
+            LoanRequest = new LoanRequest
+            {
+                BorrowerId = "other-borrower-id", // Not the current user
+            },
+        };
+
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(
+            () => _handler.Handle(query, CancellationToken.None)
+        );
+
+        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId), Times.Once);
+        _mapperMock.Verify(m => m.Map<LoanDto>(It.IsAny<Loan>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_WithNullLoanRequest_AndUserNotLender_ShouldThrowForbiddenException()
+    {
+        // Arrange
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser()).Returns(user);
+
+        var query = new GetLoanByIdQuery { Id = _loanId };
+
+        var loan = new Loan
+        {
+            Id = _loanId,
+            IsDeleted = false,
+            LenderId = "other-lender-id", // Not the current user
+            Amount = 100,
+            Note = "Test loan",
+            IssuedAt = DateTime.UtcNow.AddDays(-5),
+            DueDate = DateTime.UtcNow.AddDays(10),
+            DueAmount = 110,
+            WalletId = 1,
+            BorrowerWalletId = 2,
+            LoanRequest = null, // No loan request
+        };
+
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(
+            () => _handler.Handle(query, CancellationToken.None)
+        );
+
+        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId), Times.Once);
+        _mapperMock.Verify(m => m.Map<LoanDto>(It.IsAny<Loan>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_WithNullUser_ShouldThrowForbiddenException()
+    {
+        // Arrange
+        _userContextMock.Setup(u => u.GetUser()).Returns((UserDto?)null);
+
+        var query = new GetLoanByIdQuery { Id = _loanId };
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(
+            () => _handler.Handle(query, CancellationToken.None)
+        );
+
+        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(It.IsAny<int>()), Times.Never);
+        _mapperMock.Verify(m => m.Map<LoanDto>(It.IsAny<Loan>()), Times.Never);
+    }
 }
