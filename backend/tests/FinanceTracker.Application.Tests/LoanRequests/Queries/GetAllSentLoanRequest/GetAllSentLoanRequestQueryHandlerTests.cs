@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.LoanRequests.Dtos.LoanRequestDTO;
+using FinanceTracker.Application.LoanRequests.Queries.GetAllSentLoanRequest;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Repositories;
@@ -10,23 +11,23 @@ using Xunit;
 
 namespace FinanceTracker.Application.LoanRequests.Queries.GetAllLoanRequests.Tests;
 
-public class GetAllReceivedLoanRequestQueryHandlerTests
+public class GetAllSentLoanRequestQueryHandlerTests
 {
-    private readonly Mock<ILogger<GetAllReceivedLoanRequestQueryHandler>> _loggerMock;
+    private readonly Mock<ILogger<GetAllSentLoanRequestQueryHandler>> _loggerMock;
     private readonly Mock<IUserContext> _userContextMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly Mock<ILoanRequestRepository> _loanRequestRepositoryMock;
-    private readonly GetAllReceivedLoanRequestQueryHandler _handler;
+    private readonly GetAllSentLoanRequestQueryHandler _handler;
     private readonly string _userId = "test-user-id";
 
-    public GetAllReceivedLoanRequestQueryHandlerTests()
+    public GetAllSentLoanRequestQueryHandlerTests()
     {
         _mapperMock = new Mock<IMapper>();
         _loanRequestRepositoryMock = new Mock<ILoanRequestRepository>();
-        _loggerMock = new Mock<ILogger<GetAllReceivedLoanRequestQueryHandler>>();
+        _loggerMock = new Mock<ILogger<GetAllSentLoanRequestQueryHandler>>();
         _userContextMock = new Mock<IUserContext>();
 
-        _handler = new GetAllReceivedLoanRequestQueryHandler(
+        _handler = new GetAllSentLoanRequestQueryHandler(
             _loggerMock.Object,
             _loanRequestRepositoryMock.Object,
             _userContextMock.Object,
@@ -35,12 +36,12 @@ public class GetAllReceivedLoanRequestQueryHandlerTests
     }
 
     [Fact()]
-    public async Task Handle_WithValidRequest_ShouldReturnAllReceivedLoanRequestForCurrentUser()
+    public async Task Handle_WithValidRequest_ShouldReturnAllSentLoanRequestForCurrentUser()
     {
         // Arrange
         var user = new UserDto("test", "test@test.com") { Id = _userId };
         _userContextMock.Setup(u => u.GetUser()).Returns(user);
-        var query = new GetAllReceivedLoanRequestQuery();
+        var query = new GetAllSentLoanRequestQuery();
         var loanRequests = new List<LoanRequest>
         {
             new LoanRequest
@@ -83,7 +84,7 @@ public class GetAllReceivedLoanRequestQueryHandlerTests
         };
 
         _loanRequestRepositoryMock
-            .Setup(repo => repo.GetAllReceivedAsync(_userId))
+            .Setup(repo => repo.GetAllSentAsync(_userId))
             .ReturnsAsync(loanRequests);
 
         _mapperMock
@@ -96,7 +97,7 @@ public class GetAllReceivedLoanRequestQueryHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(loanRequestDtos);
-        _loanRequestRepositoryMock.Verify(repo => repo.GetAllReceivedAsync(_userId), Times.Once);
+        _loanRequestRepositoryMock.Verify(repo => repo.GetAllSentAsync(_userId), Times.Once);
         _mapperMock.Verify(m => m.Map<IEnumerable<LoanRequestDto>>(loanRequests), Times.Once);
     }
 }
