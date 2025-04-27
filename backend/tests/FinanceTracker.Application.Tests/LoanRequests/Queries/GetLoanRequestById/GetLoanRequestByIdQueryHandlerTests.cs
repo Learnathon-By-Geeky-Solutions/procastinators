@@ -80,4 +80,58 @@ public class GetLoanRequestByIdQueryHandlerTests
         _loanRequestRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanRequestId), Times.Once);
         _mapperMock.Verify(m => m.Map<LoanRequestDto>(loanRequest), Times.Once);
     }
+
+    [Fact]
+    public async Task Handle_WithNonExistentLoanRequest_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser()).Returns(user);
+
+        var query = new GetLoanRequestByIdQuery(_loanRequestId);
+
+        _loanRequestRepositoryMock
+            .Setup(repo => repo.GetByIdAsync(_loanRequestId))
+            .ReturnsAsync((LoanRequest?)null);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(
+            () => _handler.Handle(query, CancellationToken.None)
+        );
+
+        _loanRequestRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanRequestId), Times.Once);
+        _mapperMock.Verify(m => m.Map<LoanRequestDto>(It.IsAny<LoanRequest>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Handle_WithNullBorrowerId_ShouldThrowForbiddenException()
+    {
+        // Arrange
+        var user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser()).Returns(user);
+
+        var query = new GetLoanRequestByIdQuery(_loanRequestId);
+
+        var loanRequest = new LoanRequest
+        {
+            Id = _loanRequestId,
+            Amount = 100,
+            DueDate = DateTime.UtcNow.AddDays(10),
+            WalletId = 1,
+            LenderId = "test-lender-id",
+            BorrowerId = null!,
+        };
+
+        _loanRequestRepositoryMock
+            .Setup(repo => repo.GetByIdAsync(_loanRequestId))
+            .ReturnsAsync(loanRequest);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(
+            () => _handler.Handle(query, CancellationToken.None)
+        );
+
+        _loanRequestRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanRequestId), Times.Once);
+        _mapperMock.Verify(m => m.Map<LoanRequestDto>(It.IsAny<LoanRequest>()), Times.Never);
+    }
 }
