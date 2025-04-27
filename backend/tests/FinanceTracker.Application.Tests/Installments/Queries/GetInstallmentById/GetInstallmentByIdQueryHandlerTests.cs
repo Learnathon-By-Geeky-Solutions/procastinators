@@ -3,6 +3,7 @@ using FinanceTracker.Application.Categories.Dtos;
 using FinanceTracker.Application.Installments.Dtos;
 using FinanceTracker.Application.Installments.Queries.GetAllInstallments;
 using FinanceTracker.Domain.Entities;
+using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using Moq;
@@ -65,5 +66,22 @@ public class GetInstallmentByIdQueryHandlerTests
         // Assert
         result.Should().Be(expectedDto);
         _mapperMock.Verify(m => m.Map<InstallmentDto>(installment), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_ForInstallmentNotFound_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var installmentId = 1;
+        var command = new GetInstallmentByIdQuery(installmentId) { Id = installmentId };
+
+        _installmentRepositoryMock
+            .Setup(r => r.GetByIdAsync(installmentId))
+            .ReturnsAsync((Installment?)null);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(
+            () => _handler.Handle(command, CancellationToken.None)
+        );
     }
 }
