@@ -39,7 +39,6 @@ public class CreateLoanAsLenderCommandHandler(
             DueDate = request.DueDate,
             IssuedAt = DateTime.UtcNow,
             DueAmount = request.Amount,
-            LenderWalletId = wallet.Id,
         };
 
         logger.LogInformation("Creating Loan: {@Loan}", loan);

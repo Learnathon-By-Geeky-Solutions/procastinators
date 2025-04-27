@@ -5,7 +5,6 @@ using FinanceTracker.Application.LoanRequests.Queries.GetAllSentLoanRequest;
 using FinanceTracker.Application.LoanRequests.Queries.GetLoanRequestById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceTracker.Api.Controllers;

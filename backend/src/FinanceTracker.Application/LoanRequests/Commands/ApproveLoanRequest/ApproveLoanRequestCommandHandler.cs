@@ -42,26 +42,22 @@ public class ApproveLoanRequestCommandHandler(
         if (lenderWallet.UserId != user.Id)
             throw new ForbiddenException();
 
-        var borrowerWallet = loanRequest.Wallet;
-
         lenderWallet.Balance -= loanRequest.Amount;
-        borrowerWallet.Balance += loanRequest.Amount;
         loanRequest.IsApproved = true;
 
         var loan = new Loan
         {
             LenderId = loanRequest.LenderId,
+            BorrowerId = loanRequest.BorrowerId,
             LoanRequestId = loanRequest.Id,
             Amount = loanRequest.Amount,
             Note = loanRequest.Note,
             IssuedAt = DateTime.UtcNow,
             DueDate = loanRequest.DueDate,
             DueAmount = loanRequest.Amount,
-            LenderWalletId = lenderWallet.Id,
-            BorrowerWalletId = borrowerWallet.Id,
         };
 
-        await loanRepo.CreateAsync(loan);
+        await loanRepo.CreateWithClaimAsync(loan);
         return loan.Id;
     }
 }

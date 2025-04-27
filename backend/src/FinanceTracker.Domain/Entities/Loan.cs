@@ -21,10 +21,4 @@ public class Loan
 
     public DateTime DueDate { get; set; } = default!;
     public decimal DueAmount { get; set; } = default!;
-
-    public int? LenderWalletId { get; set; } = default!;
-    public Wallet LenderWallet { get; set; } = default!;
-
-    public int? BorrowerWalletId { get; set; } = default!;
-    public Wallet BorrowerWallet { get; set; } = default!;
 }

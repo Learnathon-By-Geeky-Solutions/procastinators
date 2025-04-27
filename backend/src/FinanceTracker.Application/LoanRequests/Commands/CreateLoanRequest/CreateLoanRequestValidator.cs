@@ -8,7 +8,6 @@ public class CreateLoanRequestValidator : AbstractValidator<CreateLoanRequestCom
     public CreateLoanRequestValidator()
     {
         RuleFor(x => x.Amount).GreaterThan(0);
-        RuleFor(x => x.WalletId).NotEmpty();
         RuleFor(x => x.DueDate).MustBeInFuture(1);
     }
 }

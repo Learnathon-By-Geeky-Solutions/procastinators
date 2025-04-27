@@ -21,10 +21,6 @@ namespace FinanceTracker.Domain.Entities
         public string LenderId { get; set; } = default!;
         public User Lender { get; set; } = default!;
 
-        public int WalletId { get; set; } = default!;
-
-        public Wallet Wallet { get; set; } = default!;
-
         public bool IsApproved { get; set; } = false;
     }
 }

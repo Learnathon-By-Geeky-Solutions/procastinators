@@ -35,7 +35,6 @@ internal class LoanRequestRepository(FinanceTrackerDbContext dbContext) : ILoanR
         return await dbContext
             .LoanRequests.Include(r => r.Borrower)
             .Include(r => r.Lender)
-            .Include(r => r.Wallet)
             .FirstOrDefaultAsync(r => r.Id == id);
     }
 

@@ -32,4 +32,28 @@ internal class LoanRepository(FinanceTrackerDbContext dbContext) : ILoanReposito
     }
 
     public async Task<int> SaveChangesAsync() => await dbContext.SaveChangesAsync();
+
+    public async Task<int> CreateWithClaimAsync(Loan loan)
+    {
+        dbContext.Loans.Add(loan);
+        dbContext.LoanClaims.Add(new LoanClaim { Loan = loan });
+        await dbContext.SaveChangesAsync();
+        return loan.Id;
+    }
+
+    public async Task<IEnumerable<LoanClaim>> GetAllLoanClaimsAsync(string userId)
+    {
+        return await dbContext
+            .LoanClaims.Include(lc => lc.Loan)
+            .Where(lc => lc.Loan.BorrowerId == userId)
+            .ToListAsync();
+    }
+
+    public async Task<LoanClaim?> GetLoanClaimByIdAsync(int id, string userId)
+    {
+        return await dbContext
+            .LoanClaims.Include(lc => lc.Loan)
+            .Where(lc => lc.Loan.BorrowerId == userId)
+            .FirstOrDefaultAsync(lc => lc.Id == id);
+    }
 }

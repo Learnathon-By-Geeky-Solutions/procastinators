@@ -13,7 +13,6 @@ public class CreateLoanRequestCommandHandler(
     ILogger<CreateLoanRequestCommandHandler> logger,
     IUserContext userContext,
     ILoanRequestRepository repo,
-    IWalletRepository walletRepo,
     IMapper mapper,
     UserManager<User> userManager
 ) : IRequestHandler<CreateLoanRequestCommand, int>
@@ -32,15 +31,6 @@ public class CreateLoanRequestCommandHandler(
         if (lender.Id == user.Id)
         {
             throw new BadRequestException("Self loan requests are not allowed.");
-        }
-
-        var wallet =
-            await walletRepo.GetById(request.WalletId)
-            ?? throw new NotFoundException(nameof(Wallet), request.WalletId.ToString());
-
-        if (wallet.UserId != user.Id)
-        {
-            throw new ForbiddenException();
         }
 
         var loanRequest = mapper.Map<CreateLoanRequestCommand, LoanRequest>(request);

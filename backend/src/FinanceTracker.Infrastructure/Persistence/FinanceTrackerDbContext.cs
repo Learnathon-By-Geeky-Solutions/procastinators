@@ -12,28 +12,57 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
     internal DbSet<Wallet> Wallets { get; set; } = default!;
     internal DbSet<Category> Categories { get; set; } = default!;
     internal DbSet<PersonalTransaction> PersonalTransactions { get; set; } = default!;
-    internal DbSet<LoanRequest> LoanRequests { get; set; } = default!;
     internal DbSet<Loan> Loans { get; set; } = default!;
+    internal DbSet<LoanRequest> LoanRequests { get; set; } = default!;
+    internal DbSet<LoanClaim> LoanClaims { get; set; } = default!;
     internal DbSet<Installment> Installments { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
+        ConfigureDecimalColumns(builder);
+
+        ConfigurePersonalTransactionRelations(builder);
+
+        ConfigureLoanRelations(builder);
+
+        ConfigureLoanRequestRelations(builder);
+
+        builder
+            .Entity<LoanClaim>()
+            .HasOne(lc => lc.Loan)
+            .WithOne()
+            .HasForeignKey<LoanClaim>(lc => lc.LoanId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .Entity<Installment>()
+            .HasOne(lr => lr.Loan)
+            .WithMany()
+            .HasForeignKey(lr => lr.LoanId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        ArgumentNullException.ThrowIfNull(configurationBuilder);
+
+        configurationBuilder.Properties<DateTime>().HaveConversion<DateTimeAsUtcValueConverter>();
+        configurationBuilder
+            .Properties<DateTime?>()
+            .HaveConversion<NullableDateTimeAsUtcValueConverter>();
+    }
+
+    private void ConfigureDecimalColumns(ModelBuilder builder)
+    {
         builder.Entity<Wallet>(entity =>
-        {
-            entity.Property(e => e.Balance).HasColumnType(DecimalColumnType);
-        });
+            entity.Property(e => e.Balance).HasColumnType(DecimalColumnType)
+        );
 
         builder.Entity<PersonalTransaction>(entity =>
-        {
-            entity.Property(e => e.Amount).HasColumnType(DecimalColumnType);
-        });
-
-        builder.Entity<LoanRequest>(entity =>
-        {
-            entity.Property(e => e.Amount).HasColumnType(DecimalColumnType);
-        });
+            entity.Property(e => e.Amount).HasColumnType(DecimalColumnType)
+        );
 
         builder.Entity<Loan>(entity =>
         {
@@ -41,11 +70,17 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
             entity.Property(e => e.DueAmount).HasColumnType(DecimalColumnType);
         });
 
-        builder.Entity<Installment>(entity =>
-        {
-            entity.Property(e => e.Amount).HasColumnType(DecimalColumnType);
-        });
+        builder.Entity<LoanRequest>(entity =>
+            entity.Property(e => e.Amount).HasColumnType(DecimalColumnType)
+        );
 
+        builder.Entity<Installment>(entity =>
+            entity.Property(e => e.Amount).HasColumnType(DecimalColumnType)
+        );
+    }
+
+    private void ConfigurePersonalTransactionRelations(ModelBuilder builder)
+    {
         builder
             .Entity<PersonalTransaction>()
             .HasOne(p => p.Wallet)
@@ -66,21 +101,10 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
             .WithMany()
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Restrict);
+    }
 
-        builder
-            .Entity<LoanRequest>()
-            .HasOne(lr => lr.Borrower)
-            .WithMany()
-            .HasForeignKey(lr => lr.BorrowerId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder
-            .Entity<LoanRequest>()
-            .HasOne(lr => lr.Lender)
-            .WithMany()
-            .HasForeignKey(lr => lr.LenderId)
-            .OnDelete(DeleteBehavior.Restrict);
-
+    private void ConfigureLoanRelations(ModelBuilder builder)
+    {
         builder
             .Entity<Loan>()
             .HasOne(lr => lr.Lender)
@@ -101,41 +125,22 @@ internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext>
             .WithOne()
             .HasForeignKey<Loan>(lr => lr.LoanRequestId)
             .OnDelete(DeleteBehavior.Restrict);
+    }
 
+    private void ConfigureLoanRequestRelations(ModelBuilder builder)
+    {
         builder
-            .Entity<Installment>()
-            .HasOne(lr => lr.Loan)
+            .Entity<LoanRequest>()
+            .HasOne(lr => lr.Borrower)
             .WithMany()
-            .HasForeignKey(lr => lr.LoanId)
-            .OnDelete(DeleteBehavior.Restrict);
-        builder
-            .Entity<Loan>()
-            .HasOne(l => l.LenderWallet)
-            .WithMany()
-            .HasForeignKey(l => l.LenderWalletId)
-            .OnDelete(DeleteBehavior.Restrict);
-        builder
-            .Entity<Loan>()
-            .HasOne(l => l.BorrowerWallet)
-            .WithMany()
-            .HasForeignKey(l => l.BorrowerWalletId)
+            .HasForeignKey(lr => lr.BorrowerId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .Entity<LoanRequest>()
-            .HasOne(lr => lr.Wallet)
+            .HasOne(lr => lr.Lender)
             .WithMany()
-            .HasForeignKey(lr => lr.WalletId)
+            .HasForeignKey(lr => lr.LenderId)
             .OnDelete(DeleteBehavior.Restrict);
-    }
-
-    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
-    {
-        ArgumentNullException.ThrowIfNull(configurationBuilder);
-
-        configurationBuilder.Properties<DateTime>().HaveConversion<DateTimeAsUtcValueConverter>();
-        configurationBuilder
-            .Properties<DateTime?>()
-            .HaveConversion<NullableDateTimeAsUtcValueConverter>();
     }
 }
