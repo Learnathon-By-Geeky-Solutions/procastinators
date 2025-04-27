@@ -5,6 +5,7 @@ using FinanceTracker.Application.LoanRequests.Queries.GetAllSentLoanRequest;
 using FinanceTracker.Application.LoanRequests.Queries.GetLoanRequestById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceTracker.Api.Controllers;
@@ -12,7 +13,7 @@ namespace FinanceTracker.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class LoanRequestController(IMediator mediator) : ControllerBase
+public class LoanRequestsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> CreateLoanRequest(CreateLoanRequestCommand command)
@@ -22,10 +23,14 @@ public class LoanRequestController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("{id}/approve")]
-    public async Task<IActionResult> ApproveLoanRequest(int id, [FromBody] int lenderWalletId)
+    public async Task<IActionResult> ApproveLoanRequest(
+        [FromRoute] int id,
+        [FromBody] ApproveLoanRequestCommand command
+    )
     {
-        await mediator.Send(new ApproveLoanRequestCommand(id, lenderWalletId));
-        return NoContent();
+        command.LoanRequestId = id;
+        var loanId = await mediator.Send(command);
+        return CreatedAtAction("GetLoanById", "Loans", new { id = loanId }, null);
     }
 
     [HttpGet("received")]

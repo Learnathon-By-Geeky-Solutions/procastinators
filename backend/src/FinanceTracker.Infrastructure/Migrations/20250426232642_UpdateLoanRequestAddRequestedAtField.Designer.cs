@@ -4,6 +4,7 @@ using FinanceTracker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(FinanceTrackerDbContext))]
-    partial class FinanceTrackerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250426232642_UpdateLoanRequestAddRequestedAtField")]
+    partial class UpdateLoanRequestAddRequestedAtField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,6 +126,9 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BorrowerId");
@@ -136,6 +142,8 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.HasIndex("LoanRequestId")
                         .IsUnique()
                         .HasFilter("[LoanRequestId] IS NOT NULL");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Loans");
                 });
@@ -171,7 +179,10 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.Property<DateTime>("RequestedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("WalletId")
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("WalletId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -179,6 +190,8 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.HasIndex("BorrowerId");
 
                     b.HasIndex("LenderId");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("WalletId");
 
@@ -216,6 +229,9 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("UserId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("WalletId")
                         .HasColumnType("int");
 
@@ -224,6 +240,8 @@ namespace FinanceTracker.Infrastructure.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.HasIndex("WalletId");
 
@@ -471,7 +489,7 @@ namespace FinanceTracker.Infrastructure.Migrations
             modelBuilder.Entity("FinanceTracker.Domain.Entities.Category", b =>
                 {
                     b.HasOne("FinanceTracker.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Categories")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -517,6 +535,10 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .HasForeignKey("FinanceTracker.Domain.Entities.Loan", "LoanRequestId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("FinanceTracker.Domain.Entities.User", null)
+                        .WithMany("Loans")
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Borrower");
 
                     b.Navigation("BorrowerWallet");
@@ -542,11 +564,14 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("FinanceTracker.Domain.Entities.User", null)
+                        .WithMany("LoanRequests")
+                        .HasForeignKey("UserId");
+
                     b.HasOne("FinanceTracker.Domain.Entities.Wallet", "Wallet")
                         .WithMany()
                         .HasForeignKey("WalletId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Borrower");
 
@@ -569,6 +594,10 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("FinanceTracker.Domain.Entities.User", null)
+                        .WithMany("Transactions")
+                        .HasForeignKey("UserId1");
+
                     b.HasOne("FinanceTracker.Domain.Entities.Wallet", "Wallet")
                         .WithMany()
                         .HasForeignKey("WalletId")
@@ -585,7 +614,7 @@ namespace FinanceTracker.Infrastructure.Migrations
             modelBuilder.Entity("FinanceTracker.Domain.Entities.Wallet", b =>
                 {
                     b.HasOne("FinanceTracker.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Wallets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -642,6 +671,19 @@ namespace FinanceTracker.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FinanceTracker.Domain.Entities.User", b =>
+                {
+                    b.Navigation("Categories");
+
+                    b.Navigation("LoanRequests");
+
+                    b.Navigation("Loans");
+
+                    b.Navigation("Transactions");
+
+                    b.Navigation("Wallets");
                 });
 #pragma warning restore 612, 618
         }

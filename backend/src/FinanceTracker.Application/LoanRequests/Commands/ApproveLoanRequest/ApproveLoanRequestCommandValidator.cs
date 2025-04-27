@@ -6,8 +6,6 @@ public class ApproveLoanRequestCommandValidator : AbstractValidator<ApproveLoanR
 {
     public ApproveLoanRequestCommandValidator()
     {
-        RuleFor(x => x.LoanRequestId).NotEmpty().WithMessage("LoanRequestId must not be empty.");
-
-        RuleFor(x => x.LenderWalletId).NotEmpty().WithMessage("LenderWalletId must not be empty.");
+        RuleFor(x => x.LenderWalletId).NotEmpty();
     }
 }

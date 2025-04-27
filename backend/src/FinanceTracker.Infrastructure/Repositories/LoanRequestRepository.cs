@@ -1,5 +1,4 @@
-﻿
-using FinanceTracker.Domain.Entities;
+﻿using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Repositories;
 using FinanceTracker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -17,25 +16,26 @@ internal class LoanRequestRepository(FinanceTrackerDbContext dbContext) : ILoanR
 
     public async Task<IEnumerable<LoanRequest>> GetAllReceivedAsync(string userId)
     {
-        return await dbContext.LoanRequests
-            .Include(r => r.Borrower)
+        return await dbContext
+            .LoanRequests.Include(r => r.Borrower)
             .Where(r => r.LenderId == userId)
             .ToListAsync();
     }
 
     public async Task<IEnumerable<LoanRequest>> GetAllSentAsync(string userId)
     {
-        return await dbContext.LoanRequests
-            .Include(r => r.Lender)
+        return await dbContext
+            .LoanRequests.Include(r => r.Lender)
             .Where(r => r.BorrowerId == userId)
             .ToListAsync();
     }
 
     public async Task<LoanRequest?> GetByIdAsync(int id)
     {
-        return await dbContext.LoanRequests
-            .Include(r => r.Borrower)
+        return await dbContext
+            .LoanRequests.Include(r => r.Borrower)
             .Include(r => r.Lender)
+            .Include(r => r.Wallet)
             .FirstOrDefaultAsync(r => r.Id == id);
     }
 

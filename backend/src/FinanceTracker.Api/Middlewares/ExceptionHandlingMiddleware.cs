@@ -34,6 +34,12 @@ public class ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> lo
             context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
             await context.Response.WriteAsync(exception.Message);
         }
+        catch (BadRequestException exception)
+        {
+            LogError(exception);
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await context.Response.WriteAsync(exception.Message);
+        }
         catch (Exception exception)
         {
             LogError(exception);
