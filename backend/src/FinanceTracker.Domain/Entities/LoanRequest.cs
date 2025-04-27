@@ -11,6 +11,8 @@ namespace FinanceTracker.Domain.Entities
 
         public string? Note { get; set; } = default!;
 
+        public DateTime RequestedAt { get; set; } = DateTime.UtcNow;
+
         public DateTime DueDate { get; set; } = default!;
 
         public string BorrowerId { get; set; } = default!;
@@ -18,10 +20,6 @@ namespace FinanceTracker.Domain.Entities
 
         public string LenderId { get; set; } = default!;
         public User Lender { get; set; } = default!;
-
-        public int? WalletId { get; set; } = default!;
-
-        public Wallet Wallet { get; set; } = default!;
 
         public bool IsApproved { get; set; } = false;
     }

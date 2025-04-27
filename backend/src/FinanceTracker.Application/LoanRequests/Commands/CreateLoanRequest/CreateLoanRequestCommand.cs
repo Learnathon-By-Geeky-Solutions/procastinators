@@ -8,6 +8,4 @@ public class CreateLoanRequestCommand : IRequest<int>
     public string? Note { get; set; }
     public DateTime DueDate { get; set; }
     public string LenderId { get; set; } = default!;
-
-    public int WalletId { get; set; } = default!;
 }

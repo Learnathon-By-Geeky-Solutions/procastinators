@@ -12,7 +12,8 @@ public class ApproveLoanRequestCommandHandler(
     ILogger<ApproveLoanRequestCommandHandler> logger,
     ILoanRequestRepository loanRequestRepo,
     ILoanRepository loanRepo,
-    IWalletRepository walletRepo
+    IWalletRepository walletRepo,
+    IUserContext userContext
 ) : IRequestHandler<ApproveLoanRequestCommand, int>
 {
     public async Task<int> Handle(
@@ -20,47 +21,43 @@ public class ApproveLoanRequestCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        var loanRequest = await loanRequestRepo.GetByIdAsync(request.LoanRequestId);
+        var user = userContext.GetUser() ?? throw new ForbiddenException();
+
+        var loanRequest =
+            await loanRequestRepo.GetByIdAsync(request.LoanRequestId)
+            ?? throw new NotFoundException(nameof(LoanRequest), request.LoanRequestId.ToString());
 
         logger.LogInformation("LoanReq: {@r}", loanRequest);
-        if (loanRequest == null)
-            throw new NotFoundException("LoanRequest", request.LoanRequestId.ToString());
+
+        if (loanRequest.LenderId != user.Id)
+            throw new ForbiddenException();
 
         if (loanRequest.IsApproved)
             throw new BadRequestException("LoanRequest is already approved.");
 
-        var lenderWallet = await walletRepo.GetById(request.LenderWalletId);
-        var borrowerWallet = await walletRepo.GetById(
-            loanRequest.WalletId ?? throw new BadRequestException("WalletId cannot be null.")
-        );
+        var lenderWallet =
+            await walletRepo.GetById(request.LenderWalletId)
+            ?? throw new NotFoundException(nameof(Wallet), request.LenderWalletId.ToString());
 
-        if (lenderWallet == null)
-            throw new NotFoundException("Wallet", loanRequest.LenderId.ToString());
-
-        if (borrowerWallet == null)
-            throw new NotFoundException("Wallet", loanRequest.BorrowerId.ToString());
+        if (lenderWallet.UserId != user.Id)
+            throw new ForbiddenException();
 
         lenderWallet.Balance -= loanRequest.Amount;
-        borrowerWallet!.Balance += loanRequest.Amount;
-
         loanRequest.IsApproved = true;
 
         var loan = new Loan
         {
             LenderId = loanRequest.LenderId,
+            BorrowerId = loanRequest.BorrowerId,
             LoanRequestId = loanRequest.Id,
             Amount = loanRequest.Amount,
             Note = loanRequest.Note,
             IssuedAt = DateTime.UtcNow,
             DueDate = loanRequest.DueDate,
             DueAmount = loanRequest.Amount,
-            IsDeleted = false,
-            WalletId = request.LenderWalletId,
-            BorrowerWalletId = borrowerWallet.Id,
         };
 
-        await loanRepo.CreateAsync(loan);
-        await loanRequestRepo.SaveChangesAsync();
+        await loanRepo.CreateWithClaimAsync(loan);
         return loan.Id;
     }
 }
