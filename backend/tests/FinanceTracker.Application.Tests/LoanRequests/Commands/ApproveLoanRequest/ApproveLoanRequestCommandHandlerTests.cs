@@ -24,7 +24,6 @@ public class ApproveLoanRequestCommandHandlerTests
     private readonly string _lenderId = "lender-id";
     private readonly int _loanRequestId = 1;
     private readonly int _lenderWalletId = 2;
-    private readonly int _borrowerWalletId = 3;
     private readonly string _userId = "user-id";
     private readonly UserDto? _user;
 
