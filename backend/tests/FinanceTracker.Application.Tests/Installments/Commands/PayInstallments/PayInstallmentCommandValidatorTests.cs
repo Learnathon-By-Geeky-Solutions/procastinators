@@ -12,7 +12,7 @@ public class PayInstallmentCommandValidatorTests
         // Arrange
         var command = new PayInstallmentCommand()
         {
-            LoanId = 2,
+            WalletId = 1,
             Amount = 100,
             NextDueDate = DateTime.UtcNow.AddDays(1),
         };

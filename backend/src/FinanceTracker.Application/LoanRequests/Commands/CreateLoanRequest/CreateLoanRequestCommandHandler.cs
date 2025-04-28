@@ -14,7 +14,7 @@ public class CreateLoanRequestCommandHandler(
     IUserContext userContext,
     ILoanRequestRepository repo,
     IMapper mapper,
-    UserManager<User> userManager
+    IUserStore<User> userStore
 ) : IRequestHandler<CreateLoanRequestCommand, int>
 {
     public async Task<int> Handle(
@@ -25,7 +25,7 @@ public class CreateLoanRequestCommandHandler(
         var user = userContext.GetUser() ?? throw new ForbiddenException();
 
         var lender =
-            await userManager.FindByIdAsync(request.LenderId)
+            await userStore.FindByIdAsync(request.LenderId, cancellationToken)
             ?? throw new NotFoundException(nameof(User), request.LenderId);
 
         if (lender.Id == user.Id)

@@ -91,7 +91,7 @@ public class GetAllLoansAsLenderQueryHandlerTests
             },
         };
 
-        _loanRepositoryMock.Setup(repo => repo.GetAllAsBorrowerAsync(_userId)).ReturnsAsync(loans);
+        _loanRepositoryMock.Setup(repo => repo.GetAllAsLenderAsync(_userId)).ReturnsAsync(loans);
 
         _mapperMock
             .Setup(m => m.Map<IEnumerable<LoanDto>>(It.IsAny<IEnumerable<Loan>>()))
@@ -103,7 +103,7 @@ public class GetAllLoansAsLenderQueryHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(loanDtos);
-        _loanRepositoryMock.Verify(repo => repo.GetAllAsBorrowerAsync(_userId), Times.Once);
+        _loanRepositoryMock.Verify(repo => repo.GetAllAsLenderAsync(_userId), Times.Once);
         _mapperMock.Verify(m => m.Map<IEnumerable<LoanDto>>(loans), Times.Once);
     }
 }

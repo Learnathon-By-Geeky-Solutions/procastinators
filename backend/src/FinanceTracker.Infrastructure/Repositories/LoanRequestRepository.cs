@@ -30,11 +30,30 @@ internal class LoanRequestRepository(FinanceTrackerDbContext dbContext) : ILoanR
             .ToListAsync();
     }
 
-    public async Task<LoanRequest?> GetByIdAsync(int id)
+    public async Task<LoanRequest?> GetByIdAsync(int id, string userId)
     {
         return await dbContext
             .LoanRequests.Include(r => r.Borrower)
             .Include(r => r.Lender)
+            .Where(r => r.BorrowerId == userId || r.LenderId == userId)
+            .FirstOrDefaultAsync(r => r.Id == id);
+    }
+
+    public async Task<LoanRequest?> GetReceivedByIdAsync(int id, string userId)
+    {
+        return await dbContext
+            .LoanRequests.Include(r => r.Borrower)
+            .Include(r => r.Lender)
+            .Where(r => r.LenderId == userId)
+            .FirstOrDefaultAsync(r => r.Id == id);
+    }
+
+    public async Task<LoanRequest?> GetSentByIdAsync(int id, string userId)
+    {
+        return await dbContext
+            .LoanRequests.Include(r => r.Borrower)
+            .Include(r => r.Lender)
+            .Where(r => r.BorrowerId == userId)
             .FirstOrDefaultAsync(r => r.Id == id);
     }
 

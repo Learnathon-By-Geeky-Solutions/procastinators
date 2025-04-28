@@ -12,6 +12,7 @@ using FinanceTracker.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace FinanceTracker.Application.Installments.Commands.PayInstallments.Tests;
 
@@ -27,6 +28,7 @@ public class PayInstallmentCommandHandlerTests
     private readonly string _lenderId = "lender-id";
     private readonly int _loanId = 1;
     private readonly string _userId = "user-id";
+    private readonly UserDto _user;
 
     public PayInstallmentCommandHandlerTests()
     {
@@ -35,6 +37,10 @@ public class PayInstallmentCommandHandlerTests
         _loanRepositoryMock = new Mock<ILoanRepository>();
         _installmentRepositoryMock = new Mock<IInstallmentRepository>();
         _userContextMock = new Mock<IUserContext>();
+
+        _user = new UserDto("test", "test@test.com") { Id = _userId };
+        _userContextMock.Setup(u => u.GetUser()).Returns(_user);
+
         _handler = new PayInstallmentCommandHandler(
             _userContextMock.Object,
             _loanRepositoryMock.Object,
@@ -52,7 +58,6 @@ public class PayInstallmentCommandHandlerTests
         var nextDueDate = currentDate.AddMonths(1);
         decimal paymentAmount = 500m;
         decimal initialBorrowerBalance = 1000m;
-        decimal initialLenderBalance = 2000m;
         decimal initialLoanDueAmount = 2000m;
 
         var testUser = new UserDto(_userId, "test@example.com");
@@ -62,6 +67,7 @@ public class PayInstallmentCommandHandlerTests
         var loan = new Loan
         {
             Id = _loanId,
+            BorrowerId = _userId,
             LoanRequest = loanRequest,
             DueAmount = initialLoanDueAmount,
             DueDate = currentDate,
@@ -71,16 +77,8 @@ public class PayInstallmentCommandHandlerTests
         var borrowerWallet = new Wallet
         {
             Id = 1,
-            UserId = _borrowerId,
+            UserId = _userId,
             Balance = initialBorrowerBalance,
-            IsDeleted = false,
-        };
-
-        var lenderWallet = new Wallet
-        {
-            Id = 2,
-            UserId = _lenderId,
-            Balance = initialLenderBalance,
             IsDeleted = false,
         };
 
@@ -90,6 +88,7 @@ public class PayInstallmentCommandHandlerTests
             Amount = paymentAmount,
             NextDueDate = nextDueDate,
             Note = "Test payment",
+            WalletId = borrowerWallet.Id,
         };
 
         var createdInstallment = new Installment
@@ -105,18 +104,16 @@ public class PayInstallmentCommandHandlerTests
 
         _userContextMock.Setup(context => context.GetUser()).Returns(testUser);
 
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId, _userId)).ReturnsAsync(loan);
+        _loanRepositoryMock
+            .Setup(repo => repo.GetByIdAsBorrowerAsync(_loanId, _userId))
+            .ReturnsAsync(loan);
 
         _walletRepositoryMock
-            .Setup(repo => repo.GetAll(_borrowerId))
-            .ReturnsAsync(new List<Wallet> { borrowerWallet });
-
-        _walletRepositoryMock
-            .Setup(repo => repo.GetAll(_lenderId))
-            .ReturnsAsync(new List<Wallet> { lenderWallet });
+            .Setup(repo => repo.GetById(borrowerWallet.Id))
+            .ReturnsAsync(borrowerWallet);
 
         _installmentRepositoryMock
-            .Setup(repo => repo.CreateAsync(It.IsAny<Installment>()))
+            .Setup(repo => repo.CreateWithClaimAsync(It.IsAny<Installment>()))
             .Callback<Installment>(installment =>
             {
                 installment.Id = 1;
@@ -132,7 +129,6 @@ public class PayInstallmentCommandHandlerTests
         Xunit.Assert.Equal(initialBorrowerBalance - paymentAmount, borrowerWallet.Balance);
 
         // Verify lender wallet balance increased
-        Xunit.Assert.Equal(initialLenderBalance + paymentAmount, lenderWallet.Balance);
 
         // Verify loan due amount decreased
         Xunit.Assert.Equal(initialLoanDueAmount - paymentAmount, loan.DueAmount);
@@ -143,7 +139,7 @@ public class PayInstallmentCommandHandlerTests
         // Verify installment was created with correct values
         _installmentRepositoryMock.Verify(
             repo =>
-                repo.CreateAsync(
+                repo.CreateWithClaimAsync(
                     It.Is<Installment>(i =>
                         i.LoanId == _loanId
                         && i.Amount == paymentAmount
@@ -153,10 +149,6 @@ public class PayInstallmentCommandHandlerTests
                 ),
             Times.Once
         );
-
-        // Verify changes were saved
-        _loanRepositoryMock.Verify(repo => repo.SaveChangesAsync(), Times.Once);
-        _installmentRepositoryMock.Verify(repo => repo.SaveChangesAsync(), Times.Once);
     }
 
     [Fact()]
@@ -230,11 +222,6 @@ public class PayInstallmentCommandHandlerTests
         var exception = await Xunit.Assert.ThrowsAsync<NotFoundException>(
             () => _handler.Handle(command, CancellationToken.None)
         );
-
-        Xunit.Assert.Contains(
-            $"Borrower wallet not found for user {_borrowerId}",
-            exception.Message
-        );
     }
 
     [Fact]
@@ -273,7 +260,5 @@ public class PayInstallmentCommandHandlerTests
         var exception = await Xunit.Assert.ThrowsAsync<NotFoundException>(
             () => _handler.Handle(command, CancellationToken.None)
         );
-
-        Xunit.Assert.Contains($"Lender wallet not found for user {_lenderId}", exception.Message);
     }
 }

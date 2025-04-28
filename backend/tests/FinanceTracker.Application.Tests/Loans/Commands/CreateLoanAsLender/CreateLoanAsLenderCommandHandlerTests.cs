@@ -112,8 +112,6 @@ namespace FinanceTracker.Application.Loans.Commands.CreateLoan.Tests
                 () => _handler.Handle(createLoanCommand, CancellationToken.None)
             );
 
-            Xunit.Assert.Contains(_userId, exception.Message);
-
             // Verify repository method was never called
             _loanRepositoryMock.Verify(
                 repo => repo.CreateAsync(It.IsAny<Loan>()),

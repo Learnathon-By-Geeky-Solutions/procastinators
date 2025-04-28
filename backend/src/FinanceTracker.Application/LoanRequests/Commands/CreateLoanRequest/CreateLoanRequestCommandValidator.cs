@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace FinanceTracker.Application.LoanRequests.Commands.CreateLoanRequest;
 
-public class CreateLoanRequestValidator : AbstractValidator<CreateLoanRequestCommand>
+public class CreateLoanRequestCommandValidator : AbstractValidator<CreateLoanRequestCommand>
 {
-    public CreateLoanRequestValidator()
+    public CreateLoanRequestCommandValidator()
     {
         RuleFor(x => x.Amount).GreaterThan(0);
         RuleFor(x => x.DueDate).MustBeInFuture(1);

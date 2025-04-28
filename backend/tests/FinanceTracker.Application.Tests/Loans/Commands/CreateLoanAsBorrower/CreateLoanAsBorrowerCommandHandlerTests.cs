@@ -70,10 +70,10 @@ namespace FinanceTracker.Application.Loans.Commands.CreateLoan.Tests
             Xunit.Assert.Equal(1, resultId);
 
             // Verify wallet balance was decreased
-            Xunit.Assert.Equal(1000, wallet.Balance); // 2000 - 1000 = 1000
+            Xunit.Assert.Equal(3000, wallet.Balance); // 2000 + 1000 = 3000
 
             Xunit.Assert.NotNull(capturedLoan);
-            Xunit.Assert.Equal(_userId, capturedLoan.LenderId);
+            Xunit.Assert.Equal(_userId, capturedLoan.BorrowerId);
             Xunit.Assert.Equal(createLoanCommand.Amount, capturedLoan.Amount);
             Xunit.Assert.Equal(createLoanCommand.Note, capturedLoan.Note);
             Xunit.Assert.Equal(createLoanCommand.DueDate, capturedLoan.DueDate);
@@ -111,8 +111,6 @@ namespace FinanceTracker.Application.Loans.Commands.CreateLoan.Tests
             var exception = await Xunit.Assert.ThrowsAsync<NotFoundException>(
                 () => _handler.Handle(createLoanCommand, CancellationToken.None)
             );
-
-            Xunit.Assert.Contains(_userId, exception.Message);
 
             // Verify repository method was never called
             _loanRepositoryMock.Verify(

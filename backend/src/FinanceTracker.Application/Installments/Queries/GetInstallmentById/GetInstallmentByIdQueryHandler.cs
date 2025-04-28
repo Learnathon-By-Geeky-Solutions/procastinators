@@ -22,7 +22,7 @@ public class GetInstallmentByIdQueryHandler(
     {
         var user = userContext.GetUser() ?? throw new ForbiddenException();
         var loan =
-            loanRepo.GetByIdAsync(request.LoanId, user.Id)
+            await loanRepo.GetByIdAsync(request.LoanId, user.Id)
             ?? throw new NotFoundException(nameof(Loan), request.LoanId.ToString());
         var installment =
             await installmentRepo.GetByIdAsync(loan.Id, request.Id)

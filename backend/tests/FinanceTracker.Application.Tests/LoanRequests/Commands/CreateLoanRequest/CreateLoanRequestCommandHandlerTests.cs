@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FinanceTracker.Application.LoanRequests.Commands.ApproveLoanRequest;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
@@ -17,9 +16,8 @@ public class CreateLoanRequestCommandHandlerTests
     private readonly Mock<IUserContext> _userContextMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly Mock<ILoanRequestRepository> _loanRequestRepositoryMock;
-    private readonly Mock<UserManager<User>> _userManagerMock;
+    private readonly Mock<IUserStore<User>> _userStore;
     private readonly CreateLoanRequestCommandHandler _handler;
-
     private readonly string _userId = "user-id";
 
     public CreateLoanRequestCommandHandlerTests()
@@ -28,14 +26,14 @@ public class CreateLoanRequestCommandHandlerTests
         _userContextMock = new Mock<IUserContext>();
         _mapperMock = new Mock<IMapper>();
         _loanRequestRepositoryMock = new Mock<ILoanRequestRepository>();
-        _userManagerMock = new Mock<UserManager<User>>();
+        _userStore = new Mock<IUserStore<User>>();
 
         _handler = new CreateLoanRequestCommandHandler(
             _loggerMock.Object,
             _userContextMock.Object,
             _loanRequestRepositoryMock.Object,
             _mapperMock.Object,
-            _userManagerMock.Object
+            _userStore.Object
         );
     }
 
@@ -69,6 +67,10 @@ public class CreateLoanRequestCommandHandlerTests
         _loanRequestRepositoryMock
             .Setup(repo => repo.CreateAsync(It.IsAny<LoanRequest>()))
             .ReturnsAsync(1);
+
+        _userStore
+            .Setup(store => store.FindByIdAsync(createLoanCommand.LenderId, CancellationToken.None))
+            .ReturnsAsync(new User { Id = createLoanCommand.LenderId });
 
         // Act
         var resultId = await _handler.Handle(createLoanCommand, CancellationToken.None);

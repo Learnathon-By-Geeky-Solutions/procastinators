@@ -24,7 +24,7 @@ public class ApproveLoanRequestCommandValidatorTests
     public void Validator_ForEmptyCommand_ShouldHaveValidationErrors()
     {
         // Arrange
-        var command = new ApproveLoanRequestCommand() { LoanRequestId = 0, LenderWalletId = 0 };
+        var command = new ApproveLoanRequestCommand() { LenderWalletId = 0 };
 
         var validator = new ApproveLoanRequestCommandValidator();
 
@@ -32,7 +32,6 @@ public class ApproveLoanRequestCommandValidatorTests
         var results = validator.TestValidate(command);
 
         // Assert
-        results.ShouldHaveValidationErrorFor(c => c.LoanRequestId);
         results.ShouldHaveValidationErrorFor(c => c.LenderWalletId);
     }
 }

@@ -71,11 +71,12 @@ public class InstallmentControllerTests : IClassFixture<WebApplicationFactory<Pr
     public async Task GetInstallmentById_ForExistingId_Returns200Ok()
     {
         // Arrange
+        var loanId = 1;
         var id = 5;
         var installmentDto = new InstallmentDto
         {
             Id = id,
-            LoanId = 1,
+            LoanId = loanId,
             Amount = 100,
             Timestamp = DateTime.UtcNow,
         };
@@ -92,7 +93,7 @@ public class InstallmentControllerTests : IClassFixture<WebApplicationFactory<Pr
         var client = _factory.CreateClient();
 
         // Act
-        var response = await client.GetAsync($"/api/Installment/{id}");
+        var response = await client.GetAsync($"/api/loans/{loanId}/installments/{id}");
 
         // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
@@ -141,7 +142,7 @@ public class InstallmentControllerTests : IClassFixture<WebApplicationFactory<Pr
         var client = _factory.CreateClient();
 
         // Act
-        var response = await client.GetAsync($"/api/Installment/loan/{loanId}");
+        var response = await client.GetAsync($"/api/loans/{loanId}/installments");
 
         // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);

@@ -7,6 +7,7 @@ using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using Moq;
 using Xunit;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace FinanceTracker.Application.Installments.Queries.GetAllInstallments.Tests;
 
@@ -18,6 +19,7 @@ public class GetAllInstallmentsQueryHandlerTests
     private readonly Mock<IMapper> _mapperMock;
     private readonly GetAllInstallmentsQueryHandler _handler;
     private readonly int _loanId = 1;
+    private readonly UserDto _user = new("test", "test@test.com");
 
     public GetAllInstallmentsQueryHandlerTests()
     {
@@ -25,6 +27,7 @@ public class GetAllInstallmentsQueryHandlerTests
         _loanRepositoryMock = new Mock<ILoanRepository>();
         _mapperMock = new Mock<IMapper>();
         _installmentRepositoryMock = new Mock<IInstallmentRepository>();
+        _userContextMock.Setup(u => u.GetUser()).Returns(_user);
 
         _handler = new GetAllInstallmentsQueryHandler(
             _userContextMock.Object,
@@ -38,7 +41,7 @@ public class GetAllInstallmentsQueryHandlerTests
     public async Task Handle_WithValidRequest_ShouldReturnAllInstallmentsForCurrentUser()
     {
         // Arrange
-        var query = new GetAllInstallmentsQuery();
+        var query = new GetAllInstallmentsQuery { LoanId = _loanId };
 
         var installments = new List<Installment>
         {
@@ -79,6 +82,10 @@ public class GetAllInstallmentsQueryHandlerTests
                 NextDueDate = DateTime.Now.AddDays(60),
             },
         };
+
+        _loanRepositoryMock
+            .Setup(repo => repo.GetByIdAsync(_loanId, _user.Id))
+            .ReturnsAsync(new Loan { Id = _loanId });
 
         _installmentRepositoryMock
             .Setup(repo => repo.GetAllAsync(_loanId))
