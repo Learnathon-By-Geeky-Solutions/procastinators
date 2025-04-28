@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.Loans.Dtos.LoanDTO;
 using FinanceTracker.Application.Users;
+using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using MediatR;
@@ -16,13 +17,10 @@ public class GetLoanByIdQueryHandler(
     public async Task<LoanDto> Handle(GetLoanByIdQuery request, CancellationToken cancellationToken)
     {
         var user = userContext.GetUser() ?? throw new ForbiddenException();
-        var loan = await loanRepo.GetByIdAsync(request.Id);
-        if (loan == null || loan.IsDeleted)
-            throw new NotFoundException("Loan", request.Id.ToString());
-        bool isBorrower = loan.LoanRequest != null && loan.LoanRequest.BorrowerId == user.Id;
-        bool isLender = loan.LenderId == user.Id;
-        if (!isBorrower && !isLender)
-            throw new ForbiddenException();
+        var loan =
+            await loanRepo.GetByIdAsync(request.Id, user.Id)
+            ?? throw new NotFoundException(nameof(Loan), request.Id.ToString());
+
         return mapper.Map<LoanDto>(loan);
     }
 }

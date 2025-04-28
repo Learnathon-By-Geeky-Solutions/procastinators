@@ -1,8 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-
-namespace FinanceTracker.Domain.Entities;
+﻿namespace FinanceTracker.Domain.Entities;
 
 public class Installment
 {
@@ -18,4 +14,4 @@ public class Installment
     public string? Note { get; set; } = default!;
 
     public DateTime NextDueDate { get; set; } = default!;
-} 
+}

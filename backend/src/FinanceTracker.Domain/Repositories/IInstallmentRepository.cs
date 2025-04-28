@@ -1,12 +1,15 @@
-﻿
-using FinanceTracker.Domain.Entities;
+﻿using FinanceTracker.Domain.Entities;
 
 namespace FinanceTracker.Domain.Repositories;
 
 public interface IInstallmentRepository
 {
     Task<int> CreateAsync(Installment installment);
-    Task<Installment?> GetByIdAsync(int id);
-    Task<IEnumerable<Installment>> GetAllByLoanIdAsync(int loanId);
+    Task<int> CreateWithClaimAsync(Installment installment);
+    Task<Installment?> GetByIdAsync(int loanId, int id);
+    Task<IEnumerable<Installment>> GetAllAsync(int loanId);
+
+    Task<IEnumerable<InstallmentClaim>> GetAllInstallmentClaimsAsync(string userId);
+    Task<InstallmentClaim?> GetInstallmentClaimByIdAsync(int id, string userId);
     Task<int> SaveChangesAsync();
 }

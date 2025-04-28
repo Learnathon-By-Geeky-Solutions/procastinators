@@ -1,6 +1,7 @@
-﻿using FinanceTracker.Application.Loans.Commands.CreateLoan;
-using FinanceTracker.Application.Loans.Queries.GetAllLoans;
+﻿using FinanceTracker.Application.Loans.Commands.CreateLoanAsBorrower;
+using FinanceTracker.Application.Loans.Commands.CreateLoanAsLender;
 using FinanceTracker.Application.Loans.Queries.GetAllLoansAsBorrower;
+using FinanceTracker.Application.Loans.Queries.GetAllLoansAsLender;
 using FinanceTracker.Application.Loans.Queries.GetLoanById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +12,17 @@ namespace FinanceTracker.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class LoanController(IMediator mediator) : ControllerBase
+public class LoansController(IMediator mediator) : ControllerBase
 {
-    [HttpPost]
-    public async Task<IActionResult> CreateLoan(CreateLoanCommand command)
+    [HttpPost("lend")]
+    public async Task<IActionResult> CreateLoanAsLender(CreateLoanAsLenderCommand command)
+    {
+        var id = await mediator.Send(command);
+        return CreatedAtAction(nameof(GetLoanById), new { id }, null);
+    }
+
+    [HttpPost("borrow")]
+    public async Task<IActionResult> CreateLoanAsBorrower(CreateLoanAsBorrowerCommand command)
     {
         var id = await mediator.Send(command);
         return CreatedAtAction(nameof(GetLoanById), new { id }, null);
@@ -27,14 +35,14 @@ public class LoanController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAllLoans([FromQuery] GetAllLoansQuery query)
+    [HttpGet("lent")]
+    public async Task<IActionResult> GetAllLoansAsLender([FromQuery] GetAllLoansAsLenderQuery query)
     {
         var result = await mediator.Send(query);
         return Ok(result);
     }
 
-    [HttpGet("asBorrower")]
+    [HttpGet("borrowed")]
     public async Task<IActionResult> GetAllLoansAsBorrower(
         [FromQuery] GetAllLoansAsBorrowerQuery query
     )

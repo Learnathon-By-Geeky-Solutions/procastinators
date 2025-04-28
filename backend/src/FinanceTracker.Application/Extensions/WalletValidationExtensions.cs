@@ -9,7 +9,8 @@ public static class WalletValidationExtensions
     private static readonly List<string> ValidCurrencies = Currencies.GetAll();
 
     public static IRuleBuilderOptions<T, string> MustBeValidWalletType<T>(
-        this IRuleBuilder<T, string> ruleBuilder)
+        this IRuleBuilder<T, string> ruleBuilder
+    )
     {
         return ruleBuilder
             .Must(value => ValidTypes.Contains(value))
@@ -17,10 +18,13 @@ public static class WalletValidationExtensions
     }
 
     public static IRuleBuilderOptions<T, string> MustBeValidCurrency<T>(
-        this IRuleBuilder<T, string> ruleBuilder)
+        this IRuleBuilder<T, string> ruleBuilder
+    )
     {
         return ruleBuilder
             .Must(value => ValidCurrencies.Contains(value))
-            .WithMessage($"Invalid Currency. Valid currencies are: {string.Join(", ", ValidCurrencies)}");
+            .WithMessage(
+                $"Invalid Currency. Valid currencies are: {string.Join(", ", ValidCurrencies)}"
+            );
     }
 }
