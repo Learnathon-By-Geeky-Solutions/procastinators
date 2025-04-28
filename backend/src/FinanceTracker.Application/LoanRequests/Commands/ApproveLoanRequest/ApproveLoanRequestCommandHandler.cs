@@ -24,13 +24,10 @@ public class ApproveLoanRequestCommandHandler(
         var user = userContext.GetUser() ?? throw new ForbiddenException();
 
         var loanRequest =
-            await loanRequestRepo.GetByIdAsync(request.LoanRequestId)
+            await loanRequestRepo.GetReceivedByIdAsync(request.LoanRequestId, user.Id)
             ?? throw new NotFoundException(nameof(LoanRequest), request.LoanRequestId.ToString());
 
         logger.LogInformation("LoanReq: {@r}", loanRequest);
-
-        if (loanRequest.LenderId != user.Id)
-            throw new ForbiddenException();
 
         if (loanRequest.IsApproved)
             throw new BadRequestException("LoanRequest is already approved.");

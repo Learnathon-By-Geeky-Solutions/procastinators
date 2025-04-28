@@ -23,16 +23,10 @@ public class GetLoanRequestByIdQueryHandler(
     {
         var user = userContext.GetUser() ?? throw new ForbiddenException();
         var entity =
-            await repo.GetByIdAsync(request.Id)
+            await repo.GetByIdAsync(request.Id, user.Id)
             ?? throw new NotFoundException(nameof(LoanRequest), request.Id.ToString());
 
         logger.LogInformation("User: {@u} \n{@r}", user, request);
-
-        var isAllowed = entity.BorrowerId == user.Id || entity.LenderId == user.Id;
-        if (!isAllowed)
-        {
-            throw new ForbiddenException();
-        }
 
         return mapper.Map<LoanRequestDto>(entity);
     }
