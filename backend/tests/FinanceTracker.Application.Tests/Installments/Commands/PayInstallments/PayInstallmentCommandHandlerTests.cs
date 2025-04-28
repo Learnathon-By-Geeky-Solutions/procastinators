@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using FinanceTracker.Application.Installments.Commands.PayInstallment;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Application.Wallets.Commands.UpdateWallet;
 using FinanceTracker.Domain.Entities;
@@ -20,10 +21,12 @@ public class PayInstallmentCommandHandlerTests
     private readonly Mock<IWalletRepository> _walletRepositoryMock;
     private readonly Mock<ILoanRepository> _loanRepositoryMock;
     private readonly Mock<IInstallmentRepository> _installmentRepositoryMock;
+    private readonly Mock<IUserContext> _userContextMock;
     private readonly PayInstallmentCommandHandler _handler;
     private readonly string _borrowerId = "borrower-id";
     private readonly string _lenderId = "lender-id";
     private readonly int _loanId = 1;
+    private readonly string _userId = "user-id";
 
     public PayInstallmentCommandHandlerTests()
     {
@@ -31,7 +34,9 @@ public class PayInstallmentCommandHandlerTests
         _walletRepositoryMock = new Mock<IWalletRepository>();
         _loanRepositoryMock = new Mock<ILoanRepository>();
         _installmentRepositoryMock = new Mock<IInstallmentRepository>();
+        _userContextMock = new Mock<IUserContext>();
         _handler = new PayInstallmentCommandHandler(
+            _userContextMock.Object,
             _loanRepositoryMock.Object,
             _installmentRepositoryMock.Object,
             _walletRepositoryMock.Object,
@@ -49,6 +54,8 @@ public class PayInstallmentCommandHandlerTests
         decimal initialBorrowerBalance = 1000m;
         decimal initialLenderBalance = 2000m;
         decimal initialLoanDueAmount = 2000m;
+
+        var testUser = new UserDto(_userId, "test@example.com");
 
         var loanRequest = new LoanRequest { BorrowerId = _borrowerId, LenderId = _lenderId };
 
@@ -95,7 +102,10 @@ public class PayInstallmentCommandHandlerTests
         };
 
         // Setup mock repositories
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+
+        _userContextMock.Setup(context => context.GetUser()).Returns(testUser);
+
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId, _userId)).ReturnsAsync(loan);
 
         _walletRepositoryMock
             .Setup(repo => repo.GetAll(_borrowerId))
@@ -160,7 +170,9 @@ public class PayInstallmentCommandHandlerTests
             NextDueDate = DateTime.Now.AddMonths(1),
             Note = "Test payment",
         };
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync((Loan?)null);
+        _loanRepositoryMock
+            .Setup(repo => repo.GetByIdAsync(_loanId, _userId))
+            .ReturnsAsync((Loan?)null);
 
         // Act & Assert
         await Xunit.Assert.ThrowsAsync<NotFoundException>(
@@ -180,7 +192,7 @@ public class PayInstallmentCommandHandlerTests
             Note = "Test payment",
         };
         var loan = new Loan { Id = _loanId, IsDeleted = true };
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId, _userId)).ReturnsAsync(loan);
 
         // Act & Assert
         await Xunit.Assert.ThrowsAsync<NotFoundException>(
@@ -201,7 +213,7 @@ public class PayInstallmentCommandHandlerTests
             IsDeleted = false,
         };
 
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId, _userId)).ReturnsAsync(loan);
 
         _walletRepositoryMock
             .Setup(repo => repo.GetAll(_borrowerId))
@@ -240,7 +252,7 @@ public class PayInstallmentCommandHandlerTests
 
         var borrowerWallet = new Wallet { UserId = _borrowerId, IsDeleted = false };
 
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId, _userId)).ReturnsAsync(loan);
 
         _walletRepositoryMock
             .Setup(repo => repo.GetAll(_borrowerId))

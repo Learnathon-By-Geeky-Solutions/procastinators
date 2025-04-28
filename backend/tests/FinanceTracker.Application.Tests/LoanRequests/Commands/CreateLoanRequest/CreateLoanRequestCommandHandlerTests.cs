@@ -4,6 +4,7 @@ using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -16,7 +17,9 @@ public class CreateLoanRequestCommandHandlerTests
     private readonly Mock<IUserContext> _userContextMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly Mock<ILoanRequestRepository> _loanRequestRepositoryMock;
+    private readonly Mock<UserManager<User>> _userManagerMock;
     private readonly CreateLoanRequestCommandHandler _handler;
+
     private readonly string _userId = "user-id";
 
     public CreateLoanRequestCommandHandlerTests()
@@ -25,11 +28,14 @@ public class CreateLoanRequestCommandHandlerTests
         _userContextMock = new Mock<IUserContext>();
         _mapperMock = new Mock<IMapper>();
         _loanRequestRepositoryMock = new Mock<ILoanRequestRepository>();
+        _userManagerMock = new Mock<UserManager<User>>();
+
         _handler = new CreateLoanRequestCommandHandler(
             _loggerMock.Object,
             _userContextMock.Object,
             _loanRequestRepositoryMock.Object,
-            _mapperMock.Object
+            _mapperMock.Object,
+            _userManagerMock.Object
         );
     }
 
@@ -44,7 +50,6 @@ public class CreateLoanRequestCommandHandlerTests
             Amount = 1000,
             DueDate = DateTime.UtcNow.AddMonths(1),
             Note = "Test loan request",
-            WalletId = 1,
         };
         var expectedLoanRequest = new LoanRequest
         {
@@ -52,7 +57,6 @@ public class CreateLoanRequestCommandHandlerTests
             Amount = 1000,
             DueDate = createLoanCommand.DueDate,
             Note = "Test loan request",
-            WalletId = 1,
             BorrowerId = _userId,
             IsApproved = false,
         };
@@ -80,7 +84,6 @@ public class CreateLoanRequestCommandHandlerTests
                         && request.Amount == createLoanCommand.Amount
                         && request.DueDate == createLoanCommand.DueDate
                         && request.Note == createLoanCommand.Note
-                        && request.WalletId == createLoanCommand.WalletId
                         && request.BorrowerId == _userId
                         && request.IsApproved == false
                     )
@@ -106,7 +109,6 @@ public class CreateLoanRequestCommandHandlerTests
             Amount = 1000,
             DueDate = DateTime.UtcNow.AddMonths(1),
             Note = "Test loan request",
-            WalletId = 1,
         };
 
         _userContextMock.Setup(context => context.GetUser()).Returns((UserDto?)null);

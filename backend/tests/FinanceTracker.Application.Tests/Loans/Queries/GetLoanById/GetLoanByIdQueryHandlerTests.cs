@@ -52,8 +52,6 @@ public class GetLoanByIdQueryHandlerTests
             IssuedAt = DateTime.UtcNow.AddDays(-5),
             DueDate = DateTime.UtcNow.AddDays(10),
             DueAmount = 110,
-            WalletId = 1,
-            BorrowerWalletId = 2,
             LoanRequest = new LoanRequest { BorrowerId = "other-user-id" },
         };
 
@@ -68,7 +66,7 @@ public class GetLoanByIdQueryHandlerTests
             DueAmount = 110,
         };
 
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId, _userId)).ReturnsAsync(loan);
 
         _mapperMock.Setup(m => m.Map<LoanDto>(loan)).Returns(loanDto);
 
@@ -78,7 +76,7 @@ public class GetLoanByIdQueryHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(loanDto);
-        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId), Times.Once);
+        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId, _userId), Times.Once);
         _mapperMock.Verify(m => m.Map<LoanDto>(loan), Times.Once);
     }
 
@@ -101,8 +99,6 @@ public class GetLoanByIdQueryHandlerTests
             IssuedAt = DateTime.UtcNow.AddDays(-5),
             DueDate = DateTime.UtcNow.AddDays(10),
             DueAmount = 110,
-            WalletId = 1,
-            BorrowerWalletId = 2,
             LoanRequest = new LoanRequest
             {
                 BorrowerId = _userId, // Current user is the borrower
@@ -120,7 +116,7 @@ public class GetLoanByIdQueryHandlerTests
             DueAmount = 110,
         };
 
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId, _userId)).ReturnsAsync(loan);
 
         _mapperMock.Setup(m => m.Map<LoanDto>(loan)).Returns(loanDto);
 
@@ -130,7 +126,7 @@ public class GetLoanByIdQueryHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(loanDto);
-        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId), Times.Once);
+        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId, _userId), Times.Once);
         _mapperMock.Verify(m => m.Map<LoanDto>(loan), Times.Once);
     }
 
@@ -143,14 +139,16 @@ public class GetLoanByIdQueryHandlerTests
 
         var query = new GetLoanByIdQuery { Id = _loanId };
 
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync((Loan?)null);
+        _loanRepositoryMock
+            .Setup(repo => repo.GetByIdAsync(_loanId, _userId))
+            .ReturnsAsync((Loan?)null);
 
         // Act & Assert
         await Xunit.Assert.ThrowsAsync<NotFoundException>(
             () => _handler.Handle(query, CancellationToken.None)
         );
 
-        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId), Times.Once);
+        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId, _userId), Times.Once);
         _mapperMock.Verify(m => m.Map<LoanDto>(It.IsAny<Loan>()), Times.Never);
     }
 
@@ -173,18 +171,16 @@ public class GetLoanByIdQueryHandlerTests
             IssuedAt = DateTime.UtcNow.AddDays(-5),
             DueDate = DateTime.UtcNow.AddDays(10),
             DueAmount = 110,
-            WalletId = 1,
-            BorrowerWalletId = 2,
         };
 
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId, _userId)).ReturnsAsync(loan);
 
         // Act & Assert
         await Xunit.Assert.ThrowsAsync<NotFoundException>(
             () => _handler.Handle(query, CancellationToken.None)
         );
 
-        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId), Times.Once);
+        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId, _userId), Times.Once);
         _mapperMock.Verify(m => m.Map<LoanDto>(It.IsAny<Loan>()), Times.Never);
     }
 
@@ -207,22 +203,20 @@ public class GetLoanByIdQueryHandlerTests
             IssuedAt = DateTime.UtcNow.AddDays(-5),
             DueDate = DateTime.UtcNow.AddDays(10),
             DueAmount = 110,
-            WalletId = 1,
-            BorrowerWalletId = 2,
             LoanRequest = new LoanRequest
             {
                 BorrowerId = "other-borrower-id", // Not the current user
             },
         };
 
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId, _userId)).ReturnsAsync(loan);
 
         // Act & Assert
         await Xunit.Assert.ThrowsAsync<ForbiddenException>(
             () => _handler.Handle(query, CancellationToken.None)
         );
 
-        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId), Times.Once);
+        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId, _userId), Times.Once);
         _mapperMock.Verify(m => m.Map<LoanDto>(It.IsAny<Loan>()), Times.Never);
     }
 
@@ -245,19 +239,17 @@ public class GetLoanByIdQueryHandlerTests
             IssuedAt = DateTime.UtcNow.AddDays(-5),
             DueDate = DateTime.UtcNow.AddDays(10),
             DueAmount = 110,
-            WalletId = 1,
-            BorrowerWalletId = 2,
             LoanRequest = null, // No loan request
         };
 
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId)).ReturnsAsync(loan);
+        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId, _userId)).ReturnsAsync(loan);
 
         // Act & Assert
         await Xunit.Assert.ThrowsAsync<ForbiddenException>(
             () => _handler.Handle(query, CancellationToken.None)
         );
 
-        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId), Times.Once);
+        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(_loanId, _userId), Times.Once);
         _mapperMock.Verify(m => m.Map<LoanDto>(It.IsAny<Loan>()), Times.Never);
     }
 
@@ -274,7 +266,10 @@ public class GetLoanByIdQueryHandlerTests
             () => _handler.Handle(query, CancellationToken.None)
         );
 
-        _loanRepositoryMock.Verify(repo => repo.GetByIdAsync(It.IsAny<int>()), Times.Never);
+        _loanRepositoryMock.Verify(
+            repo => repo.GetByIdAsync(It.IsAny<int>(), It.IsAny<string>()),
+            Times.Never
+        );
         _mapperMock.Verify(m => m.Map<LoanDto>(It.IsAny<Loan>()), Times.Never);
     }
 }

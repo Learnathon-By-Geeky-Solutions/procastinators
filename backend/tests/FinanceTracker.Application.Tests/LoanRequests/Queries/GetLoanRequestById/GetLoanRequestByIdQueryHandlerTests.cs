@@ -51,7 +51,6 @@ public class GetLoanRequestByIdQueryHandlerTests
             Id = _loanRequestId,
             Amount = 100,
             DueDate = DateTime.UtcNow.AddDays(10),
-            WalletId = 1,
             LenderId = "test-lender-id",
             BorrowerId = "test-borrower-id",
         };
@@ -117,7 +116,6 @@ public class GetLoanRequestByIdQueryHandlerTests
             Id = _loanRequestId,
             Amount = 100,
             DueDate = DateTime.UtcNow.AddDays(10),
-            WalletId = 1,
             LenderId = "test-lender-id",
             BorrowerId = null!,
         };

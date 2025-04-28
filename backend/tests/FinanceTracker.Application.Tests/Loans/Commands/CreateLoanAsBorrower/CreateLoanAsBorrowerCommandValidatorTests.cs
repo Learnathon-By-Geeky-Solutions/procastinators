@@ -1,22 +1,23 @@
-﻿using FluentValidation.TestHelper;
+﻿using FinanceTracker.Application.Loans.Commands.CreateLoanAsBorrower;
+using FluentValidation.TestHelper;
 using Xunit;
 
 namespace FinanceTracker.Application.Loans.Commands.CreateLoan.Tests;
 
-public class CreateLoanCommandValidatorTests
+public class CreateLoanAsBorrowerCommandValidatorTests
 {
     [Fact()]
     public void Validator_ForValidCommand_ShouldNotHaveValidationErrors()
     {
         // Arrange
-        var command = new CreateLoanCommand()
+        var command = new CreateLoanAsBorrowerCommand()
         {
             Amount = 1000,
             WalletId = 1,
             DueDate = DateTime.UtcNow.AddDays(30),
         };
 
-        var validator = new CreateLoanCommandValidator();
+        var validator = new CreateLoanAsBorrowerCommandValidator();
 
         // Act
         var result = validator.TestValidate(command);
@@ -29,14 +30,14 @@ public class CreateLoanCommandValidatorTests
     public void Validator_ForInvalidCommand_ShouldHaveValidationErrors()
     {
         // Arrange
-        var command = new CreateLoanCommand()
+        var command = new CreateLoanAsBorrowerCommand()
         {
             Amount = -1000,
             WalletId = 0,
             DueDate = DateTime.UtcNow.AddDays(-1),
         };
 
-        var validator = new CreateLoanCommandValidator();
+        var validator = new CreateLoanAsBorrowerCommandValidator();
 
         // Act
         var result = validator.TestValidate(command);

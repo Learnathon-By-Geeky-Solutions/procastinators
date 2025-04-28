@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.Installments.Dtos;
+using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
@@ -11,6 +12,8 @@ namespace FinanceTracker.Application.Installments.Queries.GetInstallmentById.Tes
 
 public class GetInstallmentByIdQueryHandlerTests
 {
+    private readonly Mock<ILoanRepository> _loanRepositoryMock;
+    private readonly Mock<IUserContext> _userContextMock;
     private readonly Mock<IInstallmentRepository> _installmentRepositoryMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly GetInstallmentByIdQueryHandler _handler;
@@ -19,10 +22,14 @@ public class GetInstallmentByIdQueryHandlerTests
 
     public GetInstallmentByIdQueryHandlerTests()
     {
+        _loanRepositoryMock = new Mock<ILoanRepository>();
+        _userContextMock = new Mock<IUserContext>();
         _mapperMock = new Mock<IMapper>();
         _installmentRepositoryMock = new Mock<IInstallmentRepository>();
 
         _handler = new GetInstallmentByIdQueryHandler(
+            _userContextMock.Object,
+            _loanRepositoryMock.Object,
             _installmentRepositoryMock.Object,
             _mapperMock.Object
         );
@@ -32,7 +39,7 @@ public class GetInstallmentByIdQueryHandlerTests
     public async Task Handle_WithValidRequest_ShouldReturnAllInstallmentsForCurrentUser()
     {
         // Arrange
-        var query = new GetInstallmentByIdQuery(_installmentId);
+        var query = new GetInstallmentByIdQuery();
 
         var installment = new Installment
         {
@@ -53,7 +60,7 @@ public class GetInstallmentByIdQueryHandlerTests
         };
 
         _installmentRepositoryMock
-            .Setup(repo => repo.GetByIdAsync(_installmentId))
+            .Setup(repo => repo.GetByIdAsync(_loanId, _installmentId))
             .ReturnsAsync(installment);
 
         _mapperMock.Setup(m => m.Map<InstallmentDto>(installment)).Returns(expectedDto);
@@ -71,10 +78,10 @@ public class GetInstallmentByIdQueryHandlerTests
     {
         // Arrange
         var installmentId = 1;
-        var command = new GetInstallmentByIdQuery(installmentId) { Id = installmentId };
+        var command = new GetInstallmentByIdQuery() { Id = installmentId };
 
         _installmentRepositoryMock
-            .Setup(r => r.GetByIdAsync(installmentId))
+            .Setup(r => r.GetByIdAsync(_loanId, installmentId))
             .ReturnsAsync((Installment?)null);
 
         // Act & Assert

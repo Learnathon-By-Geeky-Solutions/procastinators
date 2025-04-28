@@ -1,4 +1,5 @@
-﻿using FluentValidation.TestHelper;
+﻿using FinanceTracker.Application.Installments.Commands.PayInstallment;
+using FluentValidation.TestHelper;
 using Xunit;
 
 namespace FinanceTracker.Application.Installments.Commands.PayInstallments.Tests;

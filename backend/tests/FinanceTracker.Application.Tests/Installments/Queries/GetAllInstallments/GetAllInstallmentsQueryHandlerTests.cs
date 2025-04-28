@@ -12,6 +12,8 @@ namespace FinanceTracker.Application.Installments.Queries.GetAllInstallments.Tes
 
 public class GetAllInstallmentsQueryHandlerTests
 {
+    private readonly Mock<IUserContext> _userContextMock;
+    private readonly Mock<ILoanRepository> _loanRepositoryMock;
     private readonly Mock<IInstallmentRepository> _installmentRepositoryMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly GetAllInstallmentsQueryHandler _handler;
@@ -19,10 +21,14 @@ public class GetAllInstallmentsQueryHandlerTests
 
     public GetAllInstallmentsQueryHandlerTests()
     {
+        _userContextMock = new Mock<IUserContext>();
+        _loanRepositoryMock = new Mock<ILoanRepository>();
         _mapperMock = new Mock<IMapper>();
         _installmentRepositoryMock = new Mock<IInstallmentRepository>();
 
         _handler = new GetAllInstallmentsQueryHandler(
+            _userContextMock.Object,
+            _loanRepositoryMock.Object,
             _installmentRepositoryMock.Object,
             _mapperMock.Object
         );
@@ -32,7 +38,7 @@ public class GetAllInstallmentsQueryHandlerTests
     public async Task Handle_WithValidRequest_ShouldReturnAllInstallmentsForCurrentUser()
     {
         // Arrange
-        var query = new GetAllInstallmentsQuery(_loanId);
+        var query = new GetAllInstallmentsQuery();
 
         var installments = new List<Installment>
         {
@@ -75,7 +81,7 @@ public class GetAllInstallmentsQueryHandlerTests
         };
 
         _installmentRepositoryMock
-            .Setup(repo => repo.GetAllByLoanIdAsync(_loanId))
+            .Setup(repo => repo.GetAllAsync(_loanId))
             .ReturnsAsync(installments);
 
         _mapperMock
@@ -88,7 +94,7 @@ public class GetAllInstallmentsQueryHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(installmentDtos);
-        _installmentRepositoryMock.Verify(repo => repo.GetAllByLoanIdAsync(_loanId), Times.Once);
+        _installmentRepositoryMock.Verify(repo => repo.GetAllAsync(_loanId), Times.Once);
         _mapperMock.Verify(m => m.Map<IEnumerable<InstallmentDto>>(installments), Times.Once);
     }
 }

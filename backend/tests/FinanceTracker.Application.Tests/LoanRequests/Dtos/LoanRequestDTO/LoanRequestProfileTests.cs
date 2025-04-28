@@ -29,7 +29,6 @@ public class LoanRequestProfileTests
             Note = "Test Loan Request",
             DueDate = DateTime.UtcNow.AddDays(30),
             LenderId = "1",
-            WalletId = 2,
         };
 
         // Act
@@ -41,7 +40,6 @@ public class LoanRequestProfileTests
         loanRequest.Note.Should().Be(command.Note);
         loanRequest.DueDate.Should().Be(command.DueDate);
         loanRequest.LenderId.Should().Be(command.LenderId);
-        loanRequest.WalletId.Should().Be(command.WalletId);
     }
 
     [Fact()]

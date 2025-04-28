@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.Loans.Dtos.LoanDTO;
+using FinanceTracker.Application.Loans.Queries.GetAllLoansAsBorrower;
+using FinanceTracker.Application.Loans.Queries.GetAllLoansAsLender;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Repositories;
@@ -9,21 +11,21 @@ using Xunit;
 
 namespace FinanceTracker.Application.Loans.Queries.GetAllLoans.Tests;
 
-public class GetAllLoansQueryHandlerTests
+public class GetAllLoansAsLenderQueryHandlerTests
 {
     private readonly Mock<ILoanRepository> _loanRepositoryMock;
     private readonly Mock<IUserContext> _userContextMock;
     private readonly Mock<IMapper> _mapperMock;
-    private readonly GetAllLoansQueryHandler _handler;
+    private readonly GetAllLoansAsLenderQueryHandler _handler;
     private readonly string _userId = "test-user-id";
 
-    public GetAllLoansQueryHandlerTests()
+    public GetAllLoansAsLenderQueryHandlerTests()
     {
         _loanRepositoryMock = new Mock<ILoanRepository>();
         _userContextMock = new Mock<IUserContext>();
         _mapperMock = new Mock<IMapper>();
 
-        _handler = new GetAllLoansQueryHandler(
+        _handler = new GetAllLoansAsLenderQueryHandler(
             _loanRepositoryMock.Object,
             _userContextMock.Object,
             _mapperMock.Object
@@ -37,7 +39,7 @@ public class GetAllLoansQueryHandlerTests
         var user = new UserDto("test", "test@test.com") { Id = _userId };
         _userContextMock.Setup(u => u.GetUser()).Returns(user);
 
-        var query = new GetAllLoansQuery();
+        var query = new GetAllLoansAsLenderQuery();
 
         var loans = new List<Loan>
         {
@@ -51,8 +53,6 @@ public class GetAllLoansQueryHandlerTests
                 IssuedAt = DateTime.UtcNow.AddDays(-5),
                 DueDate = DateTime.UtcNow.AddDays(10),
                 DueAmount = 110,
-                WalletId = 1,
-                BorrowerWalletId = 2,
             },
             new Loan
             {
@@ -64,8 +64,6 @@ public class GetAllLoansQueryHandlerTests
                 IssuedAt = DateTime.UtcNow.AddDays(-3),
                 DueDate = DateTime.UtcNow.AddDays(15),
                 DueAmount = 220,
-                WalletId = 1,
-                BorrowerWalletId = 3,
             },
         };
 
@@ -93,7 +91,7 @@ public class GetAllLoansQueryHandlerTests
             },
         };
 
-        _loanRepositoryMock.Setup(repo => repo.GetAllAsync(_userId)).ReturnsAsync(loans);
+        _loanRepositoryMock.Setup(repo => repo.GetAllAsBorrowerAsync(_userId)).ReturnsAsync(loans);
 
         _mapperMock
             .Setup(m => m.Map<IEnumerable<LoanDto>>(It.IsAny<IEnumerable<Loan>>()))
@@ -105,7 +103,7 @@ public class GetAllLoansQueryHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(loanDtos);
-        _loanRepositoryMock.Verify(repo => repo.GetAllAsync(_userId), Times.Once);
+        _loanRepositoryMock.Verify(repo => repo.GetAllAsBorrowerAsync(_userId), Times.Once);
         _mapperMock.Verify(m => m.Map<IEnumerable<LoanDto>>(loans), Times.Once);
     }
 }

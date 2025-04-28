@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
@@ -16,12 +17,14 @@ public class ApproveLoanRequestCommandHandlerTests
     private readonly Mock<IWalletRepository> _walletRepositoryMock;
     private readonly Mock<ILoanRepository> _loanRepositoryMock;
     private readonly Mock<ILoanRequestRepository> _loanRequestRepository;
+    private readonly Mock<IUserContext> _userContextMock;
     private readonly ApproveLoanRequestCommandHandler _handler;
     private readonly string _borrowerId = "borrower-id";
     private readonly string _lenderId = "lender-id";
     private readonly int _loanRequestId = 1;
     private readonly int _lenderWalletId = 2;
     private readonly int _borrowerWalletId = 3;
+    private readonly string _userId = "user-id";
 
     public ApproveLoanRequestCommandHandlerTests()
     {
@@ -29,11 +32,13 @@ public class ApproveLoanRequestCommandHandlerTests
         _walletRepositoryMock = new Mock<IWalletRepository>();
         _loanRepositoryMock = new Mock<ILoanRepository>();
         _loanRequestRepository = new Mock<ILoanRequestRepository>();
+        _userContextMock = new Mock<IUserContext>();
         _handler = new ApproveLoanRequestCommandHandler(
             _loggerMock.Object,
             _loanRequestRepository.Object,
             _loanRepositoryMock.Object,
-            _walletRepositoryMock.Object
+            _walletRepositoryMock.Object,
+            _userContextMock.Object
         );
     }
 
@@ -55,7 +60,6 @@ public class ApproveLoanRequestCommandHandlerTests
             DueDate = dueDate,
             Note = "Test loan request",
             IsApproved = false,
-            WalletId = _borrowerWalletId,
         };
 
         var lenderWallet = new Wallet
@@ -72,7 +76,7 @@ public class ApproveLoanRequestCommandHandlerTests
             Balance = initialBorrowerBalance,
         };
 
-        var command = new ApproveLoanRequestCommand(_loanRequestId, _lenderWalletId)
+        var command = new ApproveLoanRequestCommand()
         {
             LoanRequestId = _loanRequestId,
             LenderWalletId = _lenderWalletId,
@@ -119,8 +123,7 @@ public class ApproveLoanRequestCommandHandlerTests
                         && loan.Note == "Test loan request"
                         && loan.DueDate == dueDate
                         && loan.DueAmount == loanAmount
-                        && loan.WalletId == _lenderWalletId
-                        && loan.BorrowerWalletId == _borrowerWalletId
+                        && loan.BorrowerId == _borrowerId
                     )
                 ),
             Times.Once
@@ -138,7 +141,7 @@ public class ApproveLoanRequestCommandHandlerTests
             .Setup(repo => repo.GetByIdAsync(_loanRequestId))
             .ReturnsAsync((LoanRequest?)null);
 
-        var command = new ApproveLoanRequestCommand(_loanRequestId, _lenderWalletId)
+        var command = new ApproveLoanRequestCommand()
         {
             LoanRequestId = _loanRequestId,
             LenderWalletId = _lenderWalletId,
@@ -162,7 +165,7 @@ public class ApproveLoanRequestCommandHandlerTests
             .Setup(repo => repo.GetByIdAsync(_loanRequestId))
             .ReturnsAsync(loanRequest);
 
-        var command = new ApproveLoanRequestCommand(_loanRequestId, _lenderWalletId)
+        var command = new ApproveLoanRequestCommand()
         {
             LoanRequestId = _loanRequestId,
             LenderWalletId = _lenderWalletId,
@@ -177,35 +180,6 @@ public class ApproveLoanRequestCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_NullWalletId_ThrowsBadRequestException()
-    {
-        // Arrange
-        var loanRequest = new LoanRequest
-        {
-            Id = _loanRequestId,
-            IsApproved = false,
-            WalletId = null,
-        };
-
-        _loanRequestRepository
-            .Setup(repo => repo.GetByIdAsync(_loanRequestId))
-            .ReturnsAsync(loanRequest);
-
-        var command = new ApproveLoanRequestCommand(_loanRequestId, _lenderWalletId)
-        {
-            LoanRequestId = _loanRequestId,
-            LenderWalletId = _lenderWalletId,
-        };
-
-        // Act & Assert
-        var exception = await Xunit.Assert.ThrowsAsync<BadRequestException>(
-            () => _handler.Handle(command, CancellationToken.None)
-        );
-
-        Xunit.Assert.Contains("WalletId cannot be null", exception.Message);
-    }
-
-    [Fact]
     public async Task Handle_LenderWalletNotFound_ThrowsNotFoundException()
     {
         // Arrange
@@ -213,7 +187,6 @@ public class ApproveLoanRequestCommandHandlerTests
         {
             Id = _loanRequestId,
             IsApproved = false,
-            WalletId = _borrowerWalletId,
             LenderId = _lenderId,
         };
 
@@ -225,7 +198,7 @@ public class ApproveLoanRequestCommandHandlerTests
             .Setup(repo => repo.GetById(_lenderWalletId))
             .ReturnsAsync((Wallet?)null);
 
-        var command = new ApproveLoanRequestCommand(_loanRequestId, _lenderWalletId)
+        var command = new ApproveLoanRequestCommand()
         {
             LoanRequestId = _loanRequestId,
             LenderWalletId = _lenderWalletId,
@@ -240,19 +213,56 @@ public class ApproveLoanRequestCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_BorrowerWalletNotFound_ThrowsNotFoundException()
+    public async Task Handle_UserNotLender_ThrowsForbiddenException()
     {
         // Arrange
         var loanRequest = new LoanRequest
         {
             Id = _loanRequestId,
-            BorrowerId = _borrowerId,
-            LenderId = _lenderId,
+            LenderId = "different-lender-id", // User is not the lender
             IsApproved = false,
-            WalletId = _borrowerWalletId,
         };
 
-        var lenderWallet = new Wallet { Id = _lenderWalletId, UserId = _lenderId };
+        var testUser = new UserDto(_userId, "test@example.com");
+        _userContextMock.Setup(context => context.GetUser()).Returns(testUser);
+
+        _loanRequestRepository
+            .Setup(repo => repo.GetByIdAsync(_loanRequestId))
+            .ReturnsAsync(loanRequest);
+
+        var command = new ApproveLoanRequestCommand
+        {
+            LoanRequestId = _loanRequestId,
+            LenderWalletId = _lenderWalletId,
+        };
+
+        // Act & Assert
+        var exception = await Xunit.Assert.ThrowsAsync<ForbiddenException>(
+            () => _handler.Handle(command, CancellationToken.None)
+        );
+
+        Xunit.Assert.Contains("Forbidden", exception.Message);
+    }
+
+    [Fact]
+    public async Task Handle_LenderWalletNotOwnedByUser_ThrowsForbiddenException()
+    {
+        // Arrange
+        var loanRequest = new LoanRequest
+        {
+            Id = _loanRequestId,
+            LenderId = _lenderId,
+            IsApproved = false,
+        };
+
+        var lenderWallet = new Wallet
+        {
+            Id = _lenderWalletId,
+            UserId = "different-user-id", // Wallet does not belong to the user
+        };
+
+        var testUser = new UserDto(_userId, "test@example.com");
+        _userContextMock.Setup(context => context.GetUser()).Returns(testUser);
 
         _loanRequestRepository
             .Setup(repo => repo.GetByIdAsync(_loanRequestId))
@@ -262,21 +272,17 @@ public class ApproveLoanRequestCommandHandlerTests
             .Setup(repo => repo.GetById(_lenderWalletId))
             .ReturnsAsync(lenderWallet);
 
-        _walletRepositoryMock
-            .Setup(repo => repo.GetById(_borrowerWalletId))
-            .ReturnsAsync((Wallet?)null);
-
-        var command = new ApproveLoanRequestCommand(_loanRequestId, _lenderWalletId)
+        var command = new ApproveLoanRequestCommand
         {
             LoanRequestId = _loanRequestId,
             LenderWalletId = _lenderWalletId,
         };
 
         // Act & Assert
-        var exception = await Xunit.Assert.ThrowsAsync<NotFoundException>(
+        var exception = await Xunit.Assert.ThrowsAsync<ForbiddenException>(
             () => _handler.Handle(command, CancellationToken.None)
         );
 
-        Xunit.Assert.Contains(_borrowerId.ToString(), exception.Message);
+        Xunit.Assert.Contains("Forbidden", exception.Message);
     }
 }

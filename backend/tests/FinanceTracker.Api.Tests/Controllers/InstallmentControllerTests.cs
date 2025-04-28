@@ -1,6 +1,4 @@
-﻿using System.Net.Http.Json;
-using FinanceTracker.Api.Tests;
-using FinanceTracker.Application.Installments.Commands.PayInstallments;
+﻿using FinanceTracker.Api.Tests;
 using FinanceTracker.Application.Installments.Dtos;
 using FinanceTracker.Application.Installments.Queries.GetAllInstallments;
 using FinanceTracker.Application.Installments.Queries.GetInstallmentById;

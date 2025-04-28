@@ -1,4 +1,5 @@
-﻿using FinanceTracker.Application.Users;
+﻿using FinanceTracker.Application.Loans.Commands.CreateLoanAsLender;
+using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
@@ -8,23 +9,23 @@ using Xunit;
 
 namespace FinanceTracker.Application.Loans.Commands.CreateLoan.Tests
 {
-    public class CreateLoanCommandHandlerTests
+    public class CreateLoanAsLenderLCommandHandlerTests
     {
-        private readonly Mock<ILogger<CreateLoanCommandHandler>> _loggerMock;
+        private readonly Mock<ILogger<CreateLoanAsLenderCommandHandler>> _loggerMock;
         private readonly Mock<IUserContext> _userContextMock;
         private readonly Mock<ILoanRepository> _loanRepositoryMock;
         private readonly Mock<IWalletRepository> _walletRepositoryMock;
-        private readonly CreateLoanCommandHandler _handler;
+        private readonly CreateLoanAsLenderCommandHandler _handler;
         private readonly string _userId = "lender-id";
         private readonly int _walletId = 1;
 
-        public CreateLoanCommandHandlerTests()
+        public CreateLoanAsLenderLCommandHandlerTests()
         {
-            _loggerMock = new Mock<ILogger<CreateLoanCommandHandler>>();
+            _loggerMock = new Mock<ILogger<CreateLoanAsLenderCommandHandler>>();
             _userContextMock = new Mock<IUserContext>();
             _loanRepositoryMock = new Mock<ILoanRepository>();
             _walletRepositoryMock = new Mock<IWalletRepository>();
-            _handler = new CreateLoanCommandHandler(
+            _handler = new CreateLoanAsLenderCommandHandler(
                 _loggerMock.Object,
                 _userContextMock.Object,
                 _loanRepositoryMock.Object,
@@ -37,7 +38,7 @@ namespace FinanceTracker.Application.Loans.Commands.CreateLoan.Tests
         {
             // Arrange
             var testUser = new UserDto(_userId, "test@example.com");
-            var createLoanCommand = new CreateLoanCommand
+            var createLoanCommand = new CreateLoanAsLenderCommand
             {
                 Amount = 1000,
                 DueDate = DateTime.UtcNow.AddMonths(1),
@@ -78,7 +79,6 @@ namespace FinanceTracker.Application.Loans.Commands.CreateLoan.Tests
             Xunit.Assert.Equal(createLoanCommand.DueDate, capturedLoan.DueDate);
             Xunit.Assert.Equal(createLoanCommand.Amount, capturedLoan.DueAmount);
             Xunit.Assert.Null(capturedLoan.LoanRequestId);
-            Xunit.Assert.Equal(_walletId, capturedLoan.WalletId);
             Xunit.Assert.False(capturedLoan.IsDeleted);
 
             // Verify repository method was called
@@ -94,7 +94,7 @@ namespace FinanceTracker.Application.Loans.Commands.CreateLoan.Tests
         {
             // Arrange
             var testUser = new UserDto(_userId, "test@example.com");
-            var createLoanCommand = new CreateLoanCommand
+            var createLoanCommand = new CreateLoanAsLenderCommand
             {
                 Amount = 1000,
                 DueDate = DateTime.UtcNow.AddMonths(1),

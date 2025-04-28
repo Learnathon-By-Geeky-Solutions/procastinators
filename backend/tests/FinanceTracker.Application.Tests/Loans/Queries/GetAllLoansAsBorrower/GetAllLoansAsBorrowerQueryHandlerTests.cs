@@ -46,27 +46,23 @@ public class GetAllLoansAsBorrowerQueryHandlerTests
             {
                 Id = 1,
                 IsDeleted = false,
-                LenderId = "test-lender-id",
+                BorrowerId = "test-borrower-id",
                 Amount = 100,
                 Note = "First loan",
                 IssuedAt = DateTime.UtcNow.AddDays(-5),
                 DueDate = DateTime.UtcNow.AddDays(10),
                 DueAmount = 110,
-                WalletId = 1,
-                BorrowerWalletId = 2,
             },
             new Loan
             {
                 Id = 2,
                 IsDeleted = false,
-                LenderId = "test-lender-id",
+                BorrowerId = "test-borrower-id",
                 Amount = 200,
                 Note = "Second loan",
                 IssuedAt = DateTime.UtcNow.AddDays(-3),
                 DueDate = DateTime.UtcNow.AddDays(15),
                 DueAmount = 220,
-                WalletId = 1,
-                BorrowerWalletId = 3,
             },
         };
 
@@ -75,7 +71,7 @@ public class GetAllLoansAsBorrowerQueryHandlerTests
             new LoanDto
             {
                 Id = 1,
-                LenderId = "test-lender-id",
+                BorrowerId = "test-borrower-id",
                 Amount = 100,
                 Note = "First loan",
                 IssuedAt = loans[0].IssuedAt,
@@ -85,7 +81,7 @@ public class GetAllLoansAsBorrowerQueryHandlerTests
             new LoanDto
             {
                 Id = 2,
-                LenderId = "test-lender-id",
+                BorrowerId = "test-borrower-id",
                 Amount = 200,
                 Note = "Second loan",
                 IssuedAt = loans[1].IssuedAt,
@@ -94,7 +90,7 @@ public class GetAllLoansAsBorrowerQueryHandlerTests
             },
         };
 
-        _loanRepositoryMock.Setup(repo => repo.GetAllByBorrowerAsync(_userId)).ReturnsAsync(loans);
+        _loanRepositoryMock.Setup(repo => repo.GetAllAsBorrowerAsync(_userId)).ReturnsAsync(loans);
 
         _mapperMock
             .Setup(m => m.Map<IEnumerable<LoanDto>>(It.IsAny<IEnumerable<Loan>>()))
@@ -106,7 +102,7 @@ public class GetAllLoansAsBorrowerQueryHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(loanDtos);
-        _loanRepositoryMock.Verify(repo => repo.GetAllByBorrowerAsync(_userId), Times.Once);
+        _loanRepositoryMock.Verify(repo => repo.GetAllAsBorrowerAsync(_userId), Times.Once);
         _mapperMock.Verify(m => m.Map<IEnumerable<LoanDto>>(loans), Times.Once);
     }
 }
