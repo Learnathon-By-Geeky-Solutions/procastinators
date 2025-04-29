@@ -58,7 +58,7 @@ export default function ReceivedTab({
                                             {request.requester}
                                         </TableCell>
                                         <TableCell>
-                                            ${request.amount.toFixed(2)}
+                                            ${request?.amount.toFixed(2)}
                                         </TableCell>
                                         <TableCell>{request.date}</TableCell>
                                         <TableCell>{request.dueDate}</TableCell>

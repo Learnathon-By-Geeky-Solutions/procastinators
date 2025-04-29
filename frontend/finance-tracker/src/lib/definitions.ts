@@ -39,7 +39,7 @@ export type TransactionReport = {
 };
 
 export type Loan = {
-    id: 17;
+    id: string;
     lender?: UserInfo;
     borrower?: UserInfo;
     amount: number;
@@ -47,4 +47,14 @@ export type Loan = {
     issuedAt: string;
     dueDate: string;
     dueAmount: number;
+};
+
+export type LoanRequest = {
+    id: string;
+    amount: number;
+    note?: string;
+    dueDate: string;
+    borrower: UserInfo;
+    lender: UserInfo;
+    isApproved: boolean;
 };

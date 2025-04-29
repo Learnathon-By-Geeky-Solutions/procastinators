@@ -57,7 +57,7 @@ export default function SentTab({
                                             {request.recipient}
                                         </TableCell>
                                         <TableCell>
-                                            ${request.amount.toFixed(2)}
+                                            ${request?.amount.toFixed(2)}
                                         </TableCell>
                                         <TableCell>{request.date}</TableCell>
                                         <TableCell>{request.dueDate}</TableCell>
