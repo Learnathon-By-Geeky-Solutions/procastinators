@@ -20,6 +20,7 @@ import { TabsContent } from "@/components/ui/tabs";
 import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Loan } from "@/lib/definitions";
+import { toLocaleDateString } from "@/lib/utils";
 
 export default function BorrowedTab({
     loansBorrowed,
@@ -39,13 +40,12 @@ export default function BorrowedTab({
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Person</TableHead>
-                                <TableHead>Amount</TableHead>
-                                <TableHead>Remaining</TableHead>
-                                <TableHead>Date</TableHead>
-                                <TableHead>Due Date</TableHead>
                                 <TableHead>Status</TableHead>
+                                <TableHead>Amount</TableHead>
+                                <TableHead>Lender</TableHead>
                                 <TableHead>Note</TableHead>
+                                <TableHead>Due Amount</TableHead>
+                                <TableHead>Due Date</TableHead>
                                 <TableHead className="w-[80px]">
                                     Actions
                                 </TableHead>
@@ -55,29 +55,39 @@ export default function BorrowedTab({
                             {loansBorrowed.length > 0 ? (
                                 loansBorrowed.map((loan) => (
                                     <TableRow key={loan.id}>
-                                        <TableCell className="font-medium">
-                                            {loan?.lender?.userName}
-                                        </TableCell>
-                                        <TableCell>
-                                            ${loan?.amount.toFixed(2)} BDT
-                                        </TableCell>
-                                        <TableCell>
-                                            {loan?.dueAmount.toFixed(2)} BDT
-                                        </TableCell>
-                                        <TableCell>{loan.issuedAt}</TableCell>
-                                        <TableCell>{loan.dueDate}</TableCell>
                                         <TableCell>
                                             {loan.dueAmount > 0 ? (
-                                                <Badge variant="destructive">
+                                                <Badge
+                                                    variant="outline"
+                                                    className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                                                >
                                                     Due
                                                 </Badge>
                                             ) : (
-                                                <Badge variant="default">
+                                                <Badge
+                                                    variant="outline"
+                                                    className="bg-green-100 text-green-800 hover:bg-green-100"
+                                                >
                                                     Paid
                                                 </Badge>
                                             )}
                                         </TableCell>
-                                        <TableCell>{loan.note}</TableCell>
+                                        <TableCell className="text-base font-medium">
+                                            {loan?.amount.toFixed(2)} BDT
+                                        </TableCell>
+                                        <TableCell>
+                                            {loan?.lender?.userName ?? "-"}
+                                        </TableCell>
+                                        <TableCell>
+                                            {loan.note ?? "-"}
+                                        </TableCell>
+                                        <TableCell className=" text-base font-medium">
+                                            {loan?.dueAmount.toFixed(2)} BDT
+                                        </TableCell>
+                                        <TableCell>
+                                            {toLocaleDateString(loan.dueDate)}
+                                        </TableCell>
+
                                         <TableCell>
                                             <Link href={`/loans/${loan.id}`}>
                                                 <Button
