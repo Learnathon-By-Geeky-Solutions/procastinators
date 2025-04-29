@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FinanceTracker.Application.LoanClaims.Commands.ClaimLoanFund;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
@@ -233,6 +234,23 @@ public class ApproveLoanRequestCommandHandlerTests
 
         // Act & Assert
         var exception = await Xunit.Assert.ThrowsAsync<ForbiddenException>(
+            () => _handler.Handle(command, CancellationToken.None)
+        );
+    }
+
+    [Fact()]
+    public async Task Handle_WithNullUser_ThrowsForbiddenException()
+    {
+        // Arrange
+        _userContextMock.Setup(x => x.GetUser()).Returns((UserDto?)null);
+        var command = new ApproveLoanRequestCommand
+        {
+            LoanRequestId = _loanRequestId,
+            LenderWalletId = _lenderWalletId,
+        };
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(
             () => _handler.Handle(command, CancellationToken.None)
         );
     }
