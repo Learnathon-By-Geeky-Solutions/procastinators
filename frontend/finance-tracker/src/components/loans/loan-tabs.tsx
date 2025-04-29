@@ -3,13 +3,14 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import BorrowedTab from "@/components/loans/borrowed-tab";
 import LentTab from "@/components/loans/lent-tab";
+import { Loan } from "@/lib/definitions";
 
 export default function LoanTabs({
     loansBorrowed,
     loansLent,
 }: {
-    loansBorrowed: any[];
-    loansLent: any[];
+    loansBorrowed: Loan[];
+    loansLent: Loan[];
 }) {
     const [activeTab, setActiveTab] = useState("borrowed");
 

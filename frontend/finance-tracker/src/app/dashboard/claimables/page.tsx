@@ -1,7 +1,12 @@
 import ClaimableTabs from "@/components/claimables/claimable-tabs";
-import LoanTabs from "@/components/loans/loan-tabs";
+import {
+    fetchInstallmentClaims,
+    fetchLoanClaims,
+} from "@/lib/data/claimables-data";
 
 export default async function ClaimablesPage() {
+    const loanClaims = await fetchLoanClaims();
+    const installmentClaims = await fetchInstallmentClaims();
     return (
         <div className="flex flex-col gap-4 p-4 md:p-8">
             <div className="flex items-center justify-between">
@@ -14,7 +19,10 @@ export default async function ClaimablesPage() {
             </div>
 
             <div className="flex flex-col gap-4">
-                <ClaimableTabs />
+                <ClaimableTabs
+                    loanClaims={loanClaims}
+                    installmentClaims={installmentClaims}
+                />
             </div>
         </div>
     );

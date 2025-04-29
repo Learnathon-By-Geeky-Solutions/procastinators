@@ -58,3 +58,26 @@ export type LoanRequest = {
     lender: UserInfo;
     isApproved: boolean;
 };
+
+export type LoanClaim = {
+    id: number;
+    loan: Loan;
+    isClaimed: boolean;
+    claimedAt: string;
+};
+
+export type Installment = {
+    id: number;
+    loan: Loan;
+    timestamp: string;
+    amount: number;
+    note?: string;
+    nextDueDate: string;
+};
+
+export type InstallmentClaim = {
+    id: number;
+    installment: Installment;
+    isClaimed: boolean;
+    claimedAt: string;
+};

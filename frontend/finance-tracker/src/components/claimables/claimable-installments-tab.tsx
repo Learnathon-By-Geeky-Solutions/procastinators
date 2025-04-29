@@ -17,10 +17,11 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { InstallmentClaim } from "@/lib/definitions";
 export default function ClaimableInstallmentsTab({
-    installmentFunds,
+    installmentClaims,
 }: {
-    readonly installmentFunds: any[];
+    readonly installmentClaims: InstallmentClaim[];
 }) {
     return (
         <TabsContent value="installments" className="space-y-4">
@@ -45,20 +46,34 @@ export default function ClaimableInstallmentsTab({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {installmentFunds.length > 0 ? (
-                                installmentFunds.map((fund) => (
-                                    <TableRow key={fund.id}>
+                            {installmentClaims.length > 0 ? (
+                                installmentClaims.map((claim) => (
+                                    <TableRow key={claim.id}>
                                         <TableCell className="font-medium">
-                                            {fund.from}
+                                            {
+                                                claim?.installment.loan
+                                                    ?.borrower?.userName
+                                            }
                                         </TableCell>
                                         <TableCell>
-                                            ${fund.amount.toFixed(2)}
+                                            $
+                                            {claim?.installment?.amount.toFixed(
+                                                2
+                                            )}
                                         </TableCell>
-                                        <TableCell>{fund.date}</TableCell>
                                         <TableCell>
-                                            <Badge variant="outline">
-                                                {fund.status}
-                                            </Badge>
+                                            {claim?.installment?.timestamp}
+                                        </TableCell>
+                                        <TableCell>
+                                            {claim.isClaimed ? (
+                                                <Badge variant="outline">
+                                                    Claimed
+                                                </Badge>
+                                            ) : (
+                                                <Badge variant="destructive">
+                                                    Unclaimed
+                                                </Badge>
+                                            )}
                                         </TableCell>
                                         <TableCell>
                                             <Button variant="outline" size="sm">

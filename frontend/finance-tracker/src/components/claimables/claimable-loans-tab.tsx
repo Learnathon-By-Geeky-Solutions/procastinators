@@ -18,10 +18,11 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { LoanClaim } from "@/lib/definitions";
 export default function ClaimableLoansTab({
-    loanFunds,
+    loanClaims,
 }: {
-    readonly loanFunds: any[];
+    readonly loanClaims: LoanClaim[];
 }) {
     return (
         <TabsContent value="loans" className="space-y-4">
@@ -44,20 +45,28 @@ export default function ClaimableLoansTab({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {loanFunds.length > 0 ? (
-                                loanFunds.map((fund) => (
-                                    <TableRow key={fund.id}>
+                            {loanClaims.length > 0 ? (
+                                loanClaims.map((claim) => (
+                                    <TableRow key={claim.id}>
                                         <TableCell className="font-medium">
-                                            {fund.from}
+                                            {claim?.loan?.lender?.userName}
                                         </TableCell>
                                         <TableCell>
-                                            ${fund.amount.toFixed(2)}
+                                            ${claim?.loan?.amount.toFixed(2)}
                                         </TableCell>
-                                        <TableCell>{fund.date}</TableCell>
                                         <TableCell>
-                                            <Badge variant="outline">
-                                                {fund.status}
-                                            </Badge>
+                                            {claim?.loan?.issuedAt}
+                                        </TableCell>
+                                        <TableCell>
+                                            {claim?.isClaimed ? (
+                                                <Badge variant="outline">
+                                                    Claimed
+                                                </Badge>
+                                            ) : (
+                                                <Badge variant="default">
+                                                    Unclaimed
+                                                </Badge>
+                                            )}
                                         </TableCell>
                                         <TableCell>
                                             <Button variant="outline" size="sm">

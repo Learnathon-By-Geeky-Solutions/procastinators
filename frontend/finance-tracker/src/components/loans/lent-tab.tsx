@@ -19,7 +19,8 @@ import {
 import { TabsContent } from "@/components/ui/tabs";
 import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-export default function LentTab({ loansLent }: { readonly loansLent: any[] }) {
+import { Loan } from "@/lib/definitions";
+export default function LentTab({ loansLent }: { readonly loansLent: Loan[] }) {
     return (
         <TabsContent value="lent" className="space-y-4">
             <Card>
@@ -50,7 +51,7 @@ export default function LentTab({ loansLent }: { readonly loansLent: any[] }) {
                                 loansLent.map((loan) => (
                                     <TableRow key={loan.id}>
                                         <TableCell className="font-medium">
-                                            {loan.person}
+                                            {loan?.borrower?.userName}
                                         </TableCell>
                                         <TableCell>
                                             ${loan?.amount.toFixed(2)} BDT
@@ -58,18 +59,18 @@ export default function LentTab({ loansLent }: { readonly loansLent: any[] }) {
                                         <TableCell>
                                             {loan?.dueAmount.toFixed(2)} BDT
                                         </TableCell>
-                                        <TableCell>{loan.date}</TableCell>
+                                        <TableCell>{loan?.issuedAt}</TableCell>
                                         <TableCell>{loan.dueDate}</TableCell>
                                         <TableCell>
-                                            <Badge
-                                                variant={
-                                                    loan.status === "Overdue"
-                                                        ? "destructive"
-                                                        : "outline"
-                                                }
-                                            >
-                                                {loan.status}
-                                            </Badge>
+                                            {loan.dueAmount > 0 ? (
+                                                <Badge variant="destructive">
+                                                    Due
+                                                </Badge>
+                                            ) : (
+                                                <Badge variant="default">
+                                                    Paid
+                                                </Badge>
+                                            )}
                                         </TableCell>
                                         <TableCell>{loan.note}</TableCell>
                                         <TableCell>

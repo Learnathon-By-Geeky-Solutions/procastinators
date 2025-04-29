@@ -19,11 +19,12 @@ import {
 import { TabsContent } from "@/components/ui/tabs";
 import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Loan } from "@/lib/definitions";
 
 export default function BorrowedTab({
     loansBorrowed,
 }: {
-    readonly loansBorrowed: any[];
+    readonly loansBorrowed: Loan[];
 }) {
     return (
         <TabsContent value="borrowed" className="space-y-4">
@@ -55,7 +56,7 @@ export default function BorrowedTab({
                                 loansBorrowed.map((loan) => (
                                     <TableRow key={loan.id}>
                                         <TableCell className="font-medium">
-                                            {loan.person}
+                                            {loan?.lender?.userName}
                                         </TableCell>
                                         <TableCell>
                                             ${loan?.amount.toFixed(2)} BDT
@@ -63,12 +64,18 @@ export default function BorrowedTab({
                                         <TableCell>
                                             {loan?.dueAmount.toFixed(2)} BDT
                                         </TableCell>
-                                        <TableCell>{loan.date}</TableCell>
+                                        <TableCell>{loan.issuedAt}</TableCell>
                                         <TableCell>{loan.dueDate}</TableCell>
                                         <TableCell>
-                                            <Badge variant="outline">
-                                                {loan.status}
-                                            </Badge>
+                                            {loan.dueAmount > 0 ? (
+                                                <Badge variant="destructive">
+                                                    Due
+                                                </Badge>
+                                            ) : (
+                                                <Badge variant="default">
+                                                    Paid
+                                                </Badge>
+                                            )}
                                         </TableCell>
                                         <TableCell>{loan.note}</TableCell>
                                         <TableCell>
