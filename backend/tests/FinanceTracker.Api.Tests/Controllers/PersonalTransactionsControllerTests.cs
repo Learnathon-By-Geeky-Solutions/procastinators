@@ -1,11 +1,5 @@
 ﻿using System.Net.Http.Json;
 using FinanceTracker.Api.Tests;
-using FinanceTracker.Application.Categories.Commands.CreateCategory;
-using FinanceTracker.Application.Categories.Commands.DeleteCategory;
-using FinanceTracker.Application.Categories.Commands.UpdateCategory;
-using FinanceTracker.Application.Categories.Dtos;
-using FinanceTracker.Application.Categories.Queries.GetAllCategories;
-using FinanceTracker.Application.Categories.Queries.GetCategoryById;
 using FinanceTracker.Application.PersonalTransactions.Commands.CreatePersonalTransaction;
 using FinanceTracker.Application.PersonalTransactions.Commands.DeletePersonalTransaction;
 using FinanceTracker.Application.PersonalTransactions.Commands.UpdatePersonalTransaction;
