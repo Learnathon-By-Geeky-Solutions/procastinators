@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.InstallmentClaims.Dtos;
+using FinanceTracker.Application.InstallmentClaims.Queries.GetAllInstallmentClaims;
 using FinanceTracker.Application.Installments.Dtos;
 using FinanceTracker.Application.Installments.Queries.GetAllInstallments;
 using FinanceTracker.Application.Users;

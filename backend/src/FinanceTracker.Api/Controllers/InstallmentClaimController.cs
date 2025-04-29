@@ -1,5 +1,5 @@
 ﻿using FinanceTracker.Application.InstallmentClaims.Commands.ClaimInstallmentFund;
-using FinanceTracker.Application.InstallmentClaims.Queries.GetAllLoanClaims;
+using FinanceTracker.Application.InstallmentClaims.Queries.GetAllInstallmentClaims;
 using FinanceTracker.Application.InstallmentClaims.Queries.GetInstallmentClaimById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

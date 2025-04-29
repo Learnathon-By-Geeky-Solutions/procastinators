@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.InstallmentClaims.Dtos;
-using FinanceTracker.Application.LoanClaims.Dtos;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using MediatR;
 
-namespace FinanceTracker.Application.InstallmentClaims.Queries.GetAllLoanClaims;
+namespace FinanceTracker.Application.InstallmentClaims.Queries.GetAllInstallmentClaims;
 
 public class GetAllInstallmentClaimsQueryHandler(
     IUserContext userContext,

@@ -2,7 +2,7 @@
 using FinanceTracker.Api.Tests;
 using FinanceTracker.Application.InstallmentClaims.Commands.ClaimInstallmentFund;
 using FinanceTracker.Application.InstallmentClaims.Dtos;
-using FinanceTracker.Application.InstallmentClaims.Queries.GetAllLoanClaims;
+using FinanceTracker.Application.InstallmentClaims.Queries.GetAllInstallmentClaims;
 using FinanceTracker.Application.InstallmentClaims.Queries.GetInstallmentClaimById;
 using FinanceTracker.Application.Installments.Queries.GetInstallmentById;
 using FinanceTracker.Application.PersonalTransactions.Dtos;
