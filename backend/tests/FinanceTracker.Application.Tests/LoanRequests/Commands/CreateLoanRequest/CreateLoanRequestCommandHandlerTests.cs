@@ -102,7 +102,7 @@ public class CreateLoanRequestCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_NullUser_ThrowsInvalidOperationException()
+    public async Task Handle_NullUser_ThrowsForbiddenException()
     {
         // Arrange
         var createLoanCommand = new CreateLoanRequestCommand
@@ -124,6 +124,49 @@ public class CreateLoanRequestCommandHandlerTests
             repo => repo.CreateAsync(It.IsAny<LoanRequest>()),
             Times.Never
         );
+        _mapperMock.Verify(
+            mapper =>
+                mapper.Map<CreateLoanRequestCommand, LoanRequest>(
+                    It.IsAny<CreateLoanRequestCommand>()
+                ),
+            Times.Never
+        );
+    }
+
+    [Fact]
+    public async Task Handle_WhenLenderIdMatchesUserId_ThrowsBadRequestException()
+    {
+        // Arrange
+        var testUser = new UserDto(_userId, "test@example.com");
+        var createLoanCommand = new CreateLoanRequestCommand
+        {
+            LenderId = _userId, // Lender ID matches the user ID
+            Amount = 1000,
+            DueDate = DateTime.UtcNow.AddMonths(1),
+            Note = "Test self-loan request",
+        };
+
+        _userContextMock.Setup(context => context.GetUser()).Returns(testUser);
+
+        _userStore
+            .Setup(store => store.FindByIdAsync(createLoanCommand.LenderId, CancellationToken.None))
+            .ReturnsAsync(new User { Id = createLoanCommand.LenderId }); // Mock lender user exists
+
+        // Act & Assert
+        var exception = await Xunit.Assert.ThrowsAsync<BadRequestException>(
+            () => _handler.Handle(createLoanCommand, CancellationToken.None)
+        );
+
+        // Verify exception message
+        Xunit.Assert.Equal("Self loan requests are not allowed.", exception.Message);
+
+        // Verify that no loan request was created
+        _loanRequestRepositoryMock.Verify(
+            repo => repo.CreateAsync(It.IsAny<LoanRequest>()),
+            Times.Never
+        );
+
+        // Verify that the mapper was not called
         _mapperMock.Verify(
             mapper =>
                 mapper.Map<CreateLoanRequestCommand, LoanRequest>(

@@ -1,4 +1,5 @@
-﻿using FinanceTracker.Application.Installments.Commands.ReceiveInstallment;
+﻿using FinanceTracker.Application.Installments.Commands.PayInstallment;
+using FinanceTracker.Application.Installments.Commands.ReceiveInstallment;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
@@ -120,6 +121,19 @@ public class ReceiveInstallmentCommandHandlerTests
                     )
                 ),
             Times.Once
+        );
+    }
+
+    [Fact()]
+    public async Task Handle_WithNullUser_ThrowsForbiddenException()
+    {
+        // Arrange
+        _userContextMock.Setup(x => x.GetUser()).Returns((UserDto?)null);
+        var command = new ReceiveInstallmentCommand { };
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(
+            () => _handler.Handle(command, CancellationToken.None)
         );
     }
 

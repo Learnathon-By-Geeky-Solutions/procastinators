@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.LoanRequests.Dtos.LoanRequestDTO;
+using FinanceTracker.Application.LoanRequests.Queries.GetAllSentLoanRequest;
 using FinanceTracker.Application.LoanRequests.Queries.GetLoanRequestById;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
@@ -104,5 +105,18 @@ public class GetLoanRequestByIdQueryHandlerTests
             Times.Once
         );
         _mapperMock.Verify(m => m.Map<LoanRequestDto>(It.IsAny<LoanRequest>()), Times.Never);
+    }
+
+    [Fact()]
+    public async Task Handle_WithNullUser_ThrowsForbiddenException()
+    {
+        // Arrange
+        _userContextMock.Setup(x => x.GetUser()).Returns((UserDto?)null);
+        var query = new GetLoanRequestByIdQuery(_loanRequestId);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(
+            () => _handler.Handle(query, CancellationToken.None)
+        );
     }
 }
