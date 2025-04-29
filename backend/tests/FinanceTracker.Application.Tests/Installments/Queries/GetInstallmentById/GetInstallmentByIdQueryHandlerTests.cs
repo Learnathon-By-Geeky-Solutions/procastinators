@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.Installments.Dtos;
+using FinanceTracker.Application.Installments.Queries.GetAllInstallments;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
@@ -78,6 +79,19 @@ public class GetInstallmentByIdQueryHandlerTests
         // Assert
         result.Should().Be(expectedDto);
         _mapperMock.Verify(m => m.Map<InstallmentDto>(installment), Times.Once);
+    }
+
+    [Fact()]
+    public async Task Handle_WithNullUser_ThrowsForbiddenException()
+    {
+        // Arrange
+        _userContextMock.Setup(x => x.GetUser()).Returns((UserDto?)null);
+        var query = new GetInstallmentByIdQuery { };
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(
+            () => _handler.Handle(query, CancellationToken.None)
+        );
     }
 
     [Fact]
