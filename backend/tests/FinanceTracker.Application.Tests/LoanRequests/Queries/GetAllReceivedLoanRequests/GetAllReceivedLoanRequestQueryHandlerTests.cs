@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using FinanceTracker.Application.Installments.Queries.GetInstallmentById;
 using FinanceTracker.Application.LoanRequests.Dtos.LoanRequestDTO;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
+using FinanceTracker.Domain.Exceptions;
 using FinanceTracker.Domain.Repositories;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -92,5 +94,18 @@ public class GetAllReceivedLoanRequestQueryHandlerTests
         result.Should().BeEquivalentTo(loanRequestDtos);
         _loanRequestRepositoryMock.Verify(repo => repo.GetAllReceivedAsync(_userId), Times.Once);
         _mapperMock.Verify(m => m.Map<IEnumerable<LoanRequestDto>>(loanRequests), Times.Once);
+    }
+
+    [Fact()]
+    public async Task Handle_WithNullUser_ThrowsForbiddenException()
+    {
+        // Arrange
+        _userContextMock.Setup(x => x.GetUser()).Returns((UserDto?)null);
+        var query = new GetAllReceivedLoanRequestQuery { };
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(
+            () => _handler.Handle(query, CancellationToken.None)
+        );
     }
 }

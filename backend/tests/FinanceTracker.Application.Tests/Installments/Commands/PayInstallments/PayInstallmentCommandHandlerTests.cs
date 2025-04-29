@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using FinanceTracker.Application.Installments.Commands.PayInstallment;
+using FinanceTracker.Application.LoanClaims.Commands.ClaimLoanFund;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Application.Wallets.Commands.UpdateWallet;
 using FinanceTracker.Domain.Entities;
@@ -152,19 +153,30 @@ public class PayInstallmentCommandHandlerTests
     }
 
     [Fact()]
-    public async Task Handle_WithNonExistentLoan_ShouldThrowNotFoundException()
+    public async Task Handle_WithNullUser_ThrowsForbiddenException()
+    {
+        // Arrange
+        _userContextMock.Setup(x => x.GetUser()).Returns((UserDto?)null);
+        var command = new PayInstallmentCommand { };
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(
+            () => _handler.Handle(command, CancellationToken.None)
+        );
+    }
+
+    [Fact()]
+    public async Task Handle_WithNonExistentWallet_ShouldThrowNotFoundException()
     {
         // Arrange
         var command = new PayInstallmentCommand
         {
-            LoanId = _loanId,
+            WalletId = _loanId,
             Amount = 500m,
             NextDueDate = DateTime.Now.AddMonths(1),
             Note = "Test payment",
         };
-        _loanRepositoryMock
-            .Setup(repo => repo.GetByIdAsync(_loanId, _userId))
-            .ReturnsAsync((Loan?)null);
+        _walletRepositoryMock.Setup(repo => repo.GetById(_loanId)).ReturnsAsync((Wallet?)null);
 
         // Act & Assert
         await Xunit.Assert.ThrowsAsync<NotFoundException>(
@@ -173,18 +185,18 @@ public class PayInstallmentCommandHandlerTests
     }
 
     [Fact()]
-    public async Task Handle_WithDeletedLoan_ShouldThrowNotFoundException()
+    public async Task Handle_WithDeletedWallet_ShouldThrowNotFoundException()
     {
         // Arrange
         var command = new PayInstallmentCommand
         {
-            LoanId = _loanId,
+            WalletId = _loanId,
             Amount = 500m,
             NextDueDate = DateTime.Now.AddMonths(1),
             Note = "Test payment",
         };
-        var loan = new Loan { Id = _loanId, IsDeleted = true };
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId, _userId)).ReturnsAsync(loan);
+        var wallet = new Wallet { Id = _loanId, IsDeleted = true };
+        _walletRepositoryMock.Setup(repo => repo.GetById(_loanId)).ReturnsAsync(wallet);
 
         // Act & Assert
         await Xunit.Assert.ThrowsAsync<NotFoundException>(
@@ -193,71 +205,83 @@ public class PayInstallmentCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_BorrowerWalletNotFound_ThrowsNotFoundException()
+    public async Task Handle_WhenWalletDoesNotBelongToUser_ThrowsForbiddenException()
     {
         // Arrange
-        var loanRequest = new LoanRequest { BorrowerId = _borrowerId, LenderId = _lenderId };
+        var command = new PayInstallmentCommand
+        {
+            LoanId = _loanId,
+            WalletId = 1,
+            Amount = 500m,
+            NextDueDate = DateTime.Now.AddMonths(1),
+            Note = "Test payment",
+        };
 
         var loan = new Loan
         {
             Id = _loanId,
-            LoanRequest = loanRequest,
+            BorrowerId = _userId,
+            DueAmount = 2000m,
             IsDeleted = false,
         };
 
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId, _userId)).ReturnsAsync(loan);
-
-        _walletRepositoryMock
-            .Setup(repo => repo.GetAll(_borrowerId))
-            .ReturnsAsync(new List<Wallet>()); // Empty list
-
-        var command = new PayInstallmentCommand
+        var wallet = new Wallet
         {
-            LoanId = _loanId,
-            Amount = 500m,
-            NextDueDate = DateTime.Now.AddMonths(1),
+            Id = command.WalletId,
+            UserId = "different-user-id", // Wallet belongs to a different user
+            Balance = 1000m,
+            IsDeleted = false,
         };
 
+        _loanRepositoryMock
+            .Setup(repo => repo.GetByIdAsBorrowerAsync(_loanId, _userId))
+            .ReturnsAsync(loan);
+
+        _walletRepositoryMock.Setup(repo => repo.GetById(command.WalletId)).ReturnsAsync(wallet);
+
         // Act & Assert
-        var exception = await Xunit.Assert.ThrowsAsync<NotFoundException>(
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(
             () => _handler.Handle(command, CancellationToken.None)
         );
     }
 
     [Fact]
-    public async Task Handle_LenderWalletNotFound_ThrowsNotFoundException()
+    public async Task Handle_WhenPaymentAmountExceedsDueAmount_ThrowsBadRequestException()
     {
         // Arrange
-        var loanRequest = new LoanRequest { BorrowerId = _borrowerId, LenderId = _lenderId };
+        var command = new PayInstallmentCommand
+        {
+            LoanId = _loanId,
+            WalletId = 1,
+            Amount = 3000m, // Exceeds the loan's due amount
+            NextDueDate = DateTime.Now.AddMonths(1),
+            Note = "Test payment",
+        };
 
         var loan = new Loan
         {
             Id = _loanId,
-            LoanRequest = loanRequest,
+            BorrowerId = _userId,
+            DueAmount = 2000m, // Loan's due amount is less than the payment amount
             IsDeleted = false,
         };
 
-        var borrowerWallet = new Wallet { UserId = _borrowerId, IsDeleted = false };
-
-        _loanRepositoryMock.Setup(repo => repo.GetByIdAsync(_loanId, _userId)).ReturnsAsync(loan);
-
-        _walletRepositoryMock
-            .Setup(repo => repo.GetAll(_borrowerId))
-            .ReturnsAsync(new List<Wallet> { borrowerWallet });
-
-        _walletRepositoryMock
-            .Setup(repo => repo.GetAll(_lenderId))
-            .ReturnsAsync(new List<Wallet>()); // Empty list
-
-        var command = new PayInstallmentCommand
+        var wallet = new Wallet
         {
-            LoanId = _loanId,
-            Amount = 500m,
-            NextDueDate = DateTime.Now.AddMonths(1),
+            Id = command.WalletId,
+            UserId = _userId,
+            Balance = 5000m,
+            IsDeleted = false,
         };
 
+        _loanRepositoryMock
+            .Setup(repo => repo.GetByIdAsBorrowerAsync(_loanId, _userId))
+            .ReturnsAsync(loan);
+
+        _walletRepositoryMock.Setup(repo => repo.GetById(command.WalletId)).ReturnsAsync(wallet);
+
         // Act & Assert
-        var exception = await Xunit.Assert.ThrowsAsync<NotFoundException>(
+        await Xunit.Assert.ThrowsAsync<BadRequestException>(
             () => _handler.Handle(command, CancellationToken.None)
         );
     }
