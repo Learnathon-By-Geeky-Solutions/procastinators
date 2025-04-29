@@ -38,7 +38,7 @@ public class ClaimInstallmentFundCommandHandlerTests
     }
 
     [Fact()]
-    public async Task Handle_WithValidRequest_UpdatesInstallmentClaimAndWallet()
+    public async Task Handle_WithValidRequest_ClaimInstallmentFund()
     {
         // Arrange
         var installmentAmount = 100.0m;
