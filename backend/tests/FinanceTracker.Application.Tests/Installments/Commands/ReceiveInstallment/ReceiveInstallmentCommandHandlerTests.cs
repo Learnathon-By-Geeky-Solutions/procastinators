@@ -17,8 +17,6 @@ public class ReceiveInstallmentCommandHandlerTests
     private readonly Mock<IInstallmentRepository> _installmentRepositoryMock;
     private readonly Mock<IUserContext> _userContextMock;
     private readonly ReceiveInstallmentCommandHandler _handler;
-    private readonly string _borrowerId = "borrower-id";
-    private readonly string _lenderId = "lender-id";
     private readonly int _loanId = 1;
     private readonly int _walletId = 1;
     private readonly string _userId = "user-id";

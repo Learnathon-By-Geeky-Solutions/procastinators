@@ -15,7 +15,6 @@ public class GetAllLoanClaimsQueryHandlerTests
     private readonly Mock<ILoanRepository> _LoanRepositoryMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly GetAllLoanClaimsQueryHandler _handler;
-    private readonly int _loanId = 1;
     private readonly string _userId = "test";
     private readonly UserDto _user = new("test", "test@test.com");
 

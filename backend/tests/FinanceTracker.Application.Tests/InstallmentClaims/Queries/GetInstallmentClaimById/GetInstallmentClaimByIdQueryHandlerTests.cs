@@ -21,7 +21,6 @@ public class GetInstallmentClaimByIdQueryHandlerTests
     private readonly Mock<IInstallmentRepository> _installmentRepositoryMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly GetInstallmentClaimByIdQueryHandler _handler;
-    private readonly int _loanId = 1;
     private readonly int _installmentId = 1;
     private readonly string _userId = "test";
     private readonly UserDto _user = new("test", "test@test.com");
