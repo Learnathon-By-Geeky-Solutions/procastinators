@@ -8,15 +8,18 @@ using Microsoft.Extensions.Logging;
 
 namespace FinanceTracker.Application.Wallets.Commands.CreateWallet;
 
-public class CreateWalletCommandHandler(ILogger<CreateWalletCommandHandler> logger,
+public class CreateWalletCommandHandler(
+    ILogger<CreateWalletCommandHandler> logger,
     IUserContext userContext,
     IMapper mapper,
-    IWalletRepository repo): IRequestHandler<CreateWalletCommand, int>
+    IWalletRepository repo
+) : IRequestHandler<CreateWalletCommand, int>
 {
     public async Task<int> Handle(CreateWalletCommand request, CancellationToken cancellationToken)
     {
         var user = userContext.GetUser();
-        if(user == null) throw new ForbiddenException();
+        if (user == null)
+            throw new ForbiddenException();
 
         var wallet = mapper.Map<CreateWalletCommand, Wallet>(request);
         wallet.UserId = user.Id;
