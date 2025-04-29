@@ -1,5 +1,13 @@
 import { AppSidebar } from "@/components/navigation/app-sidebar";
-import { CreditCard, LayoutDashboardIcon, Tags, Wallet } from "lucide-react";
+import {
+    ArrowRightLeftIcon,
+    BanknoteArrowDownIcon,
+    ClipboardPenLineIcon,
+    CreditCard,
+    LayoutDashboardIcon,
+    Tags,
+    Wallet,
+} from "lucide-react";
 
 export default async function DashboardLayout({
     children,
@@ -26,6 +34,21 @@ export default async function DashboardLayout({
             title: "Transactions",
             icon: <CreditCard className="h-5 w-5" />,
             href: "/dashboard/transactions",
+        },
+        {
+            title: "Loans",
+            icon: <ArrowRightLeftIcon className="h-5 w-5" />,
+            href: "/dashboard/loans",
+        },
+        {
+            title: "Loan Requests",
+            icon: <ClipboardPenLineIcon className="h-5 w-5" />,
+            href: "/dashboard/loan-requests",
+        },
+        {
+            title: "Claim Funds",
+            icon: <BanknoteArrowDownIcon className="h-5 w-5" />,
+            href: "/dashboard/claimables",
         },
     ];
     return <AppSidebar routes={routes}>{children}</AppSidebar>;

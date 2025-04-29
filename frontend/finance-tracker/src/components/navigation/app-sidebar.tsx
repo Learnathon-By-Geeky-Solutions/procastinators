@@ -39,7 +39,7 @@ export function AppSidebar({
                     {/* Sidebar header */}
                     <SidebarHeader>
                         <SidebarMenu>
-                            <SidebarMenuItem>
+                            <SidebarMenuItem className="px-1">
                                 <SidebarMenuButton size="lg">
                                     <span>
                                         <ActivityIcon size={24} />
@@ -57,8 +57,12 @@ export function AppSidebar({
                         <SidebarMenu>
                             {routes.map((route) => {
                                 return (
-                                    <SidebarMenuItem key={route.href}>
+                                    <SidebarMenuItem
+                                        className="px-1.5"
+                                        key={route.href}
+                                    >
                                         <SidebarMenuButton
+                                            className="px-4"
                                             asChild
                                             isActive={pathname === route.href}
                                             tooltip={route.title}
