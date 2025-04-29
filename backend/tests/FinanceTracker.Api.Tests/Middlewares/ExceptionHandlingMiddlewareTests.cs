@@ -85,4 +85,21 @@ public class ExceptionHandlingMiddlewareTests
 
         context.Response.StatusCode.Should().Be(500);
     }
+
+    [Fact]
+    public async Task InvokeAsync_WhenBadRequestExceptionThrown_ShouldSetStatusBadRequestAndWriteMessage()
+    {
+        // Arrange
+        var loggerMock = new Mock<ILogger<ExceptionHandlingMiddleware>>();
+        var middleware = new ExceptionHandlingMiddleware(loggerMock.Object);
+        var context = new DefaultHttpContext();
+        var exceptionMessage = "Invalid request data.";
+        var badRequestException = new BadRequestException(exceptionMessage);
+
+        // Act
+        await middleware.InvokeAsync(context, _ => throw badRequestException);
+
+        // Assert
+        context.Response.StatusCode.Should().Be(400);
+    }
 }
