@@ -39,8 +39,6 @@ public class LoansControllerTests : IClassFixture<WebApplicationFactory<Program>
                     new LoanDto
                     {
                         Id = 1,
-                        LenderId = "user1",
-                        BorrowerId = "user2",
                         Amount = 1000,
                         Note = "First test loan",
                         IssuedAt = DateTime.UtcNow.AddDays(-30),
@@ -50,8 +48,6 @@ public class LoansControllerTests : IClassFixture<WebApplicationFactory<Program>
                     new LoanDto
                     {
                         Id = 2,
-                        LenderId = "user1",
-                        BorrowerId = "user3",
                         Amount = 500,
                         Note = "Second test loan",
                         IssuedAt = DateTime.UtcNow.AddDays(-15),
@@ -89,8 +85,6 @@ public class LoansControllerTests : IClassFixture<WebApplicationFactory<Program>
         var loanDto = new LoanDto
         {
             Id = id,
-            LenderId = "user1",
-            BorrowerId = "user2",
             Amount = 1000,
             Note = "Test loan details",
             IssuedAt = DateTime.UtcNow.AddDays(-10),
@@ -149,8 +143,6 @@ public class LoansControllerTests : IClassFixture<WebApplicationFactory<Program>
             new LoanDto
             {
                 Id = 3,
-                LenderId = "user4",
-                BorrowerId = "user1",
                 Amount = 2000,
                 Note = "Borrowed loan",
                 IssuedAt = DateTime.UtcNow.AddDays(-5),

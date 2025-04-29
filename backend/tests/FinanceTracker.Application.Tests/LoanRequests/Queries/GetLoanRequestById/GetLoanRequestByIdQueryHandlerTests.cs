@@ -60,8 +60,6 @@ public class GetLoanRequestByIdQueryHandlerTests
             Id = _loanRequestId,
             Amount = 100,
             DueDate = loanRequest.DueDate,
-            LenderId = "test-lender-id",
-            BorrowerId = "test-borrower-id",
         };
 
         _loanRequestRepositoryMock

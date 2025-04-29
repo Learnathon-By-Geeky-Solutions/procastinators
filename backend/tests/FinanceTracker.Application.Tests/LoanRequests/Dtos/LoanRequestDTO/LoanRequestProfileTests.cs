@@ -66,8 +66,6 @@ public class LoanRequestProfileTests
         loanRequestDto.Amount.Should().Be(loanRequest.Amount);
         loanRequestDto.Note.Should().Be(loanRequest.Note);
         loanRequestDto.DueDate.Should().Be(loanRequest.DueDate);
-        loanRequestDto.LenderId.Should().Be(loanRequest.LenderId);
-        loanRequestDto.BorrowerId.Should().Be(loanRequest.BorrowerId);
         loanRequestDto.IsApproved.Should().Be(loanRequest.IsApproved);
     }
 }

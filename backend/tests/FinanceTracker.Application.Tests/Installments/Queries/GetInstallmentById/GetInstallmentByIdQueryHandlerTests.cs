@@ -58,7 +58,6 @@ public class GetInstallmentByIdQueryHandlerTests
             Id = _installmentId,
             Amount = 100,
             Timestamp = DateTime.Now,
-            LoanId = _loanId,
             NextDueDate = DateTime.Now.AddDays(30),
         };
 

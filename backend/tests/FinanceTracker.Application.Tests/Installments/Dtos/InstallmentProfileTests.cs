@@ -40,7 +40,6 @@ public class InstallmentProfileTests
         installmentDto.Should().NotBeNull();
         installmentDto.Id.Should().Be(installment.Id);
         installmentDto.Amount.Should().Be(installment.Amount);
-        installmentDto.LoanId.Should().Be(installment.LoanId);
         installmentDto.Timestamp.Should().Be(installment.Timestamp);
         installmentDto.NextDueDate.Should().Be(installment.NextDueDate);
         installmentDto.Note.Should().Be(installment.Note);

@@ -67,16 +67,12 @@ public class GetAllReceivedLoanRequestQueryHandlerTests
                 Id = 1,
                 Amount = 100,
                 DueDate = DateTime.UtcNow.AddDays(5),
-                LenderId = "test-lender-id",
-                BorrowerId = "test-borrower-id",
             },
             new LoanRequestDto
             {
                 Id = 2,
                 Amount = 200,
                 DueDate = DateTime.UtcNow.AddDays(10),
-                LenderId = "test-lender-id",
-                BorrowerId = "test-borrower-id",
             },
         };
 

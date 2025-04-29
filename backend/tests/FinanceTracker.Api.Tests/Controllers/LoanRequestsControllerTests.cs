@@ -42,8 +42,6 @@ public class LoanRequestControllerTests : IClassFixture<WebApplicationFactory<Pr
                         Id = 1,
                         Amount = 100,
                         DueDate = DateTime.UtcNow,
-                        LenderId = "2",
-                        BorrowerId = "3",
                         IsApproved = true,
                     },
                     new LoanRequestDto
@@ -51,8 +49,6 @@ public class LoanRequestControllerTests : IClassFixture<WebApplicationFactory<Pr
                         Id = 2,
                         Amount = 1040,
                         DueDate = DateTime.UtcNow,
-                        LenderId = "2",
-                        BorrowerId = "3",
                         IsApproved = true,
                     },
                 }
@@ -88,8 +84,6 @@ public class LoanRequestControllerTests : IClassFixture<WebApplicationFactory<Pr
             Id = id,
             Amount = 1040,
             DueDate = DateTime.UtcNow,
-            LenderId = "2",
-            BorrowerId = "3",
             IsApproved = true,
         };
 
@@ -147,8 +141,6 @@ public class LoanRequestControllerTests : IClassFixture<WebApplicationFactory<Pr
                 Id = 1,
                 Amount = 100,
                 DueDate = DateTime.UtcNow,
-                LenderId = "2",
-                BorrowerId = "3",
                 IsApproved = false,
             },
         };

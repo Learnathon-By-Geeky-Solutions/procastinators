@@ -1,4 +1,6 @@
-﻿namespace FinanceTracker.Application.LoanRequests.Dtos.LoanRequestDTO;
+﻿using FinanceTracker.Application.Users.Dtos;
+
+namespace FinanceTracker.Application.LoanRequests.Dtos.LoanRequestDTO;
 
 public class LoanRequestDto
 {
@@ -7,7 +9,7 @@ public class LoanRequestDto
     public string? Note { get; set; } = default!;
     public DateTime DueDate { get; set; } = default!;
 
-    public string BorrowerId { get; set; } = default!;
-    public string LenderId { get; set; } = default!;
+    public UserInfoDto Borrower { get; set; } = default!;
+    public UserInfoDto Lender { get; set; } = default!;
     public bool IsApproved { get; set; } = false;
 }
