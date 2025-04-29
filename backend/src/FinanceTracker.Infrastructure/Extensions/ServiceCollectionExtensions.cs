@@ -32,5 +32,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ILoanRepository, LoanRepository>();
         services.AddScoped<ILoanRequestRepository, LoanRequestRepository>();
         services.AddScoped<IInstallmentRepository, InstallmentRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
     }
 }
