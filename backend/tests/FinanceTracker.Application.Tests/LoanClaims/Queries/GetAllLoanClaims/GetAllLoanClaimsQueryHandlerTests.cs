@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.LoanClaims.Dtos;
-using FinanceTracker.Application.Loans.Dtos;
-using FinanceTracker.Application.Loans.Queries.GetAllLoans;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Repositories;
