@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace FinanceTracker.Application.Installments.Commands.ReceiveInstallment;
 
-public class ReceiveInstallmentCommandValidator : AbstractValidator<PayInstallmentCommand>
+public class ReceiveInstallmentCommandValidator : AbstractValidator<ReceiveInstallmentCommand>
 {
     public ReceiveInstallmentCommandValidator()
     {

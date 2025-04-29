@@ -1,4 +1,8 @@
-﻿using FinanceTracker.Api.Tests;
+﻿using System.Net;
+using System.Net.Http.Json;
+using FinanceTracker.Api.Tests;
+using FinanceTracker.Application.Installments.Commands.PayInstallment;
+using FinanceTracker.Application.Installments.Commands.ReceiveInstallment;
 using FinanceTracker.Application.Installments.Dtos;
 using FinanceTracker.Application.Installments.Queries.GetAllInstallments;
 using FinanceTracker.Application.Installments.Queries.GetInstallmentById;
@@ -150,6 +154,115 @@ public class InstallmentControllerTests : IClassFixture<WebApplicationFactory<Pr
             m =>
                 m.Send(
                     It.Is<GetAllInstallmentsQuery>(q => q.LoanId == loanId),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once
+        );
+    }
+
+    [Fact]
+    public async Task PayInstallment_WithValidCommand_ReturnsCreatedAtAction()
+    {
+        // Arrange
+        var loanId = 1;
+        var expectedInstallmentId = 10;
+        var command = new PayInstallmentCommand
+        {
+            WalletId = 5,
+            Amount = 150.50m,
+            Note = "Test payment",
+            NextDueDate = new DateTime(2025, 6, 15),
+        };
+
+        _mediatorMock
+            .Setup(m =>
+                m.Send(
+                    It.Is<PayInstallmentCommand>(c =>
+                        c.LoanId == loanId
+                        && c.WalletId == command.WalletId
+                        && c.Amount == command.Amount
+                        && c.Note == command.Note
+                        && c.NextDueDate == command.NextDueDate
+                    ),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync(expectedInstallmentId);
+
+        var client = _factory.CreateClient();
+        var content = JsonContent.Create(command);
+
+        // Act
+        var response = await client.PostAsync($"/api/loans/{loanId}/installments/pay", content);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        response.Headers.Location.Should().NotBeNull();
+        response
+            .Headers.Location.PathAndQuery.Should()
+            .Be($"/api/loans/{loanId}/installments/{expectedInstallmentId}");
+
+        _mediatorMock.Verify(
+            m =>
+                m.Send(
+                    It.Is<PayInstallmentCommand>(c =>
+                        c.LoanId == loanId
+                        && c.WalletId == command.WalletId
+                        && c.Amount == command.Amount
+                        && c.Note == command.Note
+                        && c.NextDueDate == command.NextDueDate
+                    ),
+                    It.IsAny<CancellationToken>()
+                ),
+            Times.Once
+        );
+    }
+
+    [Fact]
+    public async Task ReceiveInstallment_WithValidCommand_ReturnsCreatedAtAction()
+    {
+        // Arrange
+        var loanId = 2;
+        var expectedInstallmentId = 15;
+
+        var command = new ReceiveInstallmentCommand
+        {
+            WalletId = 7,
+            Amount = 200m,
+            Note = "Test receipt",
+            NextDueDate = new DateTime(2025, 7, 20),
+        };
+
+        _mediatorMock
+            .Setup(m =>
+                m.Send(
+                    It.Is<ReceiveInstallmentCommand>(c =>
+                        c.LoanId == loanId && c.Amount == command.Amount
+                    ),
+                    It.IsAny<CancellationToken>()
+                )
+            )
+            .ReturnsAsync(expectedInstallmentId);
+
+        var client = _factory.CreateClient();
+        var content = JsonContent.Create(command);
+
+        // Act
+        var response = await client.PostAsync($"/api/loans/{loanId}/installments/receive", content);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        response.Headers.Location.Should().NotBeNull();
+        response
+            .Headers.Location.PathAndQuery.Should()
+            .Be($"/api/loans/{loanId}/installments/{expectedInstallmentId}");
+
+        _mediatorMock.Verify(
+            m =>
+                m.Send(
+                    It.Is<ReceiveInstallmentCommand>(c =>
+                        c.LoanId == loanId && c.Amount == command.Amount
+                    ),
                     It.IsAny<CancellationToken>()
                 ),
             Times.Once

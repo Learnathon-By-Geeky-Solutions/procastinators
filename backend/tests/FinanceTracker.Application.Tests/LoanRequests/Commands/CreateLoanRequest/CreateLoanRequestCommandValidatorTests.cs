@@ -6,7 +6,7 @@ namespace FinanceTracker.Application.LoanRequests.Commands.CreateLoanRequest.Tes
 public class CreateLoanRequestCommandValidatorTests
 {
     [Fact()]
-    public void Validator_ForValidCommands_ShouldNotHaveValdiationErrors()
+    public void Validator_ForValidCommands_ShouldNotHaveValidationErrors()
     {
         // Arrange
         var validator = new CreateLoanRequestCommandValidator();
