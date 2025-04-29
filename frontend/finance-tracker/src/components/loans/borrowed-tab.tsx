@@ -58,10 +58,10 @@ export default function BorrowedTab({
                                             {loan.person}
                                         </TableCell>
                                         <TableCell>
-                                            ${loan.amount.toFixed(2)}
+                                            ${loan?.amount.toFixed(2)} BDT
                                         </TableCell>
                                         <TableCell>
-                                            ${loan.remainingAmount.toFixed(2)}
+                                            {loan?.dueAmount.toFixed(2)} BDT
                                         </TableCell>
                                         <TableCell>{loan.date}</TableCell>
                                         <TableCell>{loan.dueDate}</TableCell>

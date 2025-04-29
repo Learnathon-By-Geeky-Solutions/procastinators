@@ -1,3 +1,9 @@
+export type UserInfo = {
+    id: string;
+    email: string;
+    userName: string;
+};
+
 export type Wallet = {
     id: string;
     name: string;
@@ -30,4 +36,15 @@ export type TotalPerCategory = {
 export type TransactionReport = {
     categories: TotalPerCategory[];
     grandTotal: number;
+};
+
+export type Loan = {
+    id: 17;
+    lender?: UserInfo;
+    borrower?: UserInfo;
+    amount: number;
+    note?: string;
+    issuedAt: string;
+    dueDate: string;
+    dueAmount: number;
 };

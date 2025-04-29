@@ -1,6 +1,13 @@
 import LoanTabs from "@/components/loans/loan-tabs";
+import { fetchBorrowedLoans, fetchLentLoans } from "@/lib/data/loan-data";
 
 export default async function LoansPage() {
+    const loansBorrowed = await fetchBorrowedLoans();
+    const loansLent = await fetchLentLoans();
+
+    console.log("loansBorrowed", loansBorrowed);
+    console.log("loansLent", loansLent);
+
     return (
         <div className="flex flex-col gap-4 p-4 md:p-8">
             <div className="flex items-center justify-between">
@@ -13,7 +20,7 @@ export default async function LoansPage() {
             </div>
 
             <div className="flex flex-col gap-4">
-                <LoanTabs />
+                <LoanTabs loansBorrowed={loansBorrowed} loansLent={loansLent} />
             </div>
         </div>
     );
