@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using FinanceTracker.Application.Installments.Commands.ReceiveInstallment;
+﻿using FinanceTracker.Application.Installments.Commands.ReceiveInstallment;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
 using FinanceTracker.Domain.Exceptions;
