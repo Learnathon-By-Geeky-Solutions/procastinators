@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinanceTracker.Application.LoanClaims.Dtos;
+using FinanceTracker.Application.LoanClaims.Queries.GetAllLoanClaims;
 using FinanceTracker.Application.LoanClaims.Queries.GetLoanClaimById;
 using FinanceTracker.Application.Users;
 using FinanceTracker.Domain.Entities;
@@ -84,6 +85,19 @@ public class GetLoanClaimByIdQueryHandlerTests
         // Act & Assert
         await Xunit.Assert.ThrowsAsync<NotFoundException>(
             () => _handler.Handle(command, CancellationToken.None)
+        );
+    }
+
+    [Fact()]
+    public async Task Handle_WithNullUser_ThrowsForbiddenException()
+    {
+        // Arrange
+        _userContextMock.Setup(x => x.GetUser()).Returns((UserDto?)null);
+        var query = new GetLoanClaimByIdQuery { };
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(
+            () => _handler.Handle(query, CancellationToken.None)
         );
     }
 }
