@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTracker.Infrastructure.Repositories;
 
-internal class InstallmentRepository(FinanceTrackerDbContext dbContext) : IInstallmentRepository
+public class InstallmentRepository(FinanceTrackerDbContext dbContext) : IInstallmentRepository
 {
     public async Task<int> CreateAsync(Installment installment)
     {
