@@ -134,4 +134,58 @@ public class ClaimInstallmentFundCommandHandlerTests
             () => _handler.Handle(command, CancellationToken.None)
         );
     }
+
+    [Fact]
+    public async Task Handle_WithNonExistentWallet_ThrowsNotFoundException()
+    {
+        // Arrange
+        var user = new UserDto(_userId, "user@example.com");
+        var installmentClaim = new InstallmentClaim
+        {
+            Id = _claimId,
+            InstallmentId = _installmentId,
+            IsClaimed = false,
+        };
+
+        _userContextMock.Setup(x => x.GetUser()).Returns(user);
+        _installmentRepositoryMock
+            .Setup(x => x.GetInstallmentClaimByIdAsync(_claimId, _userId))
+            .ReturnsAsync(installmentClaim);
+        _walletRepositoryMock.Setup(x => x.GetById(_walletId)).ReturnsAsync((Wallet?)null);
+
+        var command = new ClaimInstallmentFundCommand { Id = _claimId, WalletId = _walletId };
+
+        // Act & Assert
+        var exception = await Xunit.Assert.ThrowsAsync<NotFoundException>(
+            () => _handler.Handle(command, CancellationToken.None)
+        );
+    }
+
+    [Fact]
+    public async Task Handle_WithWalletBelongingToDifferentUser_ThrowsForbiddenException()
+    {
+        // Arrange
+        var differentUserId = "2";
+        var user = new UserDto(_userId, "user@example.com");
+        var installmentClaim = new InstallmentClaim
+        {
+            Id = _claimId,
+            InstallmentId = _installmentId,
+            IsClaimed = false,
+        };
+        var wallet = new Wallet { Id = _walletId, UserId = differentUserId };
+
+        _userContextMock.Setup(x => x.GetUser()).Returns(user);
+        _installmentRepositoryMock
+            .Setup(x => x.GetInstallmentClaimByIdAsync(_claimId, _userId))
+            .ReturnsAsync(installmentClaim);
+        _walletRepositoryMock.Setup(x => x.GetById(_walletId)).ReturnsAsync(wallet);
+
+        var command = new ClaimInstallmentFundCommand { Id = _claimId, WalletId = _walletId };
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<ForbiddenException>(
+            () => _handler.Handle(command, CancellationToken.None)
+        );
+    }
 }
