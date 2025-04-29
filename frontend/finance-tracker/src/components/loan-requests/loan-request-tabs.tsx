@@ -3,13 +3,14 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import ReceivedTab from "./received-tab";
 import SentTab from "./sent-tab";
+import { LoanRequest } from "@/lib/definitions";
 
 export default function LoanRequestTabs({
     receivedRequests,
     sentRequests,
 }: {
-    receivedRequests: any[];
-    sentRequests: any[];
+    receivedRequests: LoanRequest[];
+    sentRequests: LoanRequest[];
 }) {
     const [activeTab, setActiveTab] = useState("received");
 

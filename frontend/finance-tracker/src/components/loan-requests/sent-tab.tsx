@@ -19,6 +19,7 @@ import {
 import { TabsContent } from "@/components/ui/tabs";
 import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toLocaleDateString } from "@/lib/utils";
 
 export default function SentTab({
     sentRequests,
@@ -41,50 +42,41 @@ export default function SentTab({
                                 <TableRow>
                                     <TableHead>Recipient</TableHead>
                                     <TableHead>Amount</TableHead>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead>Due Date</TableHead>
                                     <TableHead>Note</TableHead>
+                                    <TableHead>Due Date</TableHead>
                                     <TableHead>Status</TableHead>
-                                    <TableHead className="w-[100px]">
-                                        Actions
-                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {sentRequests.map((request) => (
                                     <TableRow key={request.id}>
-                                        <TableCell className="font-medium">
-                                            {request.recipient}
-                                        </TableCell>
                                         <TableCell>
-                                            ${request?.amount.toFixed(2)}
+                                            {request?.lender?.userName}
                                         </TableCell>
-                                        <TableCell>{request.date}</TableCell>
-                                        <TableCell>{request.dueDate}</TableCell>
+                                        <TableCell className="text-base font-medium">
+                                            {request?.amount.toFixed(2)} BDT
+                                        </TableCell>
                                         <TableCell>{request.note}</TableCell>
                                         <TableCell>
-                                            <Badge
-                                                variant={
-                                                    request.status ===
-                                                    "Approved"
-                                                        ? "default"
-                                                        : request.status ===
-                                                          "Rejected"
-                                                        ? "destructive"
-                                                        : "outline"
-                                                }
-                                            >
-                                                {request.status}
-                                            </Badge>
+                                            {toLocaleDateString(
+                                                request.dueDate
+                                            )}
                                         </TableCell>
                                         <TableCell>
-                                            {request.status === "Pending" && (
-                                                <Button
+                                            {request.isApproved ? (
+                                                <Badge
                                                     variant="outline"
-                                                    size="sm"
+                                                    className="bg-green-100 text-green-800 hover:bg-green-100"
                                                 >
-                                                    Cancel
-                                                </Button>
+                                                    Accepted
+                                                </Badge>
+                                            ) : (
+                                                <Badge
+                                                    variant="outline"
+                                                    className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                                                >
+                                                    Pending
+                                                </Badge>
                                             )}
                                         </TableCell>
                                     </TableRow>

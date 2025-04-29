@@ -17,7 +17,6 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { TabsContent } from "@/components/ui/tabs";
-import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Loan } from "@/lib/definitions";
 import { toLocaleDateString } from "@/lib/utils";

@@ -19,11 +19,13 @@ import {
 import { TabsContent } from "@/components/ui/tabs";
 import { Check, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LoanRequest } from "@/lib/definitions";
+import { toLocaleDateString } from "@/lib/utils";
 
 export default function ReceivedTab({
     receivedRequests,
 }: {
-    readonly receivedRequests: any[];
+    readonly receivedRequests: LoanRequest[];
 }) {
     return (
         <TabsContent value="received" className="space-y-4">
@@ -42,11 +44,10 @@ export default function ReceivedTab({
                                 <TableRow>
                                     <TableHead>Requester</TableHead>
                                     <TableHead>Amount</TableHead>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead>Due Date</TableHead>
                                     <TableHead>Note</TableHead>
+                                    <TableHead>Due Date</TableHead>
                                     <TableHead>Status</TableHead>
-                                    <TableHead className="w-[150px]">
+                                    <TableHead className="w-[80px]">
                                         Actions
                                     </TableHead>
                                 </TableRow>
@@ -54,31 +55,45 @@ export default function ReceivedTab({
                             <TableBody>
                                 {receivedRequests.map((request) => (
                                     <TableRow key={request.id}>
-                                        <TableCell className="font-medium">
-                                            {request.requester}
-                                        </TableCell>
                                         <TableCell>
-                                            ${request?.amount.toFixed(2)}
+                                            {request?.borrower?.userName}
                                         </TableCell>
-                                        <TableCell>{request.date}</TableCell>
-                                        <TableCell>{request.dueDate}</TableCell>
+                                        <TableCell className="text-base font-medium">
+                                            {request?.amount.toFixed(2)} BDT
+                                        </TableCell>
                                         <TableCell>{request.note}</TableCell>
                                         <TableCell>
-                                            <Badge variant="outline">
-                                                {request.status}
-                                            </Badge>
+                                            {toLocaleDateString(
+                                                request.dueDate
+                                            )}
                                         </TableCell>
                                         <TableCell>
-                                            <div className="flex gap-2">
-                                                <Button
+                                            {request.isApproved ? (
+                                                <Badge
                                                     variant="outline"
-                                                    size="sm"
-                                                    className="bg-emerald-50 hover:bg-emerald-100 border-emerald-200"
+                                                    className="bg-green-100 text-green-800 hover:bg-green-100"
                                                 >
-                                                    <Check className="h-4 w-4 mr-1" />
-                                                    Approve
+                                                    Accepted
+                                                </Badge>
+                                            ) : (
+                                                <Badge
+                                                    variant="outline"
+                                                    className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                                                >
+                                                    Pending
+                                                </Badge>
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            {!request.isApproved && (
+                                                <Button
+                                                    // variant="outline"
+                                                    size="sm"
+                                                >
+                                                    <Check className="h-4 w-4" />
+                                                    Accept
                                                 </Button>
-                                            </div>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))}
