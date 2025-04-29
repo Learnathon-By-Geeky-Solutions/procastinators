@@ -20,6 +20,7 @@ public class GetInstallmentByIdQueryHandlerTests
     private readonly Mock<IMapper> _mapperMock;
     private readonly GetInstallmentByIdQueryHandler _handler;
     private readonly int _loanId = 1;
+    private readonly string _userId = "test-user-id";
     private readonly int _installmentId = 1;
     private readonly UserDto _user = new("test", "test@test.com");
 
@@ -104,6 +105,21 @@ public class GetInstallmentByIdQueryHandlerTests
         _installmentRepositoryMock
             .Setup(r => r.GetByIdAsync(_loanId, installmentId))
             .ReturnsAsync((Installment?)null);
+
+        // Act & Assert
+        await Xunit.Assert.ThrowsAsync<NotFoundException>(
+            () => _handler.Handle(command, CancellationToken.None)
+        );
+    }
+
+    [Fact]
+    public async Task Handle_ForLoanNotFound_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var installmentId = 1;
+        var command = new GetInstallmentByIdQuery() { Id = installmentId };
+
+        _loanRepositoryMock.Setup(r => r.GetByIdAsync(_loanId, _userId)).ReturnsAsync((Loan?)null);
 
         // Act & Assert
         await Xunit.Assert.ThrowsAsync<NotFoundException>(
