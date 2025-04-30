@@ -18,13 +18,16 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { LoanClaim } from "@/lib/definitions";
+import { LoanClaim, Wallet } from "@/lib/definitions";
 import { toLocaleDateString } from "@/lib/utils";
 import { HandCoinsIcon } from "lucide-react";
+import { ClaimLoanDialog } from "./claim-loan-dialog";
 export default function ClaimableLoansTab({
     loanClaims,
+    wallets,
 }: {
     readonly loanClaims: LoanClaim[];
+    readonly wallets: Wallet[];
 }) {
     return (
         <TabsContent value="loans" className="space-y-4">
@@ -85,13 +88,10 @@ export default function ClaimableLoansTab({
 
                                         <TableCell>
                                             {!claim?.isClaimed && (
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                >
-                                                    <HandCoinsIcon className="h-4 w-4" />
-                                                    Claim
-                                                </Button>
+                                                <ClaimLoanDialog
+                                                    claim={claim}
+                                                    wallets={wallets}
+                                                />
                                             )}
                                         </TableCell>
                                     </TableRow>

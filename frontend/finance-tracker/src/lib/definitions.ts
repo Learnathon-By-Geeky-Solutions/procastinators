@@ -60,14 +60,14 @@ export type LoanRequest = {
 };
 
 export type LoanClaim = {
-    id: number;
+    id: string;
     loan: Loan;
     isClaimed: boolean;
     claimedAt: string;
 };
 
 export type Installment = {
-    id: number;
+    id: string;
     loan: Loan;
     timestamp: string;
     amount: number;
@@ -76,7 +76,7 @@ export type Installment = {
 };
 
 export type InstallmentClaim = {
-    id: number;
+    id: string;
     installment: Installment;
     isClaimed: boolean;
     claimedAt: string;
