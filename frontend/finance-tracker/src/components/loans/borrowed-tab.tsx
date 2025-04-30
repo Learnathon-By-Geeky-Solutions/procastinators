@@ -88,7 +88,9 @@ export default function BorrowedTab({
                                         </TableCell>
 
                                         <TableCell>
-                                            <Link href={`/loans/${loan.id}`}>
+                                            <Link
+                                                href={`/dashboard/loans/${loan.id}`}
+                                            >
                                                 <Button
                                                     variant="outline"
                                                     size="sm"

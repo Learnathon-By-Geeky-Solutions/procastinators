@@ -82,7 +82,9 @@ export default function LentTab({ loansLent }: { readonly loansLent: Loan[] }) {
                                             {toLocaleDateString(loan.dueDate)}
                                         </TableCell>
                                         <TableCell>
-                                            <Link href={`/loans/${loan.id}`}>
+                                            <Link
+                                                href={`/dashboard/loans/${loan.id}`}
+                                            >
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
