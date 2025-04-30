@@ -98,4 +98,85 @@ public class InstallmentRepositoryTests : IDisposable
         Assert.NotNull(claim);
         Assert.Equal(createdId, claim.Installment.Id);
     }
+
+    [Fact]
+    public async Task GetAllAsync_ShouldReturnOnlyLoanInstallments()
+    {
+        // Arrange
+        var installments = new[]
+        {
+            new Installment
+            {
+                LoanId = _testLoanId,
+                Amount = 150,
+                Timestamp = DateTime.Now.AddMonths(2),
+                NextDueDate = DateTime.Now.AddMonths(3),
+                Note = "Test installment",
+            },
+            new Installment
+            {
+                LoanId = _testLoanId,
+                Amount = 150,
+                Timestamp = DateTime.Now.AddMonths(1),
+                NextDueDate = DateTime.Now.AddMonths(2),
+                Note = "Test installment212",
+            },
+            new Installment
+            {
+                LoanId = 99, // Different loan ID
+                Amount = 150,
+                Timestamp = DateTime.Now,
+                NextDueDate = DateTime.Now.AddMonths(2),
+                Note = "Test installment2121",
+            },
+        };
+
+        await _dbContext.Installments.AddRangeAsync(installments);
+        await _dbContext.SaveChangesAsync();
+
+        // Act
+        var result = await _repository.GetAllAsync(_testLoanId);
+
+        // Assert
+        Assert.Equal(2, result.Count());
+        Assert.All(result, i => Assert.Equal(_testLoanId, i.LoanId));
+        Assert.DoesNotContain(result, i => i.LoanId == 99);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_ShouldReturnInstallment_WhenExists()
+    {
+        // Arrange
+        var installment = new Installment
+        {
+            LoanId = _testLoanId,
+            Amount = 120,
+            Timestamp = DateTime.Now.AddMonths(1),
+            NextDueDate = DateTime.Now.AddMonths(2),
+            Note = "Test installment212",
+        };
+
+        _dbContext.Installments.Add(installment);
+        await _dbContext.SaveChangesAsync();
+        var installmentId = installment.Id;
+
+        // Act
+        var result = await _repository.GetByIdAsync(_testLoanId, installmentId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(installmentId, result.Id);
+        Assert.Equal(_testLoanId, result.LoanId);
+        Assert.Equal(120, result.Amount);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_ShouldReturnNull_WhenInstallmentDoesNotExist()
+    {
+        // Act
+        var result = await _repository.GetByIdAsync(_testLoanId, 999);
+
+        // Assert
+        Assert.Null(result);
+    }
 }
