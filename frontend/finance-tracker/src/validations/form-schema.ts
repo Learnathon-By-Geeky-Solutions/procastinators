@@ -256,3 +256,12 @@ export const requestLoanFormSchema = z.object({
         }),
     note: z.coerce.string().optional(),
 });
+
+export const approveLoanRequestFormSchema = z.object({
+    id: z.coerce.string().min(1, {
+        message: "Id is required",
+    }),
+    lenderWalletId: z.coerce.string().min(1, {
+        message: "Lender wallet is required",
+    }),
+});

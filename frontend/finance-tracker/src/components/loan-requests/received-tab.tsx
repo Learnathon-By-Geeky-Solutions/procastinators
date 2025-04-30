@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import {
     Card,
@@ -17,15 +16,16 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { TabsContent } from "@/components/ui/tabs";
-import { Check, Eye } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { LoanRequest } from "@/lib/definitions";
+import { LoanRequest, Wallet } from "@/lib/definitions";
 import { toLocaleDateString } from "@/lib/utils";
+import { ApproveLoanRequestDialog } from "@/components/loan-requests/approve-loan-request-dialog";
 
 export default function ReceivedTab({
     receivedRequests,
+    wallets,
 }: {
     readonly receivedRequests: LoanRequest[];
+    readonly wallets: Wallet[];
 }) {
     return (
         <TabsContent value="received" className="space-y-4">
@@ -87,13 +87,10 @@ export default function ReceivedTab({
 
                                         <TableCell>
                                             {!request.isApproved && (
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                >
-                                                    <Check className="h-4 w-4" />
-                                                    Accept
-                                                </Button>
+                                                <ApproveLoanRequestDialog
+                                                    request={request}
+                                                    wallets={wallets}
+                                                />
                                             )}
                                         </TableCell>
                                     </TableRow>

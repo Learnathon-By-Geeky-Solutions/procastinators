@@ -40,7 +40,7 @@ import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AddLoanAction } from "@/lib/actions/loan-action";
 
-const successDescription = "Transaction processed successfully.";
+const successDescription = "Loan processed successfully.";
 const failedTitle = "Failed!";
 const failedDefaultDescription = "Something went wrong. Please try again.";
 

@@ -34,24 +34,16 @@ import { UserInfo } from "@/lib/definitions";
 import { fetchUserByEmail } from "@/lib/actions/user-action";
 import { RequestLoanAction } from "@/lib/actions/loan-request-action";
 
-const successDescription = "Transaction processed successfully.";
+const successDescription = "Loan request processed successfully.";
 const failedTitle = "Failed!";
 const failedDefaultDescription = "Something went wrong. Please try again.";
 
-const mockUsers: UserInfo[] = [
-    { id: "user1", email: "john@example.com", userName: "John Smith" },
-    { id: "user2", email: "sarah@example.com", userName: "Sarah Johnson" },
-    { id: "user3", email: "mike@example.com", userName: "Mike Brown" },
-    { id: "user4", email: "emma@example.com", userName: "Emma Wilson" },
-    { id: "user5", email: "alex@example.com", userName: "Alex Davis" },
-    { id: "user6", email: "lisa@example.com", userName: "Lisa Garcia" },
-    { id: "user7", email: "david@example.com", userName: "David Martinez" },
-];
-
 export function RequestLoanDialog({
+    variant = "outline",
     iconOnly = false,
 }: {
     readonly iconOnly?: boolean;
+    readonly variant?: "outline" | "default";
 }) {
     const [open, setOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
@@ -151,7 +143,7 @@ export function RequestLoanDialog({
                         <HandCoinsIcon className="h-4 w-4" />
                     </Button>
                 ) : (
-                    <Button variant={"outline"}>
+                    <Button variant={variant}>
                         <HandCoinsIcon className="h-4 w-4" />
                         Request Loan
                     </Button>
