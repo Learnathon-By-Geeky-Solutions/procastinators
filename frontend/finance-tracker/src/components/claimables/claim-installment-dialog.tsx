@@ -23,7 +23,10 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { claimLoanFormSchema } from "@/validations/form-schema";
+import {
+    claimInstallmentFormSchema,
+    claimLoanFormSchema,
+} from "@/validations/form-schema";
 import { toast } from "sonner";
 import { handleResponse } from "@/lib/handle-response";
 import { Input } from "@/components/ui/input";
@@ -34,19 +37,22 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { LoanClaim, Wallet } from "@/lib/definitions";
-import { ClaimLoanAction } from "@/lib/actions/claim-action";
+import { InstallmentClaim, LoanClaim, Wallet } from "@/lib/definitions";
+import {
+    ClaimInstallmentAction,
+    ClaimLoanAction,
+} from "@/lib/actions/claim-action";
 
-const successDescription = "Loan claimed successfully.";
+const successDescription = "Installment claimed successfully.";
 const failedTitle = "Failed!";
 const failedDefaultDescription = "Something went wrong. Please try again.";
 
-export function ClaimLoanDialog({
+export function ClaimInstallmentDialog({
     wallets,
     claim,
 }: {
     readonly wallets: Wallet[];
-    readonly claim: LoanClaim;
+    readonly claim: InstallmentClaim;
     readonly iconOnly?: boolean;
 }) {
     const [open, setOpen] = useState(false);
@@ -56,8 +62,8 @@ export function ClaimLoanDialog({
         walletId: "",
     };
 
-    const form = useForm<z.infer<typeof claimLoanFormSchema>>({
-        resolver: zodResolver(claimLoanFormSchema),
+    const form = useForm<z.infer<typeof claimInstallmentFormSchema>>({
+        resolver: zodResolver(claimInstallmentFormSchema),
         defaultValues,
     });
     const { isSubmitting } = form.formState;
@@ -66,9 +72,11 @@ export function ClaimLoanDialog({
         form.reset(defaultValues);
     }, [open]);
 
-    async function onSubmit(values: z.infer<typeof claimLoanFormSchema>) {
+    async function onSubmit(
+        values: z.infer<typeof claimInstallmentFormSchema>
+    ) {
         try {
-            const res = await ClaimLoanAction(values);
+            const res = await ClaimInstallmentAction(values);
             handleResponse(res, form, setOpen, successDescription);
         } catch (error) {
             console.log(error);
@@ -88,7 +96,7 @@ export function ClaimLoanDialog({
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Claim Loan</DialogTitle>
+                    <DialogTitle>Claim Installment</DialogTitle>
                     <DialogDescription>
                         Funds will be transferred to the selected wallet.
                     </DialogDescription>
@@ -113,7 +121,7 @@ export function ClaimLoanDialog({
                         <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
                             <p className="text-sm font-medium">Amount</p>
                             <p className="text-sm">
-                                {claim?.loan.amount.toFixed(2)} BDT
+                                {claim?.installment?.amount.toFixed(2)} BDT
                             </p>
                         </div>
 

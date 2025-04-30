@@ -20,3 +20,21 @@ export async function ClaimLoanAction(
         walletId,
     });
 }
+
+export async function ClaimInstallmentAction(
+    formData: z.infer<typeof claimLoanFormSchema>
+) {
+    const validatedFields = claimLoanFormSchema.safeParse(formData);
+    if (validatedFields.error) {
+        return {
+            success: false,
+            fieldErrors: validatedFields.error.flatten().fieldErrors,
+            message: "Invalid field(s)",
+        };
+    }
+    const { id, walletId } = validatedFields.data;
+    const url = `${process.env.BACKEND_BASE_URL}/installmentclaims/${id}/claim`;
+    return handleAction("POST", url, {
+        walletId,
+    });
+}

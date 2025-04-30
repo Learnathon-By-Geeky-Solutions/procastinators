@@ -274,3 +274,12 @@ export const claimLoanFormSchema = z.object({
         message: "Wallet is required",
     }),
 });
+
+export const claimInstallmentFormSchema = z.object({
+    id: z.coerce.string().min(1, {
+        message: "Id is required",
+    }),
+    walletId: z.coerce.string().min(1, {
+        message: "Wallet is required",
+    }),
+});

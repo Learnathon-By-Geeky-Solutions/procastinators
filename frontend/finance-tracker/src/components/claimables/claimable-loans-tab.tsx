@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/card";
 import { LoanClaim, Wallet } from "@/lib/definitions";
 import { toLocaleDateString } from "@/lib/utils";
-import { HandCoinsIcon } from "lucide-react";
 import { ClaimLoanDialog } from "./claim-loan-dialog";
 export default function ClaimableLoansTab({
     loanClaims,

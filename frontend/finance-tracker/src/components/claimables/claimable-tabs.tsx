@@ -33,7 +33,10 @@ export default function ClaimableTabs({
             </TabsList>
 
             <ClaimableLoansTab loanClaims={loanClaims} wallets={wallets} />
-            <ClaimableInstallmentsTab installmentClaims={installmentClaims} />
+            <ClaimableInstallmentsTab
+                installmentClaims={installmentClaims}
+                wallets={wallets}
+            />
         </Tabs>
     );
 }

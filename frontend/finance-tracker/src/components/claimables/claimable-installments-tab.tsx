@@ -9,7 +9,6 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { TabsContent } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -17,13 +16,15 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { InstallmentClaim } from "@/lib/definitions";
+import { InstallmentClaim, Wallet } from "@/lib/definitions";
 import { toLocaleDateString } from "@/lib/utils";
-import { HandCoinsIcon } from "lucide-react";
+import { ClaimInstallmentDialog } from "@/components/claimables/claim-installment-dialog";
 export default function ClaimableInstallmentsTab({
     installmentClaims,
+    wallets,
 }: {
     readonly installmentClaims: InstallmentClaim[];
+    readonly wallets: Wallet[];
 }) {
     return (
         <TabsContent value="installments" className="space-y-4">
@@ -87,10 +88,12 @@ export default function ClaimableInstallmentsTab({
                                         </TableCell>
 
                                         <TableCell>
-                                            <Button variant="outline" size="sm">
-                                                <HandCoinsIcon className="h-4 w-4" />
-                                                Claim
-                                            </Button>
+                                            {!claim?.isClaimed && (
+                                                <ClaimInstallmentDialog
+                                                    claim={claim}
+                                                    wallets={wallets}
+                                                />
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))
