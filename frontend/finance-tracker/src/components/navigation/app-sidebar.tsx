@@ -18,10 +18,12 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import AppBreadcrumbs from "@/components/navigation/app-breadcrumb";
 import NavUser from "./nav-user";
+import { Session } from "next-auth";
 
 export function AppSidebar({
     children,
     routes,
+    session,
 }: {
     readonly children: React.ReactNode;
     readonly routes: Array<{
@@ -29,6 +31,7 @@ export function AppSidebar({
         icon: React.ReactNode;
         href: string;
     }>;
+    readonly session: Session | null;
 }) {
     const pathname = usePathname();
 
@@ -39,7 +42,7 @@ export function AppSidebar({
                     {/* Sidebar header */}
                     <SidebarHeader>
                         <SidebarMenu>
-                            <SidebarMenuItem>
+                            <SidebarMenuItem className="px-1">
                                 <SidebarMenuButton size="lg">
                                     <span>
                                         <ActivityIcon size={24} />
@@ -57,8 +60,12 @@ export function AppSidebar({
                         <SidebarMenu>
                             {routes.map((route) => {
                                 return (
-                                    <SidebarMenuItem key={route.href}>
+                                    <SidebarMenuItem
+                                        className="px-1.5"
+                                        key={route.href}
+                                    >
                                         <SidebarMenuButton
+                                            className="px-4"
                                             asChild
                                             isActive={pathname === route.href}
                                             tooltip={route.title}
@@ -84,7 +91,7 @@ export function AppSidebar({
                             <AppBreadcrumbs />
                         </div>
                         <div>
-                            <NavUser />
+                            <NavUser session={session} />
                         </div>
                     </header>
                     <main className="flex-1">{children}</main>

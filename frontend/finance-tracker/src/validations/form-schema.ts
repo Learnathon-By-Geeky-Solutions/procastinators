@@ -148,3 +148,138 @@ export const deleteTransactionFormSchema = editTransactionFormSchema.omit({
     timestamp: true,
     note: true,
 });
+
+export const addLoanFormSchema = z.object({
+    action: z.enum(["borrow", "lend"], {
+        required_error: "Action is required",
+    }),
+    walletId: z.coerce.string().min(1, {
+        message: "Wallet is required",
+    }),
+    amount: z.coerce
+        .string()
+        .min(1, {
+            message: "Amount is required",
+        })
+        .refine(
+            (value) => {
+                const amount = parseFloat(value);
+                return !isNaN(amount) && amount > 0;
+            },
+            {
+                message: "Amount must be a greater than 0",
+            }
+        ),
+    dueDate: z
+        .date({
+            required_error: "Due date is required",
+        })
+        .refine((date) => date > new Date(Date.now() + 60 * 60 * 1000), {
+            message: "Due date must be at least an hour from now",
+        }),
+    note: z.coerce.string().optional(),
+});
+
+export const payInstallmentFormSchema = z
+    .object({
+        loanId: z.coerce.string().min(1, {
+            message: "Loan is required",
+        }),
+        action: z.enum(["pay", "receive"], {
+            required_error: "Action is required",
+        }),
+        walletId: z.coerce.string().min(1, {
+            message: "Wallet is required",
+        }),
+        dueAmount: z.coerce.string().min(1, {
+            message: "Due amount is required",
+        }),
+        amount: z.coerce
+            .string()
+            .min(1, {
+                message: "Amount is required",
+            })
+            .refine(
+                (value) => {
+                    const amount = parseFloat(value);
+                    return !isNaN(amount) && amount > 0;
+                },
+                {
+                    message: "Amount must be a greater than 0",
+                }
+            ),
+        nextDueDate: z
+            .date({
+                required_error: "Due date is required",
+            })
+            .refine((date) => date > new Date(Date.now() + 60 * 60 * 1000), {
+                message: "Due date must be at least an hour from now",
+            }),
+        note: z.coerce.string().optional(),
+    })
+    .refine(
+        (data) => {
+            const amount = parseFloat(data.amount);
+            const dueAmount = parseFloat(data.dueAmount);
+            return amount <= dueAmount;
+        },
+        {
+            message: "Amount cannot exceed due amount",
+            path: ["amount"],
+        }
+    );
+
+export const requestLoanFormSchema = z.object({
+    lenderId: z.coerce.string().min(1, {
+        message: "Lender is required",
+    }),
+    amount: z.coerce
+        .string()
+        .min(1, {
+            message: "Amount is required",
+        })
+        .refine(
+            (value) => {
+                const amount = parseFloat(value);
+                return !isNaN(amount) && amount > 0;
+            },
+            {
+                message: "Amount must be a greater than 0",
+            }
+        ),
+    dueDate: z
+        .date({
+            required_error: "Due date is required",
+        })
+        .refine((date) => date > new Date(Date.now() + 60 * 60 * 1000), {
+            message: "Due date must be at least an hour from now",
+        }),
+    note: z.coerce.string().optional(),
+});
+
+export const approveLoanRequestFormSchema = z.object({
+    id: z.coerce.string().min(1, {
+        message: "Id is required",
+    }),
+    lenderWalletId: z.coerce.string().min(1, {
+        message: "Lender wallet is required",
+    }),
+});
+
+export const claimLoanFormSchema = z.object({
+    id: z.coerce.string().min(1, {
+        message: "Id is required",
+    }),
+    walletId: z.coerce.string().min(1, {
+        message: "Wallet is required",
+    }),
+});
+
+export const claimInstallmentFormSchema = z.object({
+    id: z.coerce.string().min(1, {
+        message: "Id is required",
+    }),
+    walletId: z.coerce.string().min(1, {
+        message: "Wallet is required",
+    }),
+});

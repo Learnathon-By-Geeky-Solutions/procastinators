@@ -1,3 +1,9 @@
+export type UserInfo = {
+    id: string;
+    email: string;
+    userName: string;
+};
+
 export type Wallet = {
     id: string;
     name: string;
@@ -30,4 +36,48 @@ export type TotalPerCategory = {
 export type TransactionReport = {
     categories: TotalPerCategory[];
     grandTotal: number;
+};
+
+export type Loan = {
+    id: string;
+    lender?: UserInfo;
+    borrower?: UserInfo;
+    amount: number;
+    note?: string;
+    issuedAt: string;
+    dueDate: string;
+    dueAmount: number;
+};
+
+export type LoanRequest = {
+    id: string;
+    amount: number;
+    note?: string;
+    dueDate: string;
+    borrower: UserInfo;
+    lender: UserInfo;
+    isApproved: boolean;
+};
+
+export type LoanClaim = {
+    id: string;
+    loan: Loan;
+    isClaimed: boolean;
+    claimedAt: string;
+};
+
+export type Installment = {
+    id: string;
+    loan: Loan;
+    timestamp: string;
+    amount: number;
+    note?: string;
+    nextDueDate: string;
+};
+
+export type InstallmentClaim = {
+    id: string;
+    installment: Installment;
+    isClaimed: boolean;
+    claimedAt: string;
 };

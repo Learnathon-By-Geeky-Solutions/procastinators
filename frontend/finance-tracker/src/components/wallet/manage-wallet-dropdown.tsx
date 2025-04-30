@@ -11,7 +11,7 @@ import { MoreHorizontalIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import { EditWalletDialog } from "@/components/wallet/edit-wallet-dialog";
 import { useState } from "react";
 import { Wallet } from "@/lib/definitions";
-import { DeleteWalletDialog } from "./delete-wallet-dialog";
+import { DeleteWalletDialog } from "@/components/wallet/delete-wallet-dialog";
 
 export default function ManageWalletDropdown({
     wallet,

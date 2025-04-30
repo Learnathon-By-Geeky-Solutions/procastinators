@@ -12,8 +12,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ContactIcon, HelpCircle, LogOut, Settings } from "lucide-react";
-import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import { Session } from "next-auth";
 
 function UserAvatar(fallbackText: string) {
     return (
@@ -24,8 +24,7 @@ function UserAvatar(fallbackText: string) {
     );
 }
 
-export default function NavUser() {
-    const { data: session } = useSession();
+export default function NavUser({ session }: { session: Session | null }) {
     const user = session?.user;
     const avatarFallbackText = (user?.name ?? "u").slice(0, 1).toUpperCase();
 
@@ -56,11 +55,9 @@ export default function NavUser() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem asChild>
-                        <Link href={`/profile`}>
-                            <ContactIcon className="mr-2 h-4 w-4" />
-                            Profile
-                        </Link>
+                    <DropdownMenuItem>
+                        <ContactIcon className="mr-2 h-4 w-4" />
+                        <span>Profile</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                         <Settings className="mr-2 h-4 w-4" />

@@ -15,6 +15,16 @@ import Link from "next/link";
 export default function AppBreadcrumbs() {
     const pathname = usePathname();
     const segments = pathname.split("/").filter((segment) => segment);
+
+    // Function to format kebab-case segment into capitalized words
+    const formatSegment = (segment: string) => {
+        // Split by hyphen and capitalize each word
+        return segment
+            .split("-")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+    };
+
     return (
         <Breadcrumb>
             <BreadcrumbList>
@@ -26,8 +36,7 @@ export default function AppBreadcrumbs() {
                     segments.map((segment, index) => {
                         const href =
                             "/" + segments.slice(0, index + 1).join("/");
-                        const formattedSegment =
-                            segment.charAt(0).toUpperCase() + segment.slice(1);
+                        const formattedSegment = formatSegment(segment);
                         const isLastSegment = index === segments.length - 1;
 
                         return (

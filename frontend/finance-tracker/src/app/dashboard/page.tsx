@@ -11,11 +11,21 @@ import {
 } from "@/components/ui/card";
 import { fetchCategories } from "@/lib/data/categories-data";
 import {
+    fetchInstallmentClaims,
+    fetchLoanClaims,
+} from "@/lib/data/claimables-data";
+import { fetchBorrowedLoans, fetchLentLoans } from "@/lib/data/loan-data";
+import {
     fetchTransactionReport,
     fetchTransactions,
 } from "@/lib/data/transaction-data";
 import { fetchWallets } from "@/lib/data/wallet-data";
-import { ArrowDownRight, ArrowUpRight, Wallet } from "lucide-react";
+import {
+    ArrowDownRight,
+    ArrowUpRight,
+    HandCoinsIcon,
+    Wallet,
+} from "lucide-react";
 import Link from "next/link";
 
 export default async function Dashboard() {
@@ -27,6 +37,30 @@ export default async function Dashboard() {
         (acc, wallet) => acc + wallet.balance,
         0
     );
+
+    const borrowedLoans = await fetchBorrowedLoans();
+    const totalPayable = borrowedLoans.reduce(
+        (acc, loan) => acc + loan?.dueAmount,
+        0
+    );
+    const lentLoans = await fetchLentLoans();
+    const totalReceivable = lentLoans.reduce(
+        (acc, loan) => acc + loan?.dueAmount,
+        0
+    );
+    const loanClaims = await fetchLoanClaims();
+    const installmentClaims = await fetchInstallmentClaims();
+    const tatalloanClaims = loanClaims.reduce(
+        (acc, claim) => acc + (claim.isClaimed ? 0 : claim?.loan?.amount),
+        0
+    );
+    const totalInstallmentClaims = installmentClaims.reduce(
+        (acc, claim) =>
+            acc + (claim.isClaimed ? 0 : claim?.installment?.amount),
+        0
+    );
+    const totalClaimable = tatalloanClaims + totalInstallmentClaims;
+
     const { grandTotal: totalIncome } = await fetchTransactionReport(
         "income",
         30
@@ -44,28 +78,6 @@ export default async function Dashboard() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Total Balance
-                        </CardTitle>
-                        <Wallet className="h-4 w-4 " />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{`${totalBalance} BDT`}</div>
-                        <div className="flex gap-2 items-center">
-                            <p className="text-sm text-muted-foreground mt-2">
-                                Across all wallets.
-                            </p>
-                            <Link
-                                href="/dashboard/wallets"
-                                className="text-sm underline mt-2"
-                            >
-                                View All
-                            </Link>
-                        </div>
-                    </CardContent>
-                </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">
@@ -92,6 +104,77 @@ export default async function Dashboard() {
                         <p className="text-sm text-muted-foreground mt-2">
                             Last 30 days
                         </p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                            Total Payables
+                        </CardTitle>
+
+                        <ArrowDownRight className="h-4 w-4 text-rose-500" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{`${totalPayable} BDT`}</div>
+                        <p className="text-sm text-muted-foreground mt-2">
+                            You owe to others.
+                        </p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                            Total Receivables
+                        </CardTitle>
+                        <ArrowUpRight className="h-4 w-4 text-emerald-500" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{`${totalReceivable} BDT`}</div>
+                        <p className="text-sm text-muted-foreground mt-2">
+                            Others owe you.
+                        </p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                            Current Total Balance
+                        </CardTitle>
+                        <Wallet className="h-4 w-4 " />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{`${totalBalance} BDT`}</div>
+                        <div className="flex gap-2 items-center">
+                            <p className="text-sm text-muted-foreground mt-2">
+                                Across all wallets.
+                            </p>
+                            <Link
+                                href="/dashboard/wallets"
+                                className="text-sm underline mt-2"
+                            >
+                                View All
+                            </Link>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                            Total Claimables
+                        </CardTitle>
+                        <HandCoinsIcon className="h-4 w-4 " />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{`${totalClaimable} BDT`}</div>
+                        <div className="flex gap-2 items-center">
+                            <p className="text-sm text-muted-foreground mt-2"></p>
+                            <Link
+                                href="/dashboard/claimables"
+                                className="text-sm underline mt-2"
+                            >
+                                Claim Now
+                            </Link>
+                        </div>
                     </CardContent>
                 </Card>
             </div>
