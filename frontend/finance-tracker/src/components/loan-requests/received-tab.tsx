@@ -87,7 +87,7 @@ export default function ReceivedTab({
                                         <TableCell>
                                             {!request.isApproved && (
                                                 <Button
-                                                    // variant="outline"
+                                                    variant="outline"
                                                     size="sm"
                                                 >
                                                     <Check className="h-4 w-4" />

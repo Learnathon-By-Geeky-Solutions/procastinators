@@ -19,6 +19,8 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { LoanClaim } from "@/lib/definitions";
+import { toLocaleDateString } from "@/lib/utils";
+import { HandCoinsIcon } from "lucide-react";
 export default function ClaimableLoansTab({
     loanClaims,
 }: {
@@ -35,9 +37,10 @@ export default function ClaimableLoansTab({
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>From</TableHead>
                                 <TableHead>Amount</TableHead>
-                                <TableHead>Date</TableHead>
+                                <TableHead>From</TableHead>
+                                <TableHead>Issued At</TableHead>
+                                <TableHead>Note</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead className="w-[100px]">
                                     Actions
@@ -48,30 +51,47 @@ export default function ClaimableLoansTab({
                             {loanClaims.length > 0 ? (
                                 loanClaims.map((claim) => (
                                     <TableRow key={claim.id}>
+                                        <TableCell className="text-base font-medium">
+                                            {claim?.loan?.amount.toFixed(2)} BDT
+                                        </TableCell>
                                         <TableCell className="font-medium">
                                             {claim?.loan?.lender?.userName}
                                         </TableCell>
                                         <TableCell>
-                                            ${claim?.loan?.amount.toFixed(2)}
+                                            {toLocaleDateString(
+                                                claim?.loan?.issuedAt
+                                            )}
                                         </TableCell>
                                         <TableCell>
-                                            {claim?.loan?.issuedAt}
+                                            {claim?.loan?.note ?? "-"}
                                         </TableCell>
                                         <TableCell>
                                             {claim?.isClaimed ? (
-                                                <Badge variant="outline">
+                                                <Badge
+                                                    variant="outline"
+                                                    className="bg-green-100 text-green-800 hover:bg-green-100"
+                                                >
                                                     Claimed
                                                 </Badge>
                                             ) : (
-                                                <Badge variant="default">
-                                                    Unclaimed
+                                                <Badge
+                                                    variant="outline"
+                                                    className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                                                >
+                                                    Pending
                                                 </Badge>
                                             )}
                                         </TableCell>
                                         <TableCell>
-                                            <Button variant="outline" size="sm">
-                                                Claim
-                                            </Button>
+                                            {!claim?.isClaimed && (
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                >
+                                                    <HandCoinsIcon className="h-4 w-4" />
+                                                    Claim
+                                                </Button>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))

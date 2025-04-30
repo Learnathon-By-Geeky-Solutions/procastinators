@@ -1,8 +1,6 @@
 "use client";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
-import BorrowedTab from "@/components/loans/borrowed-tab";
-import LentTab from "@/components/loans/lent-tab";
 import ClaimableInstallmentsTab from "./claimable-installments-tab";
 import ClaimableLoansTab from "./claimable-loans-tab";
 import { InstallmentClaim, LoanClaim } from "@/lib/definitions";
