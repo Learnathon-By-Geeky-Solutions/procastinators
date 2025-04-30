@@ -24,8 +24,15 @@ export async function handleAction(httpMethod: string, url: string, body: any) {
         });
 
         if (!res.ok) {
+            if (res.headers.get("content-type") === null) {
+                return {
+                    success: false,
+                    fieldErrors: {},
+                    message: await res.text(),
+                };
+            }
+
             const data = await res.json();
-            console.log(data);
 
             return {
                 success: false,

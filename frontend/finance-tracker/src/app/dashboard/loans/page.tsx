@@ -1,5 +1,6 @@
 import { AddLoanDialog } from "@/components/loans/add-loan-dialog";
 import LoanTabs from "@/components/loans/loan-tabs";
+import { RequestLoanDialog } from "@/components/loans/request-loan-dialog";
 import { fetchBorrowedLoans, fetchLentLoans } from "@/lib/data/loan-data";
 import { fetchWallets } from "@/lib/data/wallet-data";
 
@@ -17,6 +18,7 @@ export default async function LoansPage() {
                     </p>
                 </div>
                 <div className="flex gap-2">
+                    <RequestLoanDialog />
                     <AddLoanDialog wallets={wallets} />
                 </div>
             </div>

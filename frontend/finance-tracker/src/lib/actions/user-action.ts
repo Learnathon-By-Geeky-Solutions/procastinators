@@ -5,7 +5,8 @@ import {
     loginFormSchema,
     registrationFormSchema,
 } from "@/validations/form-schema";
-import { signIn } from "@/lib/auth";
+import { auth, signIn } from "@/lib/auth";
+import { UserInfo } from "../definitions";
 
 const defaultErrorMessage = "Something went wrong";
 
@@ -81,5 +82,29 @@ export async function RegisterUser(
             message:
                 error instanceof Error ? error.message : defaultErrorMessage,
         };
+    }
+}
+
+export async function fetchUserByEmail(email: string) {
+    try {
+        const url = `${process.env.BACKEND_BASE_URL}/users/${email}`;
+        const session = await auth();
+        const token = session?.accessToken;
+        const res = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!res.ok) {
+            return null;
+        }
+
+        const data: UserInfo = await res.json();
+        return data;
+    } catch (error) {
+        return null;
     }
 }

@@ -228,3 +228,31 @@ export const payInstallmentFormSchema = z
             path: ["amount"],
         }
     );
+
+export const requestLoanFormSchema = z.object({
+    lenderId: z.coerce.string().min(1, {
+        message: "Lender is required",
+    }),
+    amount: z.coerce
+        .string()
+        .min(1, {
+            message: "Amount is required",
+        })
+        .refine(
+            (value) => {
+                const amount = parseFloat(value);
+                return !isNaN(amount) && amount > 0;
+            },
+            {
+                message: "Amount must be a greater than 0",
+            }
+        ),
+    dueDate: z
+        .date({
+            required_error: "Due date is required",
+        })
+        .refine((date) => date > new Date(Date.now() + 60 * 60 * 1000), {
+            message: "Due date must be at least an hour from now",
+        }),
+    note: z.coerce.string().optional(),
+});
