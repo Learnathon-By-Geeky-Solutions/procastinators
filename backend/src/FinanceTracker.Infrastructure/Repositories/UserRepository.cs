@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTracker.Infrastructure.Repositories;
 
-internal class UserRepository(FinanceTrackerDbContext dbContext) : IUserRepository
+public class UserRepository(FinanceTrackerDbContext dbContext) : IUserRepository
 {
     private readonly FinanceTrackerDbContext _dbContext = dbContext;
 

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTracker.Infrastructure.Repositories
 {
-    internal class PersonalTransactionRepository(FinanceTrackerDbContext dbContext)
+    public class PersonalTransactionRepository(FinanceTrackerDbContext dbContext)
         : IPersonalTransactionRepository
     {
         public async Task<int> Create(PersonalTransaction transaction)
