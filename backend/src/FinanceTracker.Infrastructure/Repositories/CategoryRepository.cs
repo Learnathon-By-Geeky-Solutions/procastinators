@@ -6,7 +6,7 @@ using System;
 
 namespace FinanceTracker.Infrastructure.Repositories
 {
-    internal class CategoryRepository(FinanceTrackerDbContext dbContext) : ICategoryRepository
+    public class CategoryRepository(FinanceTrackerDbContext dbContext) : ICategoryRepository
     {
         public async Task<int> Create(Category category)
         {
