@@ -43,7 +43,6 @@ public class LoanProfileTests
         loanDto.Note.Should().Be(loan.Note);
         loanDto.IssuedAt.Should().Be(loan.IssuedAt);
         loanDto.DueDate.Should().Be(loan.DueDate);
-        loanDto.LenderId.Should().Be(loan.LenderId);
         loanDto.DueAmount.Should().Be(loan.DueAmount);
     }
 }

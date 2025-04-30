@@ -18,6 +18,7 @@ internal class LoanRequestRepository(FinanceTrackerDbContext dbContext) : ILoanR
     {
         return await dbContext
             .LoanRequests.Include(r => r.Borrower)
+            .Include(r => r.Lender)
             .Where(r => r.LenderId == userId)
             .ToListAsync();
     }
@@ -26,6 +27,7 @@ internal class LoanRequestRepository(FinanceTrackerDbContext dbContext) : ILoanR
     {
         return await dbContext
             .LoanRequests.Include(r => r.Lender)
+            .Include(r => r.Borrower)
             .Where(r => r.BorrowerId == userId)
             .ToListAsync();
     }

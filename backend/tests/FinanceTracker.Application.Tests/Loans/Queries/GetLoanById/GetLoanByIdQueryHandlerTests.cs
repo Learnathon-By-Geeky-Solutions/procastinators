@@ -58,7 +58,6 @@ public class GetLoanByIdQueryHandlerTests
         var loanDto = new LoanDto
         {
             Id = _loanId,
-            LenderId = _userId,
             Amount = 100,
             Note = "Test loan",
             IssuedAt = loan.IssuedAt,
@@ -108,7 +107,6 @@ public class GetLoanByIdQueryHandlerTests
         var loanDto = new LoanDto
         {
             Id = _loanId,
-            LenderId = "other-user-id",
             Amount = 100,
             Note = "Test loan",
             IssuedAt = loan.IssuedAt,

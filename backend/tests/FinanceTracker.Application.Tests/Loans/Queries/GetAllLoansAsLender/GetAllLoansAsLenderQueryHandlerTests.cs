@@ -73,7 +73,6 @@ public class GetAllLoansAsLenderQueryHandlerTests
             new LoanDto
             {
                 Id = 1,
-                LenderId = "test-lender-id",
                 Amount = 100,
                 Note = "First loan",
                 IssuedAt = loans[0].IssuedAt,
@@ -83,7 +82,6 @@ public class GetAllLoansAsLenderQueryHandlerTests
             new LoanDto
             {
                 Id = 2,
-                LenderId = "test-lender-id",
                 Amount = 200,
                 Note = "Second loan",
                 IssuedAt = loans[1].IssuedAt,

@@ -37,14 +37,12 @@ public class InstallmentControllerTests : IClassFixture<WebApplicationFactory<Pr
                     new InstallmentDto
                     {
                         Id = 1,
-                        LoanId = 1,
                         Amount = 100,
                         Timestamp = DateTime.UtcNow,
                     },
                     new InstallmentDto
                     {
                         Id = 2,
-                        LoanId = 1,
                         Amount = 100,
                         Timestamp = DateTime.UtcNow,
                     },
@@ -80,7 +78,6 @@ public class InstallmentControllerTests : IClassFixture<WebApplicationFactory<Pr
         var installmentDto = new InstallmentDto
         {
             Id = id,
-            LoanId = loanId,
             Amount = 100,
             Timestamp = DateTime.UtcNow,
         };
@@ -121,14 +118,12 @@ public class InstallmentControllerTests : IClassFixture<WebApplicationFactory<Pr
             new InstallmentDto
             {
                 Id = 1,
-                LoanId = loanId,
                 Amount = 100,
                 Timestamp = DateTime.UtcNow,
             },
             new InstallmentDto
             {
                 Id = 2,
-                LoanId = loanId,
                 Amount = 100,
                 Timestamp = DateTime.UtcNow,
             },

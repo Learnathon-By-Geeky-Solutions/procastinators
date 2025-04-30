@@ -72,7 +72,6 @@ public class GetAllInstallmentsQueryHandlerTests
                 Id = 1,
                 Amount = 100,
                 Timestamp = DateTime.Now,
-                LoanId = _loanId,
                 NextDueDate = DateTime.Now.AddDays(30),
             },
             new InstallmentDto
@@ -80,7 +79,6 @@ public class GetAllInstallmentsQueryHandlerTests
                 Id = 2,
                 Amount = 200,
                 Timestamp = DateTime.Now.AddDays(30),
-                LoanId = _loanId,
                 NextDueDate = DateTime.Now.AddDays(60),
             },
         };
