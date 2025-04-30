@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { PlusIcon } from "lucide-react";
+import { HandCoinsIcon, PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -23,7 +23,10 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { addLoanFormSchema } from "@/validations/form-schema";
+import {
+    addLoanFormSchema,
+    payInstallmentFormSchema,
+} from "@/validations/form-schema";
 import { toast } from "sonner";
 import { handleResponse } from "@/lib/handle-response";
 import { Input } from "@/components/ui/input";
@@ -34,35 +37,38 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Wallet } from "@/lib/definitions";
+import { Loan, Wallet } from "@/lib/definitions";
 import { Textarea } from "@/components/ui/textarea";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { AddLoanAction } from "@/lib/actions/loan-action";
+import { PayInstallmentAction } from "@/lib/actions/installment-action";
 
 const successDescription = "Transaction processed successfully.";
 const failedTitle = "Failed!";
 const failedDefaultDescription = "Something went wrong. Please try again.";
 
-export function AddLoanDialog({
+export function PayInsallmentDialog({
+    action,
     wallets,
-    iconOnly = false,
+    loan,
 }: {
+    readonly action: "pay" | "receive";
     readonly wallets: Wallet[];
-    readonly iconOnly?: boolean;
+    readonly loan: Loan;
 }) {
     const [open, setOpen] = useState(false);
 
     const defaultValues = {
-        action: "borrow" as "borrow" | "lend",
+        action,
+        loanId: loan.id,
+        dueAmount: loan.dueAmount.toFixed(2),
         walletId: "",
         amount: "",
-        dueDate: new Date(Date.now() + 1000 * 60 * 60 * 24),
+        nextDueDate: new Date(Date.now() + 1000 * 60 * 60 * 24),
         note: "",
     };
 
-    const form = useForm<z.infer<typeof addLoanFormSchema>>({
-        resolver: zodResolver(addLoanFormSchema),
+    const form = useForm<z.infer<typeof payInstallmentFormSchema>>({
+        resolver: zodResolver(payInstallmentFormSchema),
         defaultValues,
     });
     const { isSubmitting } = form.formState;
@@ -73,9 +79,9 @@ export function AddLoanDialog({
         form.reset(defaultValues);
     }, [open]);
 
-    async function onSubmit(values: z.infer<typeof addLoanFormSchema>) {
+    async function onSubmit(values: z.infer<typeof payInstallmentFormSchema>) {
         try {
-            const res = await AddLoanAction(values);
+            const res = await PayInstallmentAction(values);
             handleResponse(res, form, setOpen, successDescription);
         } catch (error) {
             console.log(error);
@@ -88,23 +94,19 @@ export function AddLoanDialog({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                {iconOnly ? (
-                    <Button variant={"outline"} size="icon">
-                        <PlusIcon className="h-4 w-4" />
-                    </Button>
-                ) : (
-                    <Button>
-                        <PlusIcon className="h-4 w-4" />
-                        Add Loan
-                    </Button>
-                )}
+                <Button>
+                    {action == "pay"
+                        ? "Pay Installment"
+                        : "Receive Installment"}
+                </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Add Loan</DialogTitle>
+                    <DialogTitle>New Installment</DialogTitle>
                     <DialogDescription>
-                        Add a new loan that you borrowed from or lent someone
-                        who doesn't use Finance Tracker.
+                        {action === "pay"
+                            ? "Pay an installment for this loan."
+                            : "Receive an installment for this loan."}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -116,46 +118,44 @@ export function AddLoanDialog({
                             control={form.control}
                             name="action"
                             render={({ field }) => (
-                                <FormItem className="space-y-1">
-                                    <FormLabel>Action</FormLabel>
+                                <FormItem className="hidden">
                                     <FormControl>
-                                        <RadioGroup
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                            className="flex space-x-4"
-                                        >
-                                            <div className="flex items-center space-x-2">
-                                                <RadioGroupItem
-                                                    value="borrow"
-                                                    id="borrow"
-                                                />
-                                                <label
-                                                    htmlFor="borrow"
-                                                    className="text-sm font-normal"
-                                                >
-                                                    Borrow
-                                                </label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <RadioGroupItem
-                                                    value="lend"
-                                                    id="lend"
-                                                />
-                                                <label
-                                                    htmlFor="lend"
-                                                    className="text-sm font-normal"
-                                                >
-                                                    Lend
-                                                </label>
-                                            </div>
-                                        </RadioGroup>
+                                        <Input type="hidden" {...field} />
                                     </FormControl>
-                                    <div className="min-h-[20px]">
-                                        <FormMessage />
-                                    </div>
                                 </FormItem>
                             )}
                         />
+
+                        <FormField
+                            control={form.control}
+                            name="loanId"
+                            render={({ field }) => (
+                                <FormItem className="hidden">
+                                    <FormControl>
+                                        <Input type="hidden" {...field} />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="dueAmount"
+                            render={({ field }) => (
+                                <FormItem className="hidden">
+                                    <FormControl>
+                                        <Input type="hidden" {...field} />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+
+                        <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
+                            <p className="text-sm font-medium">Due Amount</p>
+                            <p className="text-sm">
+                                {loan.dueAmount.toFixed(2)} BDT
+                            </p>
+                        </div>
 
                         <FormField
                             control={form.control}
@@ -231,7 +231,7 @@ export function AddLoanDialog({
 
                         <FormField
                             control={form.control}
-                            name="dueDate"
+                            name="nextDueDate"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Date & Time</FormLabel>
@@ -285,9 +285,15 @@ export function AddLoanDialog({
                             >
                                 Cancel
                             </Button>
-                            <Button type="submit" disabled={isSubmitting}>
-                                {isSubmitting ? "Adding" : "Add"}
-                            </Button>
+                            {action === "pay" ? (
+                                <Button type="submit" disabled={isSubmitting}>
+                                    {isSubmitting ? "Paying" : "Pay"}
+                                </Button>
+                            ) : (
+                                <Button type="submit" disabled={isSubmitting}>
+                                    {isSubmitting ? "Receiving" : "Receive"}
+                                </Button>
+                            )}
                         </DialogFooter>
                     </form>
                 </Form>

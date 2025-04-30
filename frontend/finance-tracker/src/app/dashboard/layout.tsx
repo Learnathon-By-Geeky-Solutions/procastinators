@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/navigation/app-sidebar";
+import { auth } from "@/lib/auth";
 import {
     ArrowRightLeftIcon,
     BanknoteArrowDownIcon,
@@ -51,5 +52,10 @@ export default async function DashboardLayout({
             href: "/dashboard/claimables",
         },
     ];
-    return <AppSidebar routes={routes}>{children}</AppSidebar>;
+    const session = await auth();
+    return (
+        <AppSidebar routes={routes} session={session}>
+            {children}
+        </AppSidebar>
+    );
 }

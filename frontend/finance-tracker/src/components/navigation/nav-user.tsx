@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { ContactIcon, HelpCircle, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 function UserAvatar(fallbackText: string) {
     return (
@@ -24,8 +25,7 @@ function UserAvatar(fallbackText: string) {
     );
 }
 
-export default function NavUser() {
-    const { data: session } = useSession();
+export default function NavUser({ session }: { session: Session | null }) {
     const user = session?.user;
     const avatarFallbackText = (user?.name ?? "u").slice(0, 1).toUpperCase();
 

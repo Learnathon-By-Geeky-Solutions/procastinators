@@ -1,27 +1,24 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
-import { ArrowLeft, ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import LoanInfoCard from "@/components/loans/loan-details/loan-info-card";
 import { fetchLoanById } from "@/lib/data/loan-data";
 import LoanSummaryCard from "@/components/loans/loan-details/loan-summary-card";
 import { fetchInstallmentsByLoanId } from "@/lib/data/installments-data";
 import InstallmentTable from "@/components/loans/loan-details/installment-table";
+import { PayInsallmentDialog } from "@/components/loans/loan-details/pay-installment-dialog";
+import { auth } from "@/lib/auth";
+import { fetchWallets } from "@/lib/data/wallet-data";
 
 export default async function LoanDetailPage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
-    // Find the loan by ID
-    const loan = await fetchLoanById(params.id);
+    const { id } = await params;
+    const loan = await fetchLoanById(id);
 
     if (!loan) {
         return (
@@ -49,7 +46,15 @@ export default async function LoanDetailPage({
         );
     }
 
-    const installments = await fetchInstallmentsByLoanId(params.id);
+    const installments = await fetchInstallmentsByLoanId(id);
+    const wallets = await fetchWallets();
+    const session = await auth();
+    const email = session?.user?.email;
+    const action = loan.borrower?.email === email ? "pay" : "receive";
+
+    const isAllowed =
+        (action === "pay" && loan.dueAmount > 0) ||
+        (action === "receive" && loan.dueAmount > 0 && loan.borrower == null);
 
     return (
         <div className="flex flex-col gap-4 p-4 md:p-8">
@@ -68,7 +73,15 @@ export default async function LoanDetailPage({
                         Loan Details
                     </h1>
                 </div>
-                <div>Buttons Here</div>
+                <div>
+                    {isAllowed && (
+                        <PayInsallmentDialog
+                            action={action}
+                            wallets={wallets}
+                            loan={loan}
+                        />
+                    )}
+                </div>
             </div>
 
             <div className="grid gap-4 lg:grid-cols-2">
