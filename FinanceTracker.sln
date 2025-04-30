@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceTracker.Application.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceTracker.Api.Tests", "backend\tests\FinanceTracker.Api.Tests\FinanceTracker.Api.Tests.csproj", "{1EC4F53E-79AF-4764-A724-3001F842E92E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceTracker.Infrastructure.Tests", "backend\tests\FinanceTracker.Infrastructure.Tests\FinanceTracker.Infrastructure.Tests.csproj", "{DDF11638-86D3-48A4-9E4B-7B5569ADB873}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{1EC4F53E-79AF-4764-A724-3001F842E92E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EC4F53E-79AF-4764-A724-3001F842E92E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EC4F53E-79AF-4764-A724-3001F842E92E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDF11638-86D3-48A4-9E4B-7B5569ADB873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDF11638-86D3-48A4-9E4B-7B5569ADB873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDF11638-86D3-48A4-9E4B-7B5569ADB873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDF11638-86D3-48A4-9E4B-7B5569ADB873}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +66,7 @@ Global
 		{975F49E7-772F-4FE7-B3DE-6EDA73427E5D} = {884D634F-8F12-4F72-8EAE-66DF839BFD70}
 		{27C7840C-B0A3-03B1-B222-2E7E2E9444ED} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{1EC4F53E-79AF-4764-A724-3001F842E92E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{DDF11638-86D3-48A4-9E4B-7B5569ADB873} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4CADF427-8247-4A06-A58A-FFCF3224B71A}

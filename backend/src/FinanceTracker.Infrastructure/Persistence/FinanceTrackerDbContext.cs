@@ -5,18 +5,18 @@ using static FinanceTracker.Infrastructure.Extensions.TypeConverters;
 
 namespace FinanceTracker.Infrastructure.Persistence;
 
-internal class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext> options)
+public class FinanceTrackerDbContext(DbContextOptions<FinanceTrackerDbContext> options)
     : IdentityDbContext<User>(options)
 {
     private const string DecimalColumnType = "decimal(18, 2)";
-    internal DbSet<Wallet> Wallets { get; set; } = default!;
-    internal DbSet<Category> Categories { get; set; } = default!;
-    internal DbSet<PersonalTransaction> PersonalTransactions { get; set; } = default!;
-    internal DbSet<Loan> Loans { get; set; } = default!;
-    internal DbSet<LoanRequest> LoanRequests { get; set; } = default!;
-    internal DbSet<LoanClaim> LoanClaims { get; set; } = default!;
-    internal DbSet<Installment> Installments { get; set; } = default!;
-    internal DbSet<InstallmentClaim> InstallmentClaims { get; set; } = default!;
+    public DbSet<Wallet> Wallets { get; set; } = default!;
+    public DbSet<Category> Categories { get; set; } = default!;
+    public DbSet<PersonalTransaction> PersonalTransactions { get; set; } = default!;
+    public DbSet<Loan> Loans { get; set; } = default!;
+    public DbSet<LoanRequest> LoanRequests { get; set; } = default!;
+    public DbSet<LoanClaim> LoanClaims { get; set; } = default!;
+    public DbSet<Installment> Installments { get; set; } = default!;
+    public DbSet<InstallmentClaim> InstallmentClaims { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
