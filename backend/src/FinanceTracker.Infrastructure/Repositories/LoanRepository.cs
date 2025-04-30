@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTracker.Infrastructure.Repositories;
 
-internal class LoanRepository(FinanceTrackerDbContext dbContext) : ILoanRepository
+public class LoanRepository(FinanceTrackerDbContext dbContext) : ILoanRepository
 {
     public async Task<int> CreateAsync(Loan loan)
     {

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTracker.Infrastructure.Repositories;
 
-internal class WalletRepository(FinanceTrackerDbContext dbContext) : IWalletRepository
+public class WalletRepository(FinanceTrackerDbContext dbContext) : IWalletRepository
 {
     public async Task<int> Create(Wallet wallet)
     {
