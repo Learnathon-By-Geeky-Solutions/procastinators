@@ -21,7 +21,7 @@ Finance Tracker is a comprehensive financial management application designed to 
 
 -   Provide an organized way to track income and expenses.
 -   Offer visibility into financial habits through analytics.
--   Enable collaborative financial activities (e.g. tracking loans and group expenses).
+-   Enable collaborative financial activities (e.g., borrowing and lending money).
 
 <div align="center">
 
@@ -95,12 +95,24 @@ Finance Tracker is a comprehensive financial management application designed to 
     Add, edit or delete transactions (amount, additional note, date/time), link them to with relevant categories and wallets
 -   **Analytics & Reports**  
     View category-wise breakdowns and trend charts to understand your income and spending over time.
+-   **Loan Management**
+    Keep track of borrowing and lending money for non-registered users as well as interactively keep track of loans by leveraging features like loan request, approval, installments etc
+
+### ERD Diagram
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/09ac0b91-8601-4b71-a4cd-d20e821d2a13" alt="ERD Diagram 1" width="600px" />
+  <br><br>
+  <img src="https://github.com/user-attachments/assets/d224482d-95d3-406a-ad76-4dd91477f6b1" alt="ERD Diagram 2" width="600px" />
+</p>
+
 
 ### Architectural Overview
 
 -   **Deployment Model:** Monolith Architecture
 -   **Code Organiztion:** Clean Architecture
 -   **Design Patterns:** Mediator, CQRS, Repository
+
 
 ### Repository Structure
 
@@ -230,8 +242,5 @@ npm run dev
 
 </center>
 
-## Resources
-
--   [Project Documentation](docs/)
--   [Development Setup](docs/setup.md)
--   [Contributing Guidelines](CONTRIBUTING.md)
+## Further Reading
+-   [Github Wiki](https://github.com/Learnathon-By-Geeky-Solutions/procastinators/wiki/)
