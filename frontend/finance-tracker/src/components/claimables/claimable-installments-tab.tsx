@@ -38,10 +38,10 @@ export default function ClaimableInstallmentsTab({
                     <Table>
                         <TableHeader>
                             <TableRow>
+                                <TableHead>Status</TableHead>
                                 <TableHead>Amount</TableHead>
                                 <TableHead>From</TableHead>
                                 <TableHead>Date</TableHead>
-                                <TableHead>Status</TableHead>
                                 <TableHead className="w-[100px]">
                                     Actions
                                 </TableHead>
@@ -51,23 +51,6 @@ export default function ClaimableInstallmentsTab({
                             {installmentClaims.length > 0 ? (
                                 installmentClaims.map((claim) => (
                                     <TableRow key={claim.id}>
-                                        <TableCell>
-                                            {claim?.installment?.amount.toFixed(
-                                                2
-                                            )}{" "}
-                                            BDT
-                                        </TableCell>
-                                        <TableCell className="font-medium">
-                                            {
-                                                claim?.installment.loan
-                                                    ?.borrower?.userName
-                                            }
-                                        </TableCell>
-                                        <TableCell>
-                                            {toLocaleDateString(
-                                                claim?.installment?.timestamp
-                                            )}
-                                        </TableCell>
                                         <TableCell>
                                             {claim.isClaimed ? (
                                                 <Badge
@@ -86,6 +69,24 @@ export default function ClaimableInstallmentsTab({
                                             )}
                                         </TableCell>
                                         <TableCell>
+                                            {claim?.installment?.amount.toFixed(
+                                                2
+                                            )}{" "}
+                                            BDT
+                                        </TableCell>
+                                        <TableCell className="font-medium">
+                                            {
+                                                claim?.installment.loan
+                                                    ?.borrower?.userName
+                                            }
+                                        </TableCell>
+                                        <TableCell>
+                                            {toLocaleDateString(
+                                                claim?.installment?.timestamp
+                                            )}
+                                        </TableCell>
+
+                                        <TableCell>
                                             <Button variant="outline" size="sm">
                                                 <HandCoinsIcon className="h-4 w-4" />
                                                 Claim
@@ -99,7 +100,7 @@ export default function ClaimableInstallmentsTab({
                                         colSpan={8}
                                         className="text-center py-4 text-muted-foreground"
                                     >
-                                        No loans found
+                                        No installments found
                                     </TableCell>
                                 </TableRow>
                             )}

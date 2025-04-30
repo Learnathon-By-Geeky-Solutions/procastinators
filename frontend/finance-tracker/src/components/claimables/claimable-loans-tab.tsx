@@ -37,11 +37,11 @@ export default function ClaimableLoansTab({
                     <Table>
                         <TableHeader>
                             <TableRow>
+                                <TableHead>Status</TableHead>
                                 <TableHead>Amount</TableHead>
                                 <TableHead>From</TableHead>
                                 <TableHead>Issued At</TableHead>
                                 <TableHead>Note</TableHead>
-                                <TableHead>Status</TableHead>
                                 <TableHead className="w-[100px]">
                                     Actions
                                 </TableHead>
@@ -51,20 +51,6 @@ export default function ClaimableLoansTab({
                             {loanClaims.length > 0 ? (
                                 loanClaims.map((claim) => (
                                     <TableRow key={claim.id}>
-                                        <TableCell className="text-base font-medium">
-                                            {claim?.loan?.amount.toFixed(2)} BDT
-                                        </TableCell>
-                                        <TableCell className="font-medium">
-                                            {claim?.loan?.lender?.userName}
-                                        </TableCell>
-                                        <TableCell>
-                                            {toLocaleDateString(
-                                                claim?.loan?.issuedAt
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            {claim?.loan?.note ?? "-"}
-                                        </TableCell>
                                         <TableCell>
                                             {claim?.isClaimed ? (
                                                 <Badge
@@ -82,6 +68,21 @@ export default function ClaimableLoansTab({
                                                 </Badge>
                                             )}
                                         </TableCell>
+                                        <TableCell className="text-base font-medium">
+                                            {claim?.loan?.amount.toFixed(2)} BDT
+                                        </TableCell>
+                                        <TableCell className="font-medium">
+                                            {claim?.loan?.lender?.userName}
+                                        </TableCell>
+                                        <TableCell>
+                                            {toLocaleDateString(
+                                                claim?.loan?.issuedAt
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            {claim?.loan?.note ?? "-"}
+                                        </TableCell>
+
                                         <TableCell>
                                             {!claim?.isClaimed && (
                                                 <Button

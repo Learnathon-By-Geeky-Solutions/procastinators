@@ -40,28 +40,16 @@ export default function SentTab({
                         <Table>
                             <TableHeader>
                                 <TableRow>
+                                    <TableHead>Status</TableHead>
                                     <TableHead>Recipient</TableHead>
                                     <TableHead>Amount</TableHead>
                                     <TableHead>Note</TableHead>
                                     <TableHead>Due Date</TableHead>
-                                    <TableHead>Status</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {sentRequests.map((request) => (
                                     <TableRow key={request.id}>
-                                        <TableCell>
-                                            {request?.lender?.userName}
-                                        </TableCell>
-                                        <TableCell className="text-base font-medium">
-                                            {request?.amount.toFixed(2)} BDT
-                                        </TableCell>
-                                        <TableCell>{request.note}</TableCell>
-                                        <TableCell>
-                                            {toLocaleDateString(
-                                                request.dueDate
-                                            )}
-                                        </TableCell>
                                         <TableCell>
                                             {request.isApproved ? (
                                                 <Badge
@@ -77,6 +65,18 @@ export default function SentTab({
                                                 >
                                                     Pending
                                                 </Badge>
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            {request?.lender?.userName}
+                                        </TableCell>
+                                        <TableCell className="text-base font-medium">
+                                            {request?.amount.toFixed(2)} BDT
+                                        </TableCell>
+                                        <TableCell>{request.note}</TableCell>
+                                        <TableCell>
+                                            {toLocaleDateString(
+                                                request.dueDate
                                             )}
                                         </TableCell>
                                     </TableRow>

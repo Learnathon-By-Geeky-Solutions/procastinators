@@ -42,11 +42,11 @@ export default function ReceivedTab({
                         <Table>
                             <TableHeader>
                                 <TableRow>
+                                    <TableHead>Status</TableHead>
                                     <TableHead>Requester</TableHead>
                                     <TableHead>Amount</TableHead>
                                     <TableHead>Note</TableHead>
                                     <TableHead>Due Date</TableHead>
-                                    <TableHead>Status</TableHead>
                                     <TableHead className="w-[80px]">
                                         Actions
                                     </TableHead>
@@ -55,18 +55,6 @@ export default function ReceivedTab({
                             <TableBody>
                                 {receivedRequests.map((request) => (
                                     <TableRow key={request.id}>
-                                        <TableCell>
-                                            {request?.borrower?.userName}
-                                        </TableCell>
-                                        <TableCell className="text-base font-medium">
-                                            {request?.amount.toFixed(2)} BDT
-                                        </TableCell>
-                                        <TableCell>{request.note}</TableCell>
-                                        <TableCell>
-                                            {toLocaleDateString(
-                                                request.dueDate
-                                            )}
-                                        </TableCell>
                                         <TableCell>
                                             {request.isApproved ? (
                                                 <Badge
@@ -84,6 +72,19 @@ export default function ReceivedTab({
                                                 </Badge>
                                             )}
                                         </TableCell>
+                                        <TableCell>
+                                            {request?.borrower?.userName}
+                                        </TableCell>
+                                        <TableCell className="text-base font-medium">
+                                            {request?.amount.toFixed(2)} BDT
+                                        </TableCell>
+                                        <TableCell>{request.note}</TableCell>
+                                        <TableCell>
+                                            {toLocaleDateString(
+                                                request.dueDate
+                                            )}
+                                        </TableCell>
+
                                         <TableCell>
                                             {!request.isApproved && (
                                                 <Button
